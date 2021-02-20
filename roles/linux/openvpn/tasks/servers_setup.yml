@@ -1,0 +1,24 @@
+---
+- name: Configure PKI for openVPN servers
+  include_tasks: pki.yml
+  tags: ['configuration']
+
+- name: Configure client certificates for roadwarrior openVPN servers
+  include_tasks: roadwarrior_clients_certs.yml
+  when:
+    - "'site1_vpn_servers' in group_names"
+  tags: ['configuration']
+
+- name: Configure client opvn files for roadwarrior users
+  include_tasks: roadwarrior_clients_ovpn.yml
+  when:
+    - "'site1_vpn_servers' in group_names"
+  tags: ['configuration']
+
+- name: Common configuration for openVPN servers and clients
+  include_tasks: common_conf.yml
+  tags: ['configuration']
+
+- name: Main configuration for site2site and roadwarrior openVPN servers
+  include_tasks: servers_conf.yml
+  tags: ['configuration']

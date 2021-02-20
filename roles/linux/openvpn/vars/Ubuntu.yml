@@ -1,0 +1,40 @@
+---
+openvpn_packages:
+  - openvpn
+  - easy-rsa
+  - bridge-utils
+openvpn_conf_dir: '/etc/openvpn'
+openvpn_easy_rsa_vars:
+  - regexp: '^export\s+EASY_RSA='
+    line: 'export EASY_RSA="`pwd`"'
+  - regexp: '^export\s+OPENSSL='
+    line: 'export OPENSSL="openssl"'
+  - regexp: '^export\s+KEY_DIR='
+    line: 'export KEY_DIR="$EASY_RSA/keys"'
+  - regexp: '^export\s+KEY_SIZE='
+    line: 'export KEY_SIZE=2048'
+  - regexp: '^export\s+CA_EXPIRE='
+    line: 'export CA_EXPIRE=3650'
+  - regexp: '^export\s+KEY_EXPIRE='
+    line: 'export KEY_EXPIRE=3650'
+  - regexp: '^export\s+KEY_COUNTRY='
+    line: 'export KEY_COUNTRY="CHANGEME"'
+  - regexp: '^export\s+KEY_PROVINCE='
+    line: 'export KEY_PROVINCE="CHANGEME"'
+  - regexp: '^export KEY_CITY='
+    line: 'export KEY_CITY="CHANGEME"'
+  - regexp: '^export\s+KEY_ORG="'
+    line: 'export KEY_ORG="CHANGEME"'
+  - regexp: '^export\s+KEY_EMAIL='
+    line: 'export KEY_EMAIL="CHANGEME@CHANGE.ME"'
+  - regexp: '^export\sKEY_ALTNAMES='
+    line: 'export KEY_ALTNAMES="CHANGEME"'
+  - regexp: '^export\s+KEY_OU='
+    line: 'export KEY_OU="CHANGEME"'
+  - regexp: '^export\s+KEY_NAME='
+    line: 'export KEY_NAME="CHANGEME"'
+openvpn_port: 1194
+openvpn_cipher: 'AES-256-CBC'
+openvpn_auth: 'SHA512'
+site1_lan_ip: '192.168.1.0'
+site1_lan_netmask: '255.255.255.0'

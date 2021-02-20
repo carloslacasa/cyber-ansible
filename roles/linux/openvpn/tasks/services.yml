@@ -1,0 +1,9 @@
+---
+- name: Enable and start openvpn services
+  systemd:
+    name: openvpn
+    enabled: yes
+    state: started
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['services']

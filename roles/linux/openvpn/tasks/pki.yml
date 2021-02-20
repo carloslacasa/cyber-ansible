@@ -1,0 +1,65 @@
+---
+- name: Symbolic link to easy-rsa
+  file:
+    src: '/usr/share/easy-rsa'
+    dest: '{{ openvpn_conf_dir }}/easy-rsa'
+    owner: root
+    group: root
+    state: link
+  tags: ['configuration']
+
+- name: Symbolic link to openssl
+  file:
+    src: '{{ openvpn_conf_dir }}/easy-rsa/openssl-1.0.0.cnf'
+    dest: '{{ openvpn_conf_dir }}/easy-rsa/openssl.cnf'
+    owner: root
+    group: root
+    state: link
+  tags: ['configuration']
+
+- name: Environment variables for easy-rsa
+  lineinfile:
+    path: '{{ openvpn_conf_dir }}/easy-rsa/vars'
+    state: present
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+  loop: '{{ openvpn_easy_rsa_vars }}'
+  tags: ['configuration']
+
+# Requiere -T 300 o superior en ansible-playbook para evitar timeout
+- name: Generacion de DH
+  shell: source ./vars && ./clean-all && ./build-dh
+  args:
+    chdir: '{{ openvpn_conf_dir }}/easy-rsa'
+    creates: '{{ openvpn_conf_dir }}/easy-rsa/keys/dh2048.pem'
+    executable: /bin/bash
+  async: 300
+  poll: 5
+  tags: ['configuration']
+
+- name: Generate CA
+  shell: source ./vars && ./pkitool --initca
+  args:
+    chdir: '{{ openvpn_conf_dir }}/easy-rsa'
+    creates: '{{ openvpn_conf_dir }}/easy-rsa/keys/ca.key'
+    executable: /bin/bash
+  tags: ['configuration']
+
+- name: Generate server certificate
+  shell: 'source ./vars && ./pkitool --server {{ inventory_hostname }}'
+  args:
+    chdir: '{{ openvpn_conf_dir }}/easy-rsa'
+    creates: '{{ openvpn_conf_dir }}/easy-rsa/keys/{{ inventory_hostname }}.key'
+    executable: /bin/bash
+  tags: ['configuration']
+
+- name: Configure HMAC for TLS-auth
+  shell: openvpn --genkey --secret ta.key
+  args:
+    chdir: '{{ openvpn_conf_dir }}/easy-rsa/keys'
+    creates: '{{ openvpn_conf_dir }}/easy-rsa/keys/ta.key'
+    executable: /bin/bash
+  tags: ['configuration']

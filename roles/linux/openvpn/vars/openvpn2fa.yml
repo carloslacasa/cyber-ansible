@@ -1,0 +1,11 @@
+openvpn_conf_file: 'roadwarriors.conf'
+vpn_name: CHANGE-ME
+remote_ip: MY.PUBLIC.IP.ADDRESS 
+remote_port: 1194
+openvpn_proto: 'tcp-server'
+openvpn_client_idle_timeout: '7200'
+openvpn_up_script: 'up.sh'
+openvpn_down_script: 'down.sh'
+openvpn_users:
+  - user1
+  - user2

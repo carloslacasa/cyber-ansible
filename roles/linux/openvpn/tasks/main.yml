@@ -1,0 +1,35 @@
+---
+- name: Include variables genericas para la distribucion
+  include_vars: '{{ item }}'
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - default_distro.yml
+  tags: ['openvpn']
+
+- name: Include variables particulares para el host
+  include_vars: '{{ item }}'
+  with_first_found:
+    - '{{ inventory_hostname }}.yml'
+    - default_host.yml
+  tags: ['openvpn']
+
+- name: Install dependencies for openVPN
+  include_tasks: packages.yml
+  tags: ['openvpn']
+
+- name: openVPN server setup
+  include_tasks: servers_setup.yml
+  when:
+    - "'site1_vpn_servers' in group_names"
+  tags: ['openvpn']
+
+- name: Sevices required for openVPN
+  include_tasks: services.yml
+  tags: ['openvpn']
+
+- name: Configure firewall rules
+  include_tasks: ufw.yml
+  when:
+    - "'site1_vpn_servers' in group_names"
+  tags: ['configuration']

@@ -1,0 +1,15 @@
+- name: Include variables genericas para la distribucion
+  include_vars: '{{ item }}'
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - default_distro.yml
+  tags: ['2fa']
+
+- name: Instalacion de GoogleAuthenticator
+  include_tasks: packages.yml
+  tags: ['2fa']
+
+- name: Configuracion de 2FA con GoogleAuthenticator
+  include_tasks: 2fa.yml
+  tags: ['2fa']

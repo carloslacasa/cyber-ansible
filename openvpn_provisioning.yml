@@ -1,0 +1,10 @@
+---
+- name: OpenVPN with multifactor authentication
+  hosts: site1_vpn_servers
+  gather_facts: true
+  roles:
+    #- roles/linux/common/generic
+    - roles/linux/2fa
+    - roles/linux/openvpn
+    #- roles/linux/fail2ban
+    #- roles/linux/updates

@@ -1,0 +1,34 @@
+local {{ ansible_default_ipv4.address }}
+port {{ openvpn_port }}
+proto {{ openvpn_proto }}
+dev tap
+up "{{ openvpn_conf_dir }}/{{ openvpn_up_script }} br0 ens3"
+down "{{ openvpn_conf_dir }}/{{ openvpn_down_script }} br0 ens3"
+ca {{ openvpn_conf_dir }}/easy-rsa/keys/ca.crt
+cert {{ openvpn_conf_dir }}/easy-rsa/keys/{{ inventory_hostname }}.crt
+key {{ openvpn_conf_dir }}/easy-rsa/keys/{{ inventory_hostname }}.key
+dh {{ openvpn_conf_dir }}/easy-rsa/keys/dh2048.pem
+ifconfig-pool-persist {{ openvpn_conf_dir }}/ipp.txt
+server-bridge {{ ansible_default_ipv4.address }} {{ ansible_default_ipv4.netmask }} 192.168.1.0 192.168.1.100 
+push "redirect-gateway def1"
+push "dhcp-option DNS MY.DNS1.IP.ADDRESS"
+push "dhcp-option DNS MY.DNS2.IP.ADDRESS"
+push "dhcp-option DOMAIN CHANGE.ME"
+push "inactive {{ openvpn_client_idle_timeout }}"
+keepalive 10 120
+reneg-sec 0
+tls-server
+tls-auth {{ openvpn_conf_dir }}/easy-rsa/keys/ta.key 0
+cipher {{ openvpn_cipher }}
+auth {{ openvpn_auth }}
+auth-nocache
+comp-lzo
+max-clients 20
+user nobody
+group nogroup
+persist-key
+persist-tun
+mute 20
+log-append /var/log/openvpn/openvpn.log
+verb 3
+plugin /usr/lib/x86_64-linux-gnu/openvpn/plugins/openvpn-plugin-auth-pam.so openvpn

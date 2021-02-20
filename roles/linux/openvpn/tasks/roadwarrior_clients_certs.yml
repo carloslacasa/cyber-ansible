@@ -1,0 +1,61 @@
+---
+- name: Check if private key for any particular user exists
+  stat: 
+    path: '{{ openvpn_conf_dir }}/easy-rsa/keys/{{ item }}.key'
+  with_items: '{{ openvpn_users }}'
+  register: client_private_key_exists
+  tags: ['configuration']
+
+#- name: Debug client keys exists
+#  debug:
+#    msg: "Filename: {{ item.item }} - Exists: {{ item.stat.exists }}"
+#  loop: "{{ client_private_key_exists.results }}"
+#  when: item.stat.exists == false
+#  tags: ['configuration']
+
+- name: Generate passwords for inexistent client certificates
+  shell: echo "$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c15)"
+  no_log: true
+  loop: "{{ client_private_key_exists.results }}"
+  when: item.stat.exists == false
+  register: client_passwords_list
+  tags: ['configuration']
+
+#- name: Debug client-password assignment
+#  debug:
+#    msg: "Username: {{ item.item.item }} - Password: {{ item.stdout }}"
+#  loop: "{{ client_passwords_list.results }}"
+#  when: item.item.stat.exists == false
+#  tags: ['configuration']
+
+- name: Store generated client passwords in ansible var file
+  local_action:
+    module: lineinfile
+    line: '{{ item.item.item }}_password: {{ item.stdout }}'
+    path: 'roles/linux/openvpn/vars/{{inventory_hostname}}.yml'
+    mode: '600'
+    create: true
+  loop: "{{ client_passwords_list.results }}"
+  when: item.item.stat.exists == false
+  become: false 
+  tags: ['configuration']
+
+- name: Stored client passwords in ansible fact
+  set_fact:
+    '{{ item.item.item }}_password': '{{ item.stdout }}' 
+  loop: "{{ client_passwords_list.results }}"
+  when: item.item.stat.exists == false
+  tags: ['configuration']
+
+- name: Generate client certificates 
+  expect:
+    command: /bin/bash -c "source ./vars && ./pkitool --pass {{ item.item.item }}"
+    responses:
+      'Enter PEM pass phrase:': '{{ item.stdout }}'
+      'Verifying - Enter PEM pass phrase:': '{{ item.stdout }}'
+    chdir: '{{ openvpn_conf_dir }}/easy-rsa'
+    creates: '{{ openvpn_conf_dir }}/easy-rsa/keys/{{ item.item.item }}.key'
+  loop: "{{ client_passwords_list.results }}"
+  no_log: true
+  when: item.item.stat.exists == false
+  tags: ['configuration']

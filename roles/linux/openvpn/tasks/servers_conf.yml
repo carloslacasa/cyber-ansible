@@ -1,0 +1,36 @@
+---
+- name: openVPN configuration
+  block:
+    - name: openVPN main server configuration
+      template:
+        src: '../templates/{{ openvpn_conf_file }}.j2'
+        dest: '{{ openvpn_conf_dir }}/server/{{ openvpn_conf_file }}'
+        mode: '0640'
+        owner: 'root'
+        group: 'root'
+      notify: restart_openvpn
+
+    - name: Symbolic link to openVPN main server configuration
+      file:
+        src: '{{ openvpn_conf_dir }}/server/{{ openvpn_conf_file }}'
+        dest: '{{ openvpn_conf_dir }}/{{ openvpn_conf_file }}'
+        owner: root
+        group: root
+        state: link
+  tags: ['configuration']
+
+- name: Upload script for on-premise openVPN servers
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: '0740'
+    owner: 'nobody'
+    group: 'root'
+  loop:
+    - src: '../scripts/{{ openvpn_up_script }}'
+      dest: '{{ openvpn_conf_dir }}/{{ openvpn_up_script }}'
+    - src: '../scripts/{{ openvpn_down_script }}'
+      dest: '{{ openvpn_conf_dir }}/{{ openvpn_down_script }}'
+  when:
+    - "'site1_vpn_servers' in group_names"
+  tags: ['configuration']

@@ -1,0 +1,7 @@
+---
+googleauth_dependencies:
+  - libqrencode3
+  - libpam-google-authenticator
+  - pamtester
+  - python-pexpect
+openvpn_conf_dir: '/etc/openvpn'

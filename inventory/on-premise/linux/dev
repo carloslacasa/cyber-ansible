@@ -1,0 +1,23 @@
+##########################################
+##
+## Linux SITE1 (DEV)
+##
+##########################################
+
+[site1_vpn_servers]
+openvpn2fa ansible_host=CHANGEME.OPENVPNSERVER.IP.ADDRESS
+
+[site1_ubuntu_it:children]
+site1_vpn_servers
+
+[site1_linux_it:children]
+site1_ubuntu_it
+
+[site1_linux:children]
+site1_linux_it
+
+[ubuntu:children]
+site1_ubuntu_it
+
+[linux:children]
+site1_linux

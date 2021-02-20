@@ -1,0 +1,14 @@
+---
+- name: Incoming openVPN TCP
+  ufw:
+    direction: in
+    proto: tcp
+    from_port: '1024:65535'
+    to_port: '1194'
+    from_ip: '{{ item }}'
+    rule: allow
+  with_items:
+    - 0.0.0.0/0 
+  when:
+    - "'site1_vpn_servers' in group_names"
+  tags: ['configuration']

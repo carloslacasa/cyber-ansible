@@ -1,0 +1,59 @@
+---
+- name: openVPN configuration
+  block:
+    - name: openVPN main client configuration
+      vars:
+        current_openvpn_server: '{{ item.name }}'
+      template:
+        src: '../templates/{{ openvpn_conf_file }}.j2'
+        dest: '{{ openvpn_conf_dir }}/client/{{ item.name }}-{{ openvpn_conf_file }}'
+        mode: '0644'
+        owner: 'root'
+        group: 'root'
+      with_items: '{{ openvpn_client_parameters }}'
+      notify: restart_openvpn
+
+    - name: Symbolic link to openVPN main client configuration
+      file:
+        src: '{{ openvpn_conf_dir }}/client/{{ item.name }}-{{ openvpn_conf_file }}'
+        dest: '{{ openvpn_conf_dir }}/{{ item.name }}-{{ openvpn_conf_file }}'
+        owner: root
+        group: root
+        state: link
+      with_items: '{{ openvpn_client_parameters }}'
+
+    - name: VPN tunnels to be started
+      lineinfile:
+         path: '/etc/default/openvpn'
+         state: present
+         owner: root
+         group: root
+         mode: '0644'
+         insertafter: '^#AUTOSTART="home\s+.*$'
+         regexp: '^AUTOSTART'
+         line: 'AUTOSTART="all"'
+      notify: reload_systemd
+  tags: ['configuration']
+
+- name: Upload x509 certificates
+  block:
+    - name: Make sure keys folder exists
+      file:
+        path: '{{ openvpn_conf_dir }}/easy-rsa/keys'
+        mode: '0755'
+        owner: 'root'
+        group: 'root'
+        state: directory
+
+    - name: Upload ca and client certificates to keys folder
+      copy:
+        src: '../certs/{{ item.0.name }}-{{ item.1 }}'
+        dest: '{{ openvpn_conf_dir }}/easy-rsa/keys/{{ item.0.name }}-{{ item.1 }}'
+        mode: '0600'
+        owner: 'nobody'
+        group: 'root'
+      with_nested: 
+        - '{{ openvpn_client_parameters }}'
+        - ['ca.crt','ta.key','{{ inventory_hostname }}.crt','{{ inventory_hostname }}.key']
+      notify: restart_openvpn
+  tags: ['configuration']

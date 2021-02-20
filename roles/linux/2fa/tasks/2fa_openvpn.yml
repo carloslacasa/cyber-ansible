@@ -1,0 +1,35 @@
+---
+- name: Group for GoogleAuthenticator
+  group:
+    name: gauth
+    state: present
+  tags: ['configuration']
+
+- name: User for GoogleAuthenticator
+  user:
+    name: gauth
+    state: present
+    comment: GoogleAuthenticator
+    shell: /usr/sbin/nologin
+    groups: gauth
+  tags: ['configuration']
+
+- name: Directory for GoogleAuthenticator
+  file:
+    path: '{{ openvpn_conf_dir }}/google-authenticator'
+    state: directory
+    owner: gauth
+    group: gauth
+    mode: '0700'
+  tags: ['configuration']
+
+- name: PAM configuration for GoogleAuthenticator
+  copy:
+    dest: '/etc/pam.d/openvpn'
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+       account required pam_permit.so
+       auth requisite /lib/x86_64-linux-gnu/security/pam_google_authenticator.so secret={{ openvpn_conf_dir }}/google-authenticator/${USER} user=gauth forward_pass
+  tags: ['configuration']

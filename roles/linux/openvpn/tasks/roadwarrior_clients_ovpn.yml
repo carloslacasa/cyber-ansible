@@ -1,0 +1,68 @@
+---
+- name: Folder for openVPN scripts required for roadwarriors
+  file:
+    path: /root/util/ovpn
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  tags: ['configuration']
+
+- name: Upload scripts required for roadwarriors
+  copy:
+    src: '../scripts/{{ item }}'
+    dest: '/root/util/ovpn/{{ item }}'
+    mode: 0740
+    owner: 'root'
+    group: 'root'
+  loop: 
+    - ovpn_client.sh
+    - generate_mfa.sh
+    - check_mfa.sh
+  tags: ['configuration']
+
+- name: Generate configuration file for each openVPN user
+  copy:
+    dest: '{{ openvpn_conf_dir }}/client/{{ item }}-client.conf'
+    owner: root
+    group: root
+    mode: '0640'
+    content: |
+      remote {{ remote_ip }}
+      port {{ remote_port }}
+      proto tcp-client
+      dev tap
+      resolv-retry infinite
+      ca ca.crt
+      cert {{ item }}.crt
+      key {{ item }}.key
+      remote-cert-tls server
+      tls-client
+      tls-auth ta.key 1
+      cipher AES-256-CBC
+      auth SHA512
+      comp-lzo
+      auth-user-pass
+      auth-nocache
+      persist-key
+      persist-tun
+      keepalive 10 120
+      reneg-sec 0
+      nobind
+      user nobody
+      group nogroup
+      pull
+      script-security 2
+      verb 3
+      mute 20
+  loop: '{{ openvpn_users }}'
+  tags: ['configuration']
+
+- name: Generate ovpn file for each openVPN user
+  shell: './ovpn_client.sh {{ item }}'
+  args:
+    chdir: '/root/util/ovpn'
+    creates: '{{ openvpn_conf_dir }}/client//{{ item }}.ovpn'
+    executable: /bin/bash
+  loop: '{{ openvpn_users }}'
+  tags: ['configuration']

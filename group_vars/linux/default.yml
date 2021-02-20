@@ -1,0 +1,5 @@
+ansible_port: 22
+ansible_connection: ssh
+ansible_ssh_pass: '{{ CHANGEME_ADMIN_PASSWORD }}'
+ansible_become_pass: '{{ CHANGEME_ADMIN_PASSWORD }}'
+timezone: 'Europe/Madrid'

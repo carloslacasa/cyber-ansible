@@ -1,0 +1,19 @@
+- name: APT cache up-to-date
+  apt:
+    update_cache: yes
+  changed_when: false
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Install {{ ansible_os_family }} packages for GoogleAuthenticator
+  package:
+    name: '{{ item }}'
+  loop: '{{ googleauth_dependencies }}'
+  register: install_result
+  until: install_result is success
+  retries: 3
+  delay: 5
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']

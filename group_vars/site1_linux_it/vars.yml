@@ -1,0 +1,10 @@
+---
+domain_name: CHANGE.ME
+proxyserver: proxy.{{ domain_name }}
+no_proxy: 'CHANGE.ME,localhost,127.0.0.1'
+smtpserver: CHANGEME.SMTP.IP.ADDRESS
+dnsservers:
+  - name: dns1
+    ip: CHANGEME.DNS1.IP.ADDRESS
+  - name: dns2
+    ip: CHANGEME.DNS2.IP.ADDRESS
