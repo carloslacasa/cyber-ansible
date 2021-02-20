@@ -13,6 +13,7 @@ OpenVPN + 2FA
 
 OpenVPN server in TAP mode (bridge). 
 VPN clients will get an IP address belonging to the local network address space 
+
 Multifactor authentication
 - PKI
 - OTP (Google Authenticator)
