@@ -26,6 +26,8 @@
 
 - name: Sevices required for openVPN
   include_tasks: services.yml
+  when:
+    - "'site1_vpn_servers' in group_names"
   tags: ['openvpn']
 
 - name: Configure firewall rules
