@@ -5,7 +5,12 @@ Ansible playbooks related to Cybersecurity
 2FA
 ---
 Multifactor authentication with Google Authenticator for both console and SSH access.
+
 Tested on Ubuntu >= 18.04 LTS
+
+How to call the playbook:
+
+ansible-playbook -i inventory/on-premise/linux/dev --limit site1_linux_it -T 5 ./openvpn_provisioning.yml --tags 2fa,install,configuration,services
 
 
 OpenVPN + 2FA
@@ -22,6 +27,7 @@ A specific PAM module for Google Authenticator is required (openvpn-plugin-auth-
 The playbooks take care of the PKI setup (client and server certificates), as well as the generation of ovpn files containing the configuration for each particular user.
 The utility googleauthenticator is used in order to generate the seed for OTP.
 Scripts containing basic rules for controlling traffic at level 2 (local network, with ebtables) and level 3 (remote network access through the VPN gateway, with iptables) are also provided.
+
 Tested with Ubuntu-18.04 LTS server 
 
 How to call the playbook:

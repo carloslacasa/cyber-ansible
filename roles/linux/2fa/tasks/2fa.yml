@@ -2,7 +2,7 @@
 - name: Configuracion de 2FA para acceso consola y SSH
   include_tasks: 2fa_console.yml
   when:
-    - "'site1_ssh_proxies' in group_names or 'site2_ssh_proxies' in group_names"
+    - "'site1_linux_it' in group_names"
   tags: ['configuration']
 
 - name: Configuracion de 2FA para openvpn
