@@ -1,0 +1,65 @@
+---
+- name: Configuracion general de modsecurity a partir de configuracion recomendada
+  file:
+    src: '{{ modsecurity_conf_folder }}/modsecurity.conf-recommended'
+    dest: '{{ modsecurity_conf_folder }}/modsecurity.conf'
+    owner: root
+    group: root
+    state: link
+  tags: ['configuration']
+
+- name: Habilitar reglas de deteccion en modsecurity
+  lineinfile:
+    path: '{{ modsecurity_conf_folder }}/modsecurity.conf'
+    state: present
+    regexp: '^SecRuleEngine\s+'
+    line: 'SecRuleEngine On'
+  notify: restart_apache2
+  tags: ['configuration']
+
+- name: Descarga de reglas OWASP para modsecurity-crs
+  git:
+    repo: '{{ modsecurity_crs_owasp_repo }}'
+    dest: '{{ modsecurity_conf_folder }}/owasp-crs'
+    force: yes
+    update: yes
+  tags: ['configuration']
+
+- name: Configuracion general de reglas CRS OWASP para modsecurity
+  copy:
+    dest: '{{ modsecurity_conf_folder }}/owasp-crs/crs-setup.conf'
+    content: |
+      SecDefaultAction "phase:1,log,auditlog,deny"
+      SecDefaultAction "phase:2,log,auditlog,deny"
+      SecCollectionTimeout 600
+      SecAction \
+       "id:900990,\
+        phase:1,\
+        nolog,\
+        pass,\
+        t:none,\
+        setvar:tx.paranoia_level=3,\
+        setvar:tx.crs_setup_version=320"
+    mode: 0644
+    owner: root
+    group: root
+  notify: restart_apache2
+  tags: ['configuration']
+
+- name: Configuracion de excepciones para reglas CRS OWASP modsecurity
+  template:
+    src: '../templates/RESPONSE-99-EXCEPTIONS.conf.j2'
+    dest: '{{ modsecurity_conf_folder }}/owasp-crs/rules/RESPONSE-99-EXCEPTIONS.conf'
+    mode: 0644
+  notify: restart_apache2
+  tags: ['configuration']
+
+- name: Configuracion de apache
+  template:
+    src: '../templates/apache2.conf.j2'
+    dest: '{{ apache_conf_folder }}/apache2.conf' 
+    mode: 0640
+    owner: 'root'
+    group: 'root'
+  notify: restart_apache2
+  tags: ['configuration']

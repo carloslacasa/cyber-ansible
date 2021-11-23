@@ -1,0 +1,13 @@
+---
+- name: restart_haproxy
+  systemd:
+    state: restarted
+    name: haproxy
+
+- name: enforce_apparmor_haproxy
+  command: /usr/sbin/aa-enforce usr.sbin.haproxy
+
+- name: reload_apparmor
+  systemd:
+    state: reloaded
+    name: apparmor

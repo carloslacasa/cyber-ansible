@@ -1,0 +1,35 @@
+#include <tunables/global>
+
+/usr/sbin/apache2 {
+  #include <abstractions/base>
+  #include <abstractions/lxc/container-base>
+  #include <abstractions/lxc/start-container>
+  #include <abstractions/nameservice>
+
+  signal (receive) peer=unconfined,
+  signal (receive) peer=/usr/sbin/haproxy,
+  signal peer=@{profile_name},
+
+  capability dac_override,
+  capability dac_read_search,
+  capability net_bind_service,
+
+  network inet stream,
+  deny network inet dgram,
+  deny network inet6 dgram,
+  deny network inet6 stream,
+
+  /usr/sbin/apache2 mr,
+  /usr/lib/apache2/modules/* r,
+  /usr/lib/x86_64-linux-gnu/* r,
+  /lib/x86_64-linux-gnu/* r,
+  /etc/apache2/** r,
+  /etc/modsecurity/** r,
+  /dev/zero r,
+  /dev/null r,
+  /run/lock/apache2/* rw,
+  /var/log/apache2/*.log w,
+  /var/cache/apache2/* rw,
+  /var/cache/modsecurity/* rw,
+
+}

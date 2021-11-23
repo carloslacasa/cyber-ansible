@@ -1,0 +1,23 @@
+ServerName {{ inventory_hostname }}
+ServerSignature Off
+ServerTokens Prod
+Listen {{ waf_listen_address }}:{{ waf_listen_port }}
+Mutex file:${APACHE_LOCK_DIR} default
+PidFile ${APACHE_PID_FILE}
+Timeout 300
+KeepAlive On
+MaxKeepAliveRequests 100
+KeepAliveTimeout 5
+User ${APACHE_RUN_USER}
+Group ${APACHE_RUN_GROUP}
+HostnameLookups off
+LogLevel warn
+IncludeOptional mods-enabled/*.load
+IncludeOptional mods-enabled/*.conf
+ErrorLog ${APACHE_LOG_DIR}/error.log
+ErrorLogFormat "[%t] [%l] [pid %P] [client %{X-Forwarded-For}i] %M"
+CustomLog ${APACHE_LOG_DIR}/access.log combined
+LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-agent}i\"" combined
+LogLevel error
+IncludeOptional conf-enabled/*.conf
+IncludeOptional sites-enabled/*.conf

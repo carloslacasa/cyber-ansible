@@ -1,0 +1,43 @@
+fail2ban_loglevel: 'INFO'
+fail2ban_logtarget: '/var/log/fail2ban.log'
+fail2ban_syslogsocket: 'auto'
+fail2ban_socket: '/var/run/fail2ban/fail2ban.sock'
+fail2ban_pidfile: '/var/run/fail2ban/fail2ban.pid'
+fail2ban_dbfile: '/var/lib/fail2ban/fail2ban.sqlite3'
+fail2ban_dbpurgeage: '1d'
+fail2ban_bantime: '60m'
+fail2ban_sshd_enabled: 'true'
+fail2ban_ignoreip: '127.0.0.1/8' # CHANGE.ME
+fail2ban_maxretry: '5'
+fail2ban_findtime: '10m'
+abusedb_apikey: 'CHANGE.ME'
+abusedb_web_attack: '19,21'
+abusedb_sqli: '16'
+abusedb_brute_force: '18'
+abusedb_port_scan: '14'
+badips_apikey: 'CHANGE.ME'
+badips_apache_attack: 'apache'
+badips_sqli: 'sql'
+badips_brute_force: 'bruteforce'
+fail2ban_haproxy_port: 'http,https'
+fail2ban_haproxy_ignoreip: '127.0.0.1/8'  # CHANGE.ME
+fail2ban_haproxy_maxretry: '2'
+fail2ban_haproxy_findtime: '10m'
+fail2ban_waf_jail_sections:
+  - apache-auth
+  - apache-badbots
+  - apache-noscript
+  - apache-overflow
+  - apache-nohome
+  - apache-botsearch
+  - apache-fakegooglebot
+  - apache-modsecurity
+  - apache-shellshock
+fail2ban_waf_ignoreip: '127.0.0.1/8'  # CHANGE.ME
+fail2ban_waf_port: 'http,https'
+fail2ban_waf_maxretry: 2
+fail2ban_waf_findtime: '10m'
+fail2ban_openvpn_ignoreip: '127.0.0.1/8'
+fail2ban_openvpn_maxretry: 8
+fail2ban_openvpn_findtime: '10m'
+fail2ban_openvpn_port: '1194'

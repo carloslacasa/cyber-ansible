@@ -1,0 +1,13 @@
+---
+- name: Upload apparmor policies for apache
+  copy:
+    src: '../conf/usr.sbin.apache2'
+    dest: '/etc/apparmor.d/usr.sbin.apache2'
+    mode: '0600'
+    owner: 'root'
+    group: 'root'
+  notify: 
+    - enforce_apparmor_apache2
+    - reload_apparmor
+    - restart_apache2
+  tags: ['configuration']

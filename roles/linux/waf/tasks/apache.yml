@@ -1,0 +1,96 @@
+---
+- name: Install apache dependencies
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: yes
+  loop: '{{ waf_dependencies }}'
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Make sure apache group is present
+  group:
+    name: www-data
+    state: present
+  tags: ['configuration']
+
+- name: Make sure apache user is present
+  user:
+    name: www-data
+    groups: www-data
+    shell: /usr/sbin/nologin
+    state: present
+  tags: ['configuration']
+
+- name: Configuracion de apache
+  template:
+    src: '../templates/apache2.conf.j2'
+    dest: '{{ apache_conf_folder }}/apache2.conf' 
+    mode: 0640
+    owner: 'root'
+    group: 'root'
+  notify: restart_apache2
+  tags: ['configuration']
+
+- name: Configuracion de modulos de apache
+  vars:
+    module_name:
+      - security2.conf
+      - rpaf.conf
+      - mpm_event.conf
+  template:
+    src: '../templates/{{ item }}.j2'
+    dest: '{{ apache_conf_folder }}/mods-available/{{ item }}' 
+    mode: 0640
+    owner: 'root'
+    group: 'root'
+  loop: '{{ module_name }}'
+  notify: restart_apache2
+  tags: ['configuration']
+
+- name: Habilitacion de modulos apache2
+  vars:
+    apache_mod_filename:
+      - mpm_event.load
+      - mpm_event.conf
+      - security2.load
+      - security2.conf
+      - rpaf.load
+      - rpaf.conf
+      - proxy.load
+      - proxy_http.load
+    apache_mod_folder:
+      - src: '{{ apache_conf_folder }}/mods-available'
+        dest: '{{ apache_conf_folder }}/mods-enabled'
+  file:
+    src: '{{ item.1.src }}/{{ item.0 }}'
+    dest: '{{ item.1.dest }}/{{ item.0 }}'
+    owner: root
+    group: root
+    state: link
+  with_nested:
+    - '{{ apache_mod_filename }}'
+    - '{{ apache_mod_folder }}'
+  notify: restart_apache2
+  tags: ['configuration']
+
+- name: Configuracion de virtualhost para proxy inverso
+  template:
+    src: '../templates/vhost_reverseproxy.conf.j2'
+    dest: '{{ apache_conf_folder }}/sites-available/000-default.conf' 
+    mode: 0640
+    owner: 'root'
+    group: 'root'
+  notify: restart_apache2
+  tags: ['configuration']
+
+- name: Habilitacion de sites apache2
+  file:
+    src: '{{ apache_conf_folder }}/sites-available/000-default.conf'
+    dest: '{{ apache_conf_folder }}/sites-enabled/000-default.conf'
+    owner: root
+    group: root
+    state: link
+  notify: restart_apache2
+  tags: ['configuration']

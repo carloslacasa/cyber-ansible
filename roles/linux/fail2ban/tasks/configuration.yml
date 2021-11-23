@@ -1,0 +1,68 @@
+---
+- name: Fail2ban general configuration
+  template:
+    src: ../templates/fail2ban.local.j2
+    dest: /etc/fail2ban/fail2ban.local
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify: restart_fail2ban
+  tags: ['configuration']
+
+- name: Fail2ban filters configuration
+  block:
+    - name: Fail2ban filters for haproxy
+      copy:
+        src: ../conf/haproxy-invalid-url.conf
+        dest: /etc/fail2ban/filter.d/haproxy-invalid-url.conf
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+      when: fail2ban_haproxy == true
+      notify: reload_fail2ban
+
+    - name: Fail2ban filters for waf
+      copy:
+        src: ../conf/apache-modsecurity.conf
+        dest: /etc/fail2ban/filter.d/apache-modsecurity.conf
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+      when: fail2ban_waf == true
+      notify: reload_fail2ban
+
+    - name: Fail2ban filters for openvpn
+      copy:
+        src: ../conf/openvpn.conf
+        dest: /etc/fail2ban/filter.d/openvpn.conf
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+      when: fail2ban_openvpn == true
+      notify: reload_fail2ban
+  tags: ['configuration']
+
+- name: Fail2ban jail configuration
+  template:
+    src: ../templates/jail.local.j2
+    dest: /etc/fail2ban/jail.local
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify: reload_fail2ban
+  tags: ['configuration']
+
+- name: Fail2ban actions configuration
+  block:
+    - name: Fail2ban actions for abuseipdb
+      lineinfile:
+        path: '/etc/fail2ban/action.d/abuseipdb.conf' 
+        state: present
+        owner: root
+        group: root
+        mode: '0644'
+        regexp: '^actionban\s?=\s?.*$'
+        line: "actionban = curl --fail --ciphers ecdhe_ecdsa_aes_256_sha 'https://api.abuseipdb.com/api/v2/report' -H 'Accept: application/json' -H 'Key: <abuseipdb_apikey>' --data-urlencode 'comment=<matches>' --data-urlencode 'ip=<ip>' --data 'categories=<abuseipdb_category>'"
+      notify: reload_fail2ban
+  tags: ['configuration']
+

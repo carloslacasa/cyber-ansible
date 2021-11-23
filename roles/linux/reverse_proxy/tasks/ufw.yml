@@ -1,0 +1,45 @@
+---
+- name: Incoming HTTP
+  ufw:
+    direction: in
+    proto: tcp
+    from_port: '1024:65535'
+    to_port: '80'
+    from_ip: '{{ item }}'
+    rule: allow
+  with_items: '{{ http_allowed_ip_addresses }}'
+  tags: ['configuration']
+
+- name: Incoming HTTPS
+  ufw:
+    direction: in
+    proto: tcp
+    from_port: '1024:65535'
+    to_port: '443'
+    from_ip: '{{ item }}'
+    rule: allow
+  with_items: '{{ http_allowed_ip_addresses }}'
+  tags: ['configuration']
+
+- name: Incoming HTTPS MTLS
+  ufw:
+    direction: in
+    proto: tcp
+    from_port: '1024:65535'
+    to_port: '8443'
+    from_ip: '{{ item }}'
+    rule: allow
+  with_items: '{{ mtls_allowed_ip_addresses }}'
+  when: mtls_allowed_ip_addresses is defined
+  tags: ['configuration']
+
+- name: Incoming HAProxy stats
+  ufw:
+    direction: in
+    proto: tcp
+    from_port: '1024:65535'
+    to_port: '1936'
+    from_ip: '{{ item }}'
+    rule: allow
+  with_items: '{{ admin_ip_addresses }}'
+  tags: ['configuration']

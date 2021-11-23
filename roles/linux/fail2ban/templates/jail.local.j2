@@ -1,0 +1,65 @@
+[DEFAULT]
+bantime  = {{ fail2ban_bantime }} 
+action_abuseipdb = abuseipdb
+action_badips = badips
+fail2ban_agent = Fail2Ban/%(fail2ban_version)s
+
+[sshd]
+enabled  = {{ fail2ban_sshd_enabled }}
+ignoreip = {{ fail2ban_ignoreip }}
+maxretry = {{ fail2ban_maxretry }}
+findtime = {{ fail2ban_findtime }}
+
+{% if fail2ban_haproxy %}
+[haproxy-http-auth]
+enabled  = true
+ignoreip = {{ fail2ban_haproxy_ignoreip }}
+maxretry = {{ fail2ban_haproxy_maxretry }}
+findtime = {{ fail2ban_haproxy_findtime }}
+actions  = %(action_)s
+           %(action_abuseipdb)s[abuseipdb_apikey="{{ abusedb_apikey }}", abuseipdb_category="{{ abusedb_brute_force }}"]
+           %(action_badips)s[category="{{ badips_apache_attack }}", agent="%(fail2ban_agent)s", key="{{ badips_apikey }}"]
+logpath  = /var/log/haproxy.log
+           /var/log/haproxy.log.1
+
+[haproxy-invalid-url]
+enabled  = true
+ignoreip = {{ fail2ban_haproxy_ignoreip }}
+maxretry = {{ fail2ban_haproxy_maxretry }}
+findtime = {{ fail2ban_haproxy_findtime }}
+port     = {{ fail2ban_haproxy_port }}
+actions  = %(action_)s
+           %(action_abuseipdb)s[abuseipdb_apikey="{{ abusedb_apikey }}", abuseipdb_category="{{ abusedb_web_attack }}"]
+           %(action_badips)s[category="{{ badips_apache_attack }}", agent="%(fail2ban_agent)s", key="{{ badips_apikey }}"]
+logpath  = /var/log/haproxy.log
+           /var/log/haproxy.log.1
+
+{% endif %}
+{% if fail2ban_waf %}
+{% for item in fail2ban_waf_jail_sections %}
+[{{ item }}]
+enabled  = true
+ignoreip = {{ fail2ban_waf_ignoreip }}
+maxretry = {{ fail2ban_waf_maxretry }}
+findtime = {{ fail2ban_waf_findtime }}
+port     = {{ fail2ban_waf_port }}
+actions  = %(action_)s
+           %(action_abuseipdb)s[abuseipdb_apikey="{{ abusedb_apikey }}", abuseipdb_category="{{ abusedb_web_attack }},{{ abusedb_brute_force }},{{ abusedb_sqli }}"]
+           %(action_badips)s[category="{{ badips_sqli }}", agent="%(fail2ban_agent)s", key="{{ badips_apikey }}"]
+logpath  = %(apache_error_log)s
+{% endfor %}
+
+{% endif %}
+{% if fail2ban_openvpn %}
+[openvpn]
+enabled  = true
+ignoreip = {{ fail2ban_openvpn_ignoreip }}
+maxretry = {{ fail2ban_openvpn_maxretry }}
+findtime = {{ fail2ban_openvpn_findtime }}
+port     = {{ fail2ban_openvpn_port }}
+actions  = %(action_)s
+           %(action_abuseipdb)s[abuseipdb_apikey="{{ abusedb_apikey }}", abuseipdb_category="{{ abusedb_port_scan }},{{ abusedb_brute_force }}"]
+           %(action_badips)s[category="{{ badips_brute_force }}", agent="%(fail2ban_agent)s", key="{{ badips_apikey }}"]
+logpath  = /var/log/openvpn/openvpn.log
+
+{% endif %}

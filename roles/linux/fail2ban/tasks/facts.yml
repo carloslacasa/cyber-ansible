@@ -1,0 +1,26 @@
+---
+- name: Identify systems for filter and jail template expansion
+  stat:
+    path: '{{ item.path }}'
+  with_items: 
+    - name: haproxy
+      path: /etc/haproxy
+    - name: waf
+      path: /etc/modsecurity/owasp-crs
+    - name: openvpn
+      path: /etc/openvpn/server
+  register: fail2ban_system_list
+  tags: ['configuration']
+
+#- name: Debug system type
+#  debug:
+#    msg: "Name: {{ item.item.name }} - Exists: {{ item.stat.exists }}"
+#  loop: "{{ fail2ban_system_list.results }}"
+#  when: item.stat.exists == true
+#  tags: ['configuration']
+
+- name: Set facts for filter and jail template expansion
+  set_fact:
+    'fail2ban_{{ item.item.name }}': '{{ item.stat.exists }}'
+  loop: "{{ fail2ban_system_list.results }}"
+  tags: ['configuration']

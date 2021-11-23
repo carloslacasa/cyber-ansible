@@ -1,0 +1,13 @@
+---
+- name: restart_apache2
+  systemd:
+    state: restarted
+    name: apache2
+
+- name: enforce_apparmor_apache2
+  command: /usr/sbin/aa-enforce usr.sbin.apache2
+
+- name: reload_apparmor
+  systemd:
+    state: reloaded
+    name: apparmor

@@ -1,0 +1,7 @@
+---
+cluster_name: 'otproxy_dmz'
+cluster_role: 'backup'
+cluster_priority: '100'
+cluster_interface: 'ens3'
+cluster_local_ip: '{{ ansible_ens3.ipv4.address }}'
+cluster_peer_ip: '192.168.26.11' # CHANGE.ME

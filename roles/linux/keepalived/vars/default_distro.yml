@@ -1,0 +1,11 @@
+---
+keepalived_flag: '/tmp/keepalived-master'
+keepalived_parameters:
+  itproxy_dmz:
+      virtual_ip: '192.168.16.10/24' # CHANGE.ME
+      password: 'XXXXXX' # CHANGE.ME
+      virtual_router_id: '50'
+  otproxy_dmz:
+      virtual_ip: '192.168.26.10/24' # CHANGE.ME
+      password: 'YYYYY' # CHANGE.ME
+      virtual_router_id: '51'

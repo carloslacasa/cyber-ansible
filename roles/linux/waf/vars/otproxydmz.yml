@@ -1,0 +1,7 @@
+---
+exception_rule_id:
+ - 942420
+ - 921180
+
+exception_rule_tag:
+ - platform-windows

@@ -1,0 +1,28 @@
+#include <tunables/global>
+
+/usr/sbin/haproxy {
+  #include <abstractions/base>
+  #include <abstractions/lxc/container-base>
+  #include <abstractions/nameservice>
+
+  signal (receive) peer=unconfined,
+  signal (receive) peer=/usr/sbin/haproxy,
+  signal peer=@{profile_name},
+
+  capability dac_override,
+  capability dac_read_search,
+  capability net_bind_service,
+
+  network inet stream,
+  network inet dgram,
+  deny network inet6 dgram,
+  deny network inet6 stream,
+
+  /usr/sbin/haproxy mr,
+  /etc/haproxy/** r,
+  /etc/default/haproxy r,
+  /run/haproxy/* w,
+  /run/haproxy.pid w,
+  /var/log/haproxy.log w,
+
+}

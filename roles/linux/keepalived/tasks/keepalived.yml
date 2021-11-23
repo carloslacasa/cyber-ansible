@@ -1,0 +1,38 @@
+---
+- name: Install keepalived
+  apt:
+    name: keepalived
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Configure keepalived
+  template:
+    src: '../templates/keepalived.conf.j2'
+    dest: /etc/keepalived/keepalived.conf
+    mode: 0640
+    owner: 'root'
+    group: 'root'
+  notify: restart_keepalived
+  tags: ['configuration']
+
+- name: Configure keepalived actions
+  template:
+    src: '../templates/actions.sh.j2'
+    dest: /etc/keepalived/actions.sh
+    owner: 'root'
+    group: 'root'
+    mode: 0750
+  notify: restart_keepalived
+  tags: ['configuration']
+
+- name: Enable and start keepalived services
+  systemd:
+    name: keepalived
+    enabled: yes
+    state: started
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['services']

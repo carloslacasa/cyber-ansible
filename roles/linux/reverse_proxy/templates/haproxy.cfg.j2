@@ -1,0 +1,156 @@
+global
+        log /dev/log    local0
+        log /dev/log    local1 notice
+        chroot /var/lib/haproxy
+        stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+        stats timeout 30s
+        user haproxy
+        group haproxy
+        daemon
+
+        ca-base {{ ca_base_dir }}
+        crt-base {{ crt_base_dir }} 
+
+        ssl-default-bind-ciphers {{ haproxy_ssl_ciphers }}
+        ssl-default-bind-options {{ haproxy_default_bind_options }}
+	tune.ssl.default-dh-param 4096
+
+defaults
+        log     global
+        mode    http
+        option  httplog
+        option  dontlognull
+        option  forwardfor
+        option  http-server-close
+        option  redispatch
+        timeout connect 5s
+        timeout client  30s
+        timeout server  300s
+        timeout tunnel  3600s
+        errorfile 400 /etc/haproxy/errors/400.http
+        errorfile 403 /etc/haproxy/errors/403.http
+        errorfile 408 /etc/haproxy/errors/408.http
+        errorfile 500 /etc/haproxy/errors/500.http
+        errorfile 502 /etc/haproxy/errors/502.http
+
+frontend {{ frontend_name }}
+	bind 0.0.0.0:80
+        bind 0.0.0.0:443 ssl crt {{ crt_file }} ca-file {{ ca_file }}
+
+        # DoS policies
+        # stickiness table data types:
+        #  conn_cur - concurrent connections
+        #  conn_rate - average incoming connection rate
+        #  gpc0 - General Purpose Counter data
+        #  http_req_rate - average HTTP request rate
+        #  http_err_rate - average HTTP request error rate
+        ## Table definition  
+        stick-table type ip size 512k expire 30s store conn_cur,conn_rate(3s),http_req_rate(10s),http_err_rate(10s)
+        ## Allow clean known IPs to bypass the filter
+        tcp-request connection accept if { src -f {{ whitelist_file }} }
+        ## Shut the new connection as long as the client has already 15 opened
+        tcp-request connection reject if { src_conn_cur ge 15 }
+        ## Shut the new connection as long as the client has already 60 opened in 3s
+        tcp-request connection reject if { src_conn_rate ge 60 }
+        ## Shut the new connection as long as the client has already 80 HTTP requests opened in 10 sec period
+        tcp-request connection reject if { src_http_req_rate ge 80 }
+        ## Shut the new connection as long as the client has already 15 HTTP error requests opened in 10 sec period
+        tcp-request connection reject if { src_http_err_rate ge 15 }
+        tcp-request connection track-sc1 src
+        # End DoS policies
+
+        acl secure dst_port eq 443
+        acl secured_cookie res.hdr(Set-Cookie),lower -m sub secure
+        rspirep ^(set-cookie:.*) \1;\ Secure if secure !secured_cookie
+        rspadd Strict-Transport-Security:\ max-age={{ hsts_max_age }};\ includeSubDomains;\ preload if secure
+        rspadd X-Frame-Options:\ SAMEORIGIN
+
+{% if frontend_name == 'itproxydmz' %}
+	redirect scheme https 			if !{ ssl_fc }
+	http-response replace-value Location ^http://(.*)$ https://\1
+
+        acl             url_login               path_beg -i /login
+        acl             no_waf nbsrv(waf)       eq 0
+        acl             waf_max_capacity        queue(waf) ge 1
+        use_backend     login          		if no_waf url_login
+        use_backend     login          		if waf_max_capacity url_login
+        use_backend     waf          		if url_login 
+        default_backend it
+
+backend waf
+        mode http
+        http-check expect status 403
+        option httpchk HEAD / HTTP/1.0
+        server waf {{ waf_listen_address }}:{{ waf_listen_port }} maxconn 100
+
+backend it
+        mode http
+        option httpchk HEAD / HTTP/1.0
+        balance roundrobin
+        cookie SRV_ID insert indirect nocache httponly secure
+{% for item in it_backend_webserver %}
+        server {{ item.server }} {{ item.host }}:{{ item.port }} check cookie {{ item.server }} maxconn 200 weight 1 check inter 5s downinter 10s fall 3 rise 2
+{% endfor %}
+
+backend login
+        mode http
+        balance roundrobin
+{% for item in login_backend_services %}
+        server {{ item.server }} {{ item.host }}:{{ item.port }} check maxconn 200 weight 1 check inter 5s downinter 10s fall 3 rise 2
+{% endfor %}
+
+frontend from_waf
+        bind {{ waf_listen_address }}:{{ waf_forward_port }}
+        acl             url_login               path_beg -i /login
+        use_backend     login          		if url_login
+
+frontend stats
+        bind *:1936
+        stats enable
+        stats hide-version
+        stats refresh 10s
+        stats scope it
+        stats scope login
+        stats uri /stats
+        stats realm Haproxy\ Statistics
+        stats auth {{ haproxy_stats_user }}:{{ haproxy_stats_password }}
+
+{% elif frontend_name == 'otproxydmz' %}
+	redirect scheme https 			if !{ ssl_fc }
+	acl             url_login               path_reg -i ^\/login\/?$
+        acl             no_waf nbsrv(waf)       eq 0
+        acl             waf_max_capacity        queue(waf) ge 1
+        use_backend     ot       		if no_waf
+        use_backend     ot	        	if waf_max_capacity
+        use_backend     waf                     if url_login
+        default_backend ot
+
+backend waf
+        mode http
+        http-check expect status 403
+        option httpchk HEAD / HTTP/1.0
+        server waf {{ waf_listen_address }}:{{ waf_listen_port }} maxconn 100
+
+backend ot
+        mode http
+        option httpchk HEAD / HTTP/1.0
+        balance roundrobin
+        cookie SRV_ID insert indirect nocache httponly secure
+{% for item in ot_backend_webserver %}
+        server {{ item.server }} {{ item.host }}:{{ item.port }} check cookie {{ item.server }} maxconn 200 weight 1 check inter 5s downinter 10s fall 3 rise 2
+{% endfor %}
+
+frontend from_waf
+        bind {{ waf_listen_address }}:{{ waf_forward_port }}
+        default_backend ot
+
+frontend stats
+        bind *:1936
+        stats enable
+        stats hide-version
+        stats refresh 10s
+        stats scope ot
+        stats scope waf
+        stats uri /stats
+        stats realm Haproxy\ Statistics
+        stats auth {{ haproxy_stats_user }}:{{ haproxy_stats_password }}

@@ -1,0 +1,22 @@
+---
+ha_cluster: 'yes'
+keepalived_flag: '/tmp/keepalived-master'
+crt_file: 'mydomain.pem'
+ca_file: 'CA.cer'
+frontend_name: 'itproxydmz'
+http_allowed_ip_addresses:
+  - 0.0.0.0/0 # CHANGE.ME
+it_backend_webserver:
+  - server: 'backend1'
+    host: 'backend1.{{ domain_name }}'
+    port: '80'
+  - server: 'backend2'
+    host: 'backend2.{{ domain_name }}'
+    port: '80'
+login_backend_services:
+  - server: 'login1'
+    host: 'login1.{{ domain_name }}'
+    port: '80'
+  - server: 'login2'
+    host: 'login2.{{ domain_name }}'
+    port: '80'

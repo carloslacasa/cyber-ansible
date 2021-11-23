@@ -1,0 +1,20 @@
+---
+#- name: Incoming VRRP multicast
+#  ufw:
+#    direction: in
+#    proto: any
+#    from_ip: '{{ cluster_peer_ip }}'
+#   to_ip: 224.0.0.18
+#    rule: allow
+#    delete: no
+#  tags: ['configuration']
+
+- name: Incoming VRRP unicast
+  ufw:
+    direction: in
+    proto: any
+    from_ip: '{{ cluster_peer_ip }}'
+    to_ip: '{{ cluster_local_ip }}'
+    rule: allow
+    delete: no
+  tags: ['configuration']

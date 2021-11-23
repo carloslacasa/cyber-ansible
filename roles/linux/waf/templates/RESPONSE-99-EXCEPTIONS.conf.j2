@@ -1,0 +1,10 @@
+{% if exception_rule_tag is defined %}
+{%   for item in exception_rule_tag %}
+SecRuleRemoveByTag "{{ item }}"
+{%   endfor %}
+{% endif %}
+{% if exception_rule_id is defined %}
+{%   for item in exception_rule_id %}
+SecRuleRemoveById "{{ item }}"
+{%   endfor %}
+{% endif %}

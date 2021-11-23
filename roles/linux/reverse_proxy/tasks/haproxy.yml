@@ -1,0 +1,95 @@
+---
+- name: Install PPA pre-requisites
+  apt:
+    name: software-properties-common
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Add haproxy apt repository
+  apt_repository:
+    repo: "{{ haproxy_ppa }}"
+    state: present
+  #environment:
+  #  http_proxy: http://proxy:3128
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Install haproxy
+  apt:
+    name: haproxy
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Download SSL/TLS certificates
+  copy:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    mode: 0640
+  with_items:
+    - src: '../certs/{{ crt_file }}'
+      dest: '{{ crt_base_dir }}'
+    - src: '../certs/{{ ca_file }}'
+      dest: '{{ ca_base_dir }}'
+  tags: ['configuration']
+  notify: restart_haproxy
+
+- name: Exception list for DoS rules
+  copy:
+   content: |
+      CHANGE.ME
+   dest: '{{ whitelist_file }}'
+  tags: ['configuration']
+  notify: restart_haproxy
+
+- name: Configure haproxy
+  template:
+    src: '../templates/haproxy.cfg.j2'
+    dest: /etc/haproxy/haproxy.cfg
+    mode: 0640
+  tags: ['configuration']
+  notify: restart_haproxy
+
+- name: Enable and start haproxy services on standalone servers
+  systemd:
+    name: haproxy
+    enabled: yes
+    state: started
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+    - ha_cluster is undefined 
+  tags: ['services']
+
+- name: Disable haproxy services on clustered servers
+  systemd:
+    name: haproxy
+    enabled: no
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+    - ha_cluster is defined 
+  tags: ['services']
+
+- name: Check master node flag on clustered servers
+  stat:
+    path: "{{ keepalived_flag }}"
+  register: keepalived_stat_result
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+    - ha_cluster is defined 
+  tags: ['services']
+
+- name: Stop haproxy services on backup cluster nodes
+  systemd:
+    name: haproxy
+    state: stopped
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+    - ha_cluster is defined 
+    - keepalived_stat_result.stat.exists == False
+  tags: ['services']

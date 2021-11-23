@@ -1,0 +1,3 @@
+fail2ban_ignoreip: '127.0.0.1/8' # CHANGE.ME
+fail2ban_haproxy_ignoreip: '127.0.0.1/8' # CHANGE.ME
+fail2ban_waf_ignoreip: '127.0.0.1/8' # CHANGE.ME

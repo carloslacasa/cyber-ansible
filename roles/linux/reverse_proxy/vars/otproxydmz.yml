@@ -1,0 +1,16 @@
+---
+ha_cluster: 'yes'
+keepalived_flag: '/tmp/keepalived-master'
+crt_file: 'mydomain.pem'
+ca_file: 'CA.cer'
+frontend_name: 'otproxydmz'
+http_allowed_ip_addresses:
+  - 192.168.16.0/24   # CHANGE.ME
+  - 192.168.17.0/24   # CHANGE.ME 
+ot_backend_webserver:
+  - server: 'backend1'
+    host: 'backend1.{{ domain_name }}'
+    port: '80'
+  - server: 'backend2'
+    host: 'backend2.{{ domain_name }}'
+    port: '80'

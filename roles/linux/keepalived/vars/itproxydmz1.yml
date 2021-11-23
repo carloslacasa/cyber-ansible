@@ -1,0 +1,7 @@
+---
+cluster_name: 'itproxy_dmz'
+cluster_role: 'master'
+cluster_priority: '200'
+cluster_interface: 'ens3'
+cluster_local_ip: '{{ ansible_ens3.ipv4.address }}'
+cluster_peer_ip: '192.168.16.12' # CHANGE.ME

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+TYPE=$1
+NAME=$2
+STATE=$3
+
+{% if cluster_name == 'itproxy_dmz' or cluster_name == 'otproxy_dmz' %}
+case $STATE in
+        "MASTER")
+		/bin/systemctl restart haproxy.service
+		/usr/bin/touch {{ keepalived_flag }} && chmod 600 {{ keepalived_flag }}
+		exit 0
+        	;;
+        "BACKUP") 
+		/bin/systemctl stop haproxy.service
+		if [ -f {{ keepalived_flag }} ]; then rm {{ keepalived_flag }}; fi
+		exit 0
+        	;;
+        "FAULT") 
+		/bin/systemctl stop haproxy.service
+		if [ -f {{ keepalived_flag }} ]; then rm {{ keepalived_flag }}; fi
+		exit 0
+        	;;
+        "*") 
+		echo "Unknown state"
+		if [ -f {{ keepalived_flag }} ]; then rm {{ keepalived_flag }}; fi
+		exit 1
+        	;;
+esac
+{% endif %}

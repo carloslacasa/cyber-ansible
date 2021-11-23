@@ -1,0 +1,36 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600 # 1 hour
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['upgrade']
+
+- name: Upgrade apt packages
+  apt:
+    upgrade: dist
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['upgrade']
+
+- name: Cleanup and purge deprecated packages
+  apt:
+    autoremove: yes
+    purge: yes
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['upgrade']
+
+- name: Check if reboot is required
+  stat: 
+    path: '/var/run/reboot-required'
+  register: reboot_required_file
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['upgrade']
+
+- name: Reboot if required
+  reboot:
+    reboot_timeout: 300
+  when: reboot_required_file.stat.exists == true
+  tags: ['upgrade']

@@ -1,0 +1,14 @@
+---
+waf_dependencies:
+  - 'apache2'
+  - 'libapache2-mod-security2'
+  - 'libapache2-mod-rpaf'
+  - 'modsecurity-crs'
+waf_listen_address: 127.0.0.1
+waf_listen_port: 81
+waf_forward_address: 127.0.0.1
+waf_forward_port: 82
+apache_conf_folder: '/etc/apache2'
+modsecurity_conf_folder: '/etc/modsecurity'
+modsecurity_crs_owasp_repo: 'https://github.com/SpiderLabs/owasp-modsecurity-crs.git'
+modsecurity_data_dir: '/var/cache/modsecurity'

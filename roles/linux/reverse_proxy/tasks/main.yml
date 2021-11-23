@@ -1,0 +1,31 @@
+---
+- name: Include variables genericas para la distribucion
+  include_vars: '{{ item }}'
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - default_distro.yml
+  tags: ['haproxy']
+
+- name: Include variables particulares para el host
+  include_vars: '{{ item }}'
+  with_first_found:
+    - '{{ inventory_hostname }}.yml'
+    - default_host.yml
+  tags: ['haproxy']
+
+- name: Configuracion de sysctl
+  include_tasks: sysctl.yml
+  tags: ['haproxy']
+
+- name: Configuracion de firewall
+  include_tasks: ufw.yml
+  tags: ['haproxy']
+
+- name: Configuracion de haproxy
+  include_tasks: haproxy.yml
+  tags: ['haproxy']
+
+- name: Configuracion de apparmor para haproxy
+  include_tasks: apparmor.yml
+  tags: ['haproxy']

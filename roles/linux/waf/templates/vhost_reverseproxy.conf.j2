@@ -1,0 +1,7 @@
+<VirtualHost {{ waf_listen_address }}:{{ waf_listen_port }}>
+    ServerSignature Off
+    AddDefaultCharset UTF-8
+    ProxyPreserveHost On
+    ProxyPass / http://{{ waf_forward_address }}:{{ waf_forward_port }}/
+    ProxyPassReverse / http://{{ waf_forward_address }}:{{ waf_forward_port }}/
+</VirtualHost>

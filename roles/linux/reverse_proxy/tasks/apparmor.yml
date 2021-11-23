@@ -1,0 +1,13 @@
+---
+- name: Upload apparmor policies for haproxy
+  copy:
+    src: '../conf/usr.sbin.haproxy'
+    dest: '/etc/apparmor.d/usr.sbin.haproxy'
+    mode: '0600'
+    owner: 'root'
+    group: 'root'
+  notify: 
+    - enforce_apparmor_haproxy
+    - reload_apparmor
+    - restart_haproxy
+  tags: ['configuration']

@@ -1,0 +1,32 @@
+global_defs {
+    notification_email {
+        {{ notification_email }}
+    }
+    notification_email_from noreply@mydomain.com # CHANGE.ME
+    smtp_server {{ smtpserver }}
+    smtp_connect_timeout 30
+}
+{% if cluster_name == 'itproxy_dmz' or 
+      cluster_name == 'otproxy_dmz' %}
+{% set _cluster_id = keepalived_parameters[cluster_name] %}
+vrrp_instance {{ inventory_hostname }} {
+    state {{ cluster_role|upper }}
+    interface {{ cluster_interface }}
+    virtual_router_id {{ _cluster_id['virtual_router_id'] }}
+    priority {{ cluster_priority }}
+    advert_int 30
+    smtp_alert
+    authentication {
+        auth_type PASS
+        auth_pass $  {{ _cluster_id['password'] }}
+    }
+    unicast_src_ip {{ cluster_local_ip }}
+    unicast_peer {
+        {{ cluster_peer_ip }}
+    }
+    virtual_ipaddress {
+         {{ _cluster_id['virtual_ip'] }}
+    }
+    notify /etc/keepalived/actions.sh
+}
+{% endif %}

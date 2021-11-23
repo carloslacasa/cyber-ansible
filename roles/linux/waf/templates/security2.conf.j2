@@ -1,0 +1,7 @@
+<IfModule security2_module>
+	SecDataDir {{ modsecurity_data_dir }}
+	SecServerSignature " "
+        IncludeOptional {{ modsecurity_conf_folder }}/*.conf
+	IncludeOptional {{ modsecurity_conf_folder }}/owasp-crs/*.conf
+	IncludeOptional {{ modsecurity_conf_folder }}/owasp-crs/rules/*.conf
+</IfModule>

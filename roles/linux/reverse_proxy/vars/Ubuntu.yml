@@ -1,0 +1,15 @@
+---
+haproxy_version: '1.8' 
+haproxy_ppa: 'ppa:vbernat/haproxy-{{ haproxy_version }}'
+haproxy_ssl_ciphers: 'EECDH+AESGCM:EDH+AESGCM'
+haproxy_default_bind_options: 'no-tls-tickets no-sslv3 no-tlsv10 no-tlsv11'
+haproxy_stats_user: 'CHANGE.ME'
+haproxy_stats_password: 'CHANGE.ME'
+ca_base_dir: '/etc/ssl/certs'
+crt_base_dir: '/etc/ssl/private'
+whitelist_file: '/etc/haproxy/whitelist.lst'
+hsts_max_age: 31536000
+waf_listen_address: '127.0.0.1'
+waf_listen_port: '81'
+waf_forward_address: '127.0.0.1'
+waf_forward_port: '82'

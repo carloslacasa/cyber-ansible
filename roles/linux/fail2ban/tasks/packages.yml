@@ -1,0 +1,11 @@
+---
+- name: Install fail2ban dependencies
+  apt:
+    name:
+      - fail2ban
+      - sqlite3
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']

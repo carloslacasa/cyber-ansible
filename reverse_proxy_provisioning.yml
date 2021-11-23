@@ -1,0 +1,26 @@
+---
+- name: Roles de provisioning para on-premise reverse proxies con HA
+  hosts:
+    - site1_reverse_proxies_it_dmz_ha
+    - site1_reverse_proxies_ot_dmz_ha
+  gather_facts: true
+  become: true
+  roles:
+    #- roles/linux/common/generic
+    #- roles/linux/compliance/anssi
+    - roles/linux/reverse_proxy
+    - roles/linux/fail2ban
+    - roles/linux/keepalived
+    #- roles/linux/kvm
+    - roles/linux/updates
+
+- name: Roles de provisioning para WAF
+  hosts:
+    - itproxydmz1
+    - itproxydmz2
+    - otproxydmz1
+    - otproxydmz2
+  gather_facts: true
+  become: true
+  roles:
+    - roles/linux/waf
