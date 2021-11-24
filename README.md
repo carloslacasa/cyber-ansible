@@ -2,6 +2,17 @@
 
 Ansible playbooks related to Cybersecurity
 
+WAF
+---
+Web application firewall with apache2+modsecurity+fail2ban.
+
+Tested on Ubuntu >= 18.04 LTS
+
+How to call the playbook:
+
+ansible-playbook -i inventory/on-premise/linux/dev --limit site1_reverse_proxies_it_dmz_ha -T 5 ./reverse_proxy_provisioning.yml --tags haproxy,waf,fail2ban,keepalived,install,configuration,services
+ansible-playbook -i inventory/on-premise/linux/dev --limit site1_reverse_proxies_ot_dmz_ha -T 5 ./reverse_proxy_provisioning.yml --tags haproxy,waf,fail2ban,keepalived,install,configuration,services
+
 2FA
 ---
 Multifactor authentication with Google Authenticator for both console and SSH access.
