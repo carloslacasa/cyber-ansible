@@ -1,0 +1,25 @@
+ansible_port: 5985
+ansible_connection: winrm
+ansible_winrm_scheme: http
+ansible_become: False
+#ansible_winrm_cert_validation: ignore
+ansible_winrm_message_encryption: auto
+#ansible_user: '{{ vault_domain_admin_user }}'
+#ansible_password: '{{ vault_domain_admin_password }}'
+ansible_user: '{{ vault_local_admin_user }}'
+ansible_password: '{{ vault_local_admin_password }}'
+
+# NTLM
+#ansible_winrm_transport: ntlm
+
+# Kerberos
+#ansible_winrm_transport: kerberos
+#ansible_winrm_kinit_mode: managed
+#ansible_winrm_kerberos_delegation: True
+#ansible_winrm_kerberos_hostname_override: True
+#ansible_winrm_kinit_mode: managed
+#ansible_winrm_kinit_cmd: kinit
+
+# CredSSP
+ansible_winrm_transport: credssp
+

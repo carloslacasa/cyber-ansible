@@ -1,0 +1,6 @@
+---
+- name: sysmon service management
+  win_service:
+     name: "{{ 'sysmon64' if ansible_facts['architecture'] == '64-bit' else 'sysmon' }}"
+     state: "{{ (sysmon_required|default(True) == True) | ternary('started', 'stopped') }}"
+  tags: ['services']

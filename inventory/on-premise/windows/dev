@@ -1,0 +1,44 @@
+##########################################
+##
+## Windows SITE1 (DEV)
+##
+##########################################
+
+[site1_windows_servers]
+
+[site1_windows_dmz_servers]
+
+[site1_windows_wks_shared]
+
+[site1_windows_wks_personal]
+#test64 ansible_host=192.168.1.60
+test32 ansible_host=192.168.1.80
+#hostX ansible_host=CHANGEME
+
+[site1_windows_laptops]
+
+[site1_windows_it:children]
+site1_windows_servers
+site1_windows_dmz_servers
+site1_windows_wks_shared
+site1_windows_wks_personal
+site1_windows_laptops
+
+[ola_windows_ot_servers]
+
+[ola_windows_ot_dmz_servers]
+
+[ola_windows_ot_hmi]
+
+
+[site1_windows_ot:children]
+ola_windows_ot_servers
+ola_windows_ot_dmz_servers
+ola_windows_ot_hmi
+
+[site1_windows:children]
+site1_windows_it
+site1_windows_ot
+
+[windows:children]
+site1_windows

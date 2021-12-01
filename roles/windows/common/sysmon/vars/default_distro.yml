@@ -1,0 +1,3 @@
+---
+sysmon_binary: "{{ 'C:\\Windows\\sysmon64.exe' if ansible_facts['architecture'] == '64-bit' else 'C:\\Windows\\sysmon.exe' }}"
+sysmon_chocolatey_binary: "{{ 'C:\\ProgramData\\chocolatey\\bin\\Sysmon64.exe' if ansible_facts['architecture'] == '64-bit' else 'C:\\ProgramData\\chocolatey\\bin\\Sysmon.exe' }}"

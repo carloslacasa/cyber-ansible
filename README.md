@@ -11,6 +11,7 @@ Tested on Ubuntu >= 18.04 LTS
 How to call the playbook:
 
 ansible-playbook -i inventory/on-premise/linux/dev --limit site1_reverse_proxies_it_dmz_ha -T 5 ./reverse_proxy_provisioning.yml --tags haproxy,waf,fail2ban,keepalived,install,configuration,services
+
 ansible-playbook -i inventory/on-premise/linux/dev --limit site1_reverse_proxies_ot_dmz_ha -T 5 ./reverse_proxy_provisioning.yml --tags haproxy,waf,fail2ban,keepalived,install,configuration,services
 
 2FA
@@ -45,7 +46,7 @@ How to call the playbook:
 
 ansible-playbook -i inventory/on-premise/linux/dev --limit site1_vpn_servers -T 300 ./openvpn_provisioning.yml --tags 2fa,openvpn,install,configuration,services
 
-CREDITS:
+Credits:
 
 https://github.com/BastiPaeltz/ansible-openvpn/tree/master/playbooks
 

@@ -1,0 +1,10 @@
+---
+domain_name: CHANGEME
+passwordhistorysize: 5
+maximumpasswordage: 180
+minimumpasswordage: 2
+minimumpasswordlength: 8
+passwordcomplexity: 1
+lockoutbadcount: 5
+lockoutduration: 1800
+resetlockoutcount: 1800

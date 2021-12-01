@@ -1,0 +1,40 @@
+---
+- name: Include generic variable for an OS distribution
+  include_vars: '{{ item }}'
+  with_first_found:
+  - '{{ ansible_distribution }}.yml'
+  - '{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml'
+  - default_distro.yml
+  tags: ['sysmon']
+
+- name: Include generic variables for a group of hosts
+  include_vars: '{{ item }}'
+  with_first_found:
+  - '{{ ansible_limit }}.yml'
+  - default_group.yml
+  tags: ['sysmon']
+
+- name: Include variables for a particular host
+  include_vars: '{{ item }}'
+  with_first_found:
+    - '{{ inventory_hostname }}.yml'
+    - default_host.yml
+  tags: ['sysmon']
+
+- name: Install sysmon 
+  include_tasks: install.yml
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['sysmon']
+
+- name: Configure sysmon 
+  include_tasks: setup.yml
+  when: 
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['sysmon']
+
+- name: Manage sysmon service
+  include_tasks: services.yml
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['sysmon']

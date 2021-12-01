@@ -1,0 +1,11 @@
+---
+- name: initialize_sysmon
+  win_command:
+     '{{ sysmon_chocolatey_binary }} -accepteula -i' 
+  when:
+    - sysmon_required|default(True) == True
+
+- name: load_sysmon_config
+  win_command:
+     '{{ sysmon_binary }} -accepteula -c {{ sysmon_config_path }}'
+

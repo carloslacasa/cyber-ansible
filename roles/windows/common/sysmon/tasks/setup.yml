@@ -1,0 +1,17 @@
+---
+- name: Configure sysmon
+  block:
+    - name: Check if sysmon configuration is downloaded
+      win_stat:
+        path: '{{ sysmon_config_path }}'
+      register: sysmon_configuration_file
+
+    - name: Download sysmon configuration file
+      win_get_url:
+        url: '{{ sysmon_url }}'
+        dest: '{{ sysmon_config_path }}'
+      notify: load_sysmon_config 
+      when: > 
+        sysmon_configuration_file.stat.exists == False and 
+        sysmon_required|default(True) == True
+  tags: ['configuration']

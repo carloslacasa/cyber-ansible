@@ -1,0 +1,16 @@
+---
+- name: Roles de provisioning para workstations y servers windows
+  hosts: windows
+  gather_facts: true
+  roles:
+    #- windows/common/domain
+    #- windows/common/generic
+    - windows/common/sysmon
+    #- windows/common/vnc
+    #- windows/common/rdp
+    #- windows/common/teamviewer
+    #- windows/compliance/cis
+    #- windows/compliance/gsa
+    #- windows/compliance/stig
+    #- windows/compliance/acsc
+    #- windows/common/logshipping
