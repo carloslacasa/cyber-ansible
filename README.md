@@ -2,6 +2,34 @@
 
 Ansible playbooks related to Cybersecurity
 
+logstash
+--------
+Logstash server acting as an message broker from linux and windows clients towards an external (cloud) Elasticsearch and Kibana instance.
+
+PKI in place so that both ends (logstash server and clients) are mutually authenticated and the data stream is encrypted (log messages might contain sensitive information).
+
+Tested on Ubuntu >= 18.04 LTS
+
+How to call the playbook:
+
+ansible-playbook -i inventory/on-premise/linux/dev --limit site1_logstash_it_dmz -T 5 ./logstash_provisioning.yml --tags logstash,fail2ban,install,configuration,services
+
+ansible-playbook -i inventory/on-premise/linux/dev --limit site1_logstash_ot_dmz -T 5 ./logstash_provisioning.yml --tags logstash,fail2ban,install,configuration,services
+
+Sysmon + logshipping
+--------------------
+Sysmon monitoring and logshipping to external logstash service.
+
+Tested on Windows 10 (64, 32bits)
+
+How to call the playbook:
+
+ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags sysmon,logshipping,install,configuration,services 
+
+Credits:
+CONForense talk by @antoniosanzlc
+https://docs.google.com/spreadsheets/d/1t3BL09-K3wZ7TpG1B26o2f-TOadF4H1TRpXj6GInsDI/edit#gid=0
+
 WAF
 ---
 Web application firewall with apache2+modsecurity+fail2ban.

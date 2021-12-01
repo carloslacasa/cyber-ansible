@@ -1,0 +1,14 @@
+---
+- name: Roles de provisioning para logstash
+  hosts:
+    - site1_logstash_it_dmz
+    - site1_logstash_ot_dmz
+  gather_facts: true
+  become: true
+  roles:
+    #- roles/linux/common/generic
+    #- roles/linux/compliance/anssi
+    - roles/linux/logstash
+    - roles/linux/fail2ban
+    #- roles/linux/kvm
+    - roles/linux/updates

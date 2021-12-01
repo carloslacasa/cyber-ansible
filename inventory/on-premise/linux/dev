@@ -5,25 +5,33 @@
 ##########################################
 
 [site1_vpn_servers]
-openvpn2fa ansible_host=CHANGEME.OPENVPNSERVER.IP.ADDRESS
+openvpn2fa ansible_host=CHANGEME
 
 [site1_reverse_proxies_it_dmz_ha]
-itproxydmz1 ansible_host=CHANGEME.HAPROXY1.IT.IP.ADDRESS
-itproxydmz2 ansible_host=CHANGEME.HAPROXY2.IT.IP.ADDRESS
+itproxydmz1 ansible_host=CHANGEME
+itproxydmz2 ansible_host=CHANGEME
 
 [site1_reverse_proxies_ot_dmz_ha]
-otproxydmz1 ansible_host=CHANGEME.HAPROXY1.OT.IP.ADDRESS
-otproxydmz2 ansible_host=CHANGEME.HAPROXY2.OT.IP.ADDRESS
+otproxydmz1 ansible_host=CHANGEME
+otproxydmz2 ansible_host=CHANGEME
+
+[site1_logstash_it_dmz]
+logstash_it ansible_host=CHANGEME
+
+[site1_logstash_ot_dmz]
+logstash_ot ansible_host=CHANGEME
 
 [site1_ubuntu_it:children]
 site1_vpn_servers
 site1_reverse_proxies_it_dmz_ha
+site1_logstash_it_dmz
 
 [site1_linux_it:children]
 site1_ubuntu_it
 
 [site1_ubuntu_ot:children]
 site1_reverse_proxies_ot_dmz_ha
+site1_logstash_ot_dmz
 
 [site1_linux_ot:children]
 site1_ubuntu_ot
