@@ -1,8 +1,21 @@
 ---
-- name: Install sysmon packages from chocolatey repositories
-  win_chocolatey:
-    name: sysmon 
-    state: "{{ (sysmon_required|default(True) == True) | ternary('present', 'absent') }}"
-    install_args: '-y'
-  notify: initialize_sysmon
+- name: Install sysmon
+  block:
+    - name: Check if sysmon binary exists
+      win_stat:
+        path: '{{ sysmon_binary }}'
+      register: check_sysmon_binary
+
+    - name: Install sysmon packages from chocolatey repositories
+      win_chocolatey:
+        name: sysmon 
+        state: "{{ (sysmon_required|default(True) == True) | ternary('present', 'absent') }}"
+        install_args: '-y'
+
+    - name: Install sysmon service and driver
+      win_command:
+        '{{ sysmon_chocolatey_binary }} -accepteula -i'
+      when: >
+        check_sysmon_binary.stat.exists == False and
+        sysmon_required|default(True) == True
   tags: ['install']
