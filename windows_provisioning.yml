@@ -13,4 +13,4 @@
     #- windows/compliance/gsa
     #- windows/compliance/stig
     #- windows/compliance/acsc
-    #- windows/common/logshipping
+    - windows/common/logshipping
