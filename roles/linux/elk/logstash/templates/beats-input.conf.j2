@@ -1,0 +1,11 @@
+input {
+ beats {
+   port => {{ beats_port }}
+   host => "{{ beats_host }}"
+   ssl => true
+   ssl_certificate_authorities => ["{{ logstash_certs_folder }}/{{ logstash_ca_pubkey }}"]
+   ssl_certificate => "{{ logstash_certs_folder }}/{{ logstash_pubkey }}"
+   ssl_key => "{{ logstash_certs_folder }}/{{ logstash_privkey }}"
+   ssl_verify_mode => "force_peer"
+ }
+}

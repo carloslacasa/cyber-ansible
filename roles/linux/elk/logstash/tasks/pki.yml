@@ -1,0 +1,131 @@
+---
+- name: Creates SSL folder
+  file:
+    path: '{{ logstash_certs_folder }}'
+    state: directory
+    group: root
+    mode: 0755
+  tags: ['configuration']
+
+- name: Auxiliary file for PKI
+  block: 
+    - name: Check if auxiliary file exists
+      stat:
+        path: /root/.rnd
+      register: aux_file_exists
+
+    - name: Create auxiliary file por PKI
+      file:
+        path: /root/.rnd
+        state: touch
+        owner: root
+        group: root
+        mode: '0600'
+      when: aux_file_exists.stat.exists == false
+  tags: ['configuration']
+
+- name: Generate server certificates
+  block:
+    - name: Generate self-signed CA for logstash server
+      shell: 'openssl req -x509 -sha512 -nodes -days {{ logstash_cert_days }} -newkey rsa:4096 -keyout ca.key -out ca.crt -subj "/C=ES/ST=Gipuzkoa/L=Olaberria/O=Arcelormittal/OU=IT/CN={{ inventory_hostname }}.{{ domain_name }}"'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ logstash_ca_pubkey }}'
+        executable: /bin/bash
+      notify: restart_logstash
+
+    - name: Generate logstash server private key (PKCS1 format)
+      shell: 'openssl genrsa -out {{ logstash_privkey }}-pkcs1 4096'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ logstash_privkey }}-pkcs1'
+        executable: /bin/bash
+      notify: restart_logstash
+
+    - name: Change private key format from PKCS1 to PKCS8
+      shell: 'openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in {{ logstash_privkey }}-pkcs1 -out {{ logstash_privkey }}'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ logstash_privkey }}'
+        executable: /bin/bash
+      notify: restart_logstash
+
+    - name: Generate logstash certificate signing request 
+      shell: 'openssl req -out {{ logstash_csr }} -key {{ logstash_privkey }} -new -subj "/C=ES/ST=Gipuzkoa/L=Olaberria/O=ArcelorMittal/OU=IT/CN={{ inventory_hostname }}.{{ domain_name }}" -addext "subjectAltName=IP:{{ ansible_default_ipv4.address }}"'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ logstash_csr }}'
+        executable: /bin/bash
+      notify: restart_logstash
+
+    - name: Generate logstash server public key
+      shell: 'openssl x509 -req -in {{ logstash_csr }} -CA {{ logstash_ca_pubkey }} -CAkey {{ logstash_ca_privkey }} -CAcreateserial -out {{ logstash_pubkey }} -days {{ logstash_cert_days }}'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ logstash_pubkey }}'
+        executable: /bin/bash
+      notify: restart_logstash
+  tags: ['configuration']
+
+- name: Generate client certificates
+  block:
+    - name: Generate logstash clients private keys (PKCS1 format)
+      shell: 'openssl genrsa -out {{ item }}-pkcs1.key 4096'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ item }}-pkcs1.key'
+        executable: /bin/bash
+      with_items: '{{ logstash_ssl_clients }}'
+
+    - name: Change client private key format from PKCS1 to PKCS8
+      shell: 'openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in {{ item }}-pkcs1.key -out {{ item }}.key'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ item }}.key'
+        executable: /bin/bash
+      with_items: '{{ logstash_ssl_clients }}'
+      notify: restart_logstash
+
+    - name: Generate logstash client certificates signing requests
+      shell: 'openssl req -out {{ item }}.csr -key {{ item }}.key -new -subj "/C=ES/ST=Gipuzkoa/L=Olaberria/O=ArcelorMittal/OU=IT/CN={{ item }}"'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ item }}.csr'
+        executable: /bin/bash
+      with_items: '{{ logstash_ssl_clients }}'
+
+    - name: Generate logstash clients public keys
+      shell: 'openssl x509 -req -in {{ item }}.csr -CA {{ logstash_ca_pubkey }} -CAkey {{ logstash_ca_privkey }} -CAcreateserial -out {{ item }}.crt -days {{ logstash_cert_days }}'
+      args:
+        chdir: '{{ logstash_certs_folder }}'
+        creates: '{{ logstash_certs_folder }}/{{ item }}.crt'
+        executable: /bin/bash
+      with_items: '{{ logstash_ssl_clients }}'
+
+    - name: Download logstash server pubkeys to localhost
+      fetch:
+        src: '{{ logstash_certs_folder }}/{{ item }}'
+        dest: 'roles/linux/elk/logstash/certs/{{ item }}'
+        flat: yes
+      with_items: 
+        - '{{ logstash_pubkey }}'
+        - 'ca.crt'
+
+    - name: Download logstash clients privkeys and pubkeys to localhost
+      fetch:
+        src: '{{ logstash_certs_folder }}/{{ item.0 }}.{{ item.1 }}'
+        dest: 'roles/linux/elk/logstash/certs/{{ item.0 }}.{{ item.1 }}'
+        flat: yes
+      with_nested: 
+        - '{{ logstash_ssl_clients }}'
+        - ['crt','key']
+  tags: ['configuration']
+
+- name: Fix ownership for folder containing certificates
+  file:
+    path: '{{ logstash_certs_folder }}'
+    state: directory
+    recurse: yes
+    owner: logstash
+    group: root
+  tags: ['configuration']

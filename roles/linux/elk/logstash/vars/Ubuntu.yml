@@ -1,0 +1,22 @@
+---
+logstash_url_key: 'https://artifacts.elastic.co/GPG-KEY-elasticsearch'
+logstash_version: '7.x'
+logstash_repo_uri: 'deb https://artifacts.elastic.co/packages/{{ logstash_version }}/apt stable main'
+logstash_conf_dir: '/etc/logstash/conf.d'
+logstash_filter_conf: '{{ logstash_conf_dir }}/10-syslog-filter.conf'
+logstash_certs_folder: '/etc/pki/tls/certs'
+logstash_privkey: '{{ inventory_hostname }}.key'
+logstash_pubkey: '{{ inventory_hostname }}.crt'
+logstash_csr: '{{ inventory_hostname }}.csr'
+logstash_ca_pubkey: 'ca.crt'
+logstash_ca_privkey: 'ca.key'
+logstash_cert_days: 3650
+logstash_ssl_clients:
+ - CHANGEME1
+ - CHANGEME2
+ - CHANGEME3
+beats_input_conf: '{{ logstash_conf_dir }}/02-beats-input.conf'
+beats_host: '0.0.0.0'
+beats_port: '5044'
+elasticsearch_output_conf: '{{ logstash_conf_dir }}/30-elasticsearch-output.conf'
+elasticsearch_cloud_id: 'CHANGEME'

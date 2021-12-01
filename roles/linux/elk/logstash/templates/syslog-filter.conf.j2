@@ -1,0 +1,44 @@
+filter {
+ if [fields][log_type] == "syslog" {
+   grok {
+     match => { "message" => "%{SYSLOGTIMESTAMP:syslog_timestamp} %{SYSLOGHOST:syslog_hostname} %{DATA:syslog_program}(?:\[%{POSINT:syslog_pid}\])?: %{GREEDYDATA:syslog_message}" }
+     add_field => [ "received_at", "%{@timestamp}" ]
+     add_field => [ "received_from", "%{host}" ]
+   }
+   syslog_pri { }
+   date {
+     match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+   }
+ }
+ else if [fields][log_type] == "apache" {
+   grok {
+     match => { "message" => "%{COMMONAPACHELOG}" }
+     add_field => [ "received_at", "%{@timestamp}" ]
+     add_field => [ "received_from", "%{host}" ]
+   }
+   date {
+     match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+   }
+ }
+ else if [fields][from] == "winlogbeat" {
+   grok {
+     add_field => {"[@metadata][source]" => "winlogbeat"}
+   }
+ }
+# else if [fields][from] == "winlogbeat" and [event_id] == 4624 or [event_id] == 4634 {
+#     drop {}
+#   }
+ else {
+   json{
+        source => "message"
+    }
+   grok {
+     match => { "message" => "%{GREEDYDATA}" }
+     add_field => [ "received_at", "%{@timestamp}" ]
+     add_field => [ "received_from", "%{host}" ]
+   }
+   date {
+     match => [ "syslog_timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+   }
+ }
+}

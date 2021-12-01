@@ -1,0 +1,49 @@
+winlogbeat.event_logs:
+- name: Application
+  ignore_older: {{ old_event_ignore_time }}
+  provider:
+    - Application Error
+    - Application Hang
+    - Windows Error Reporting
+    - EMET
+  fields:
+    log_type: applications
+    from: winlogbeat
+
+- name: Security
+  ignore_older: {{ old_event_ignore_time }}
+  level: critical, error, warning
+  fields: 
+    log_type: security
+    from: winlogbeat
+
+- name: System
+  ignore_older: {{ old_event_ignore_time }}
+  fields:
+    log_type: system
+    from: winlogbeat
+
+- name: Microsoft-Windows-Sysmon/Operational
+  ignore_older: {{ old_event_ignore_time }}
+  fields: 
+    log_type: sysmon
+    from: winlogbeat
+
+- name: "Windows Powershell"
+  ignore_older: {{ old_event_ignore_time }}
+  fields:
+    log_type: powershell
+    from: winlogbeat
+
+- name: Microsoft-Windows-Windows Firewall With Advanced Security/Firewall
+  ignore_older: {{ old_event_ignore_time }}
+  fields: 
+    log_type: firewall
+    from: winlogbeat
+
+setup.template.settings:
+  index.number_of_shards: 1
+
+output.logstash:
+  hosts:
+    {{ logstash_host }}:{{ logstash_port }}

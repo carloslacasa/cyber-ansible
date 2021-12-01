@@ -1,0 +1,38 @@
+---
+- name: Include variables generales para la distribucion
+  include_vars: '{{ item }}'
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+    - default_distro.yml
+  ignore_errors: true
+  tags: ['elk','logstash']
+
+- name: Include variables particulares para el host
+  include_vars: '{{ item }}'
+  with_first_found:
+    - '{{ inventory_hostname }}.yml'
+    - default_host.yml
+  ignore_errors: true
+  tags: ['elk','logstash']
+
+- name: Install logstash related software
+  include_tasks: packages.yml
+  tags: ['elk','logstash']
+
+- name: Logstash firewall settings
+  include_tasks: firewall.yml
+  tags: ['elk','logstash']
+
+## TODO: Certificados de cliente
+- name: Logstash PKI configuration
+  include_tasks: pki.yml
+  tags: ['elk','logstash']
+
+- name: Logstash configuration
+  include_tasks: configuration.yml
+  tags: ['elk','logstash']
+
+- name: Logstash services
+  include_tasks: services.yml
+  tags: ['elk','logstash']

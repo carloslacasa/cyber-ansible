@@ -1,0 +1,28 @@
+---
+- name: Add logstash apt key
+  apt_key:
+    url: "{{ logstash_url_key }}"
+    state: present
+  when:
+      - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Add logstash apt repository
+  apt_repository:
+   repo: "{{ logstash_repo_uri }}"
+   state: present
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Install logstash related packages
+  apt:
+    name: 
+     - default-jre
+     - apt-transport-https
+     - logstash
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']

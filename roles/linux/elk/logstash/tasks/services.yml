@@ -1,0 +1,18 @@
+---
+- name: Manage logstash services
+  block:
+    - name: Start Logstash service
+      systemd:
+        name: logstash
+        state: started
+      when:
+        - ansible_facts['os_family']|lower == "debian"
+
+    - name: Enable Logstash service
+      systemd:
+        name: logstash
+        enabled: yes
+      when:
+        - ansible_facts['os_family']|lower == "debian"
+  tags: ['services']
+

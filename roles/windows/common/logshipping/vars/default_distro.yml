@@ -1,0 +1,6 @@
+---
+logstash_host: '192.168.1.81'
+logstash_port: '5044'
+filebeat_conf: '%programdata%\chocolatey\lib\filebeat\tools\filebeat.yml'
+winlogbeat_conf: '%programdata%\chocolatey\lib\winlogbeat\tools\winlogbeat.yml'
+old_event_ignore_time: '72h'

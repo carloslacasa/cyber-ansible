@@ -1,0 +1,10 @@
+---
+- name: Make sure beats services are started
+  win_service:
+     name: '{{ item }}'
+     state: started
+  with_items:
+     - filebeat
+     - winlogbeat
+  tags: ['services']
+

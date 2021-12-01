@@ -1,0 +1,13 @@
+---
+- name: Incoming beats request
+  ufw:
+    direction: in
+    proto: tcp
+    from_port: '1024:65535'
+    to_port: "{{ beats_port }}"
+    from_ip: "{{ item }}"
+    rule: allow
+  with_items: # CHANGEME
+    - 192.168.1.0/24
+    - 192.168.2.0/24
+  tags: ['configuration']

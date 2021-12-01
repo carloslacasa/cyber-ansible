@@ -1,0 +1,7 @@
+---
+- name: Configure winlogbeat
+  template:
+    src: '../templates/winlogbeat.yml.j2'
+    dest: '{{ winlogbeat_conf }}'
+  notify: restart_winlogbeat
+  tags: ['configuration']

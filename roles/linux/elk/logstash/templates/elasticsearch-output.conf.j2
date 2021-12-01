@@ -1,0 +1,79 @@
+output {
+    if [fields][log_type] == "syslog" {
+       elasticsearch {
+         ssl => true
+         ilm_enabled => false
+         manage_template => false
+         cloud_id => "{{ elasticsearch_cloud_id }}"
+         cloud_auth => "{{ elasticsearch_user }}:{{ elasticsearch_password }}"
+         index => "syslog-%{+dd.MM.YYYY}"
+         document_type => "%{[@metadata][type]}"
+       }
+    }
+    else if [fields][log_type] == "apache" {
+       elasticsearch {
+         ssl => true
+         ilm_enabled => false
+         manage_template => false
+         cloud_id => "{{ elasticsearch_cloud_id }}"
+         cloud_auth => "{{ elasticsearch_user }}:{{ elasticsearch_password }}"
+         index => "apache-%{+dd.MM.YYYY}"
+         document_type => "%{[@metadata][type]}"
+       }
+    }
+    else if [fields][from] == "winlogbeat" {
+       elasticsearch {
+         ssl => true
+         ilm_enabled => false
+         manage_template => false
+         cloud_id => "{{ elasticsearch_cloud_id }}"
+         cloud_auth => "{{ elasticsearch_user }}:{{ elasticsearch_password }}"
+         index => "winlogbeat-%{+dd.MM.YYYY}"
+         document_type => "%{[@metadata][type]}"
+       }
+    }
+    else if [fields][from] == "auditbeat" {
+       elasticsearch {
+         ssl => true
+         ilm_enabled => false
+         manage_template => false
+         cloud_id => "{{ elasticsearch_cloud_id }}"
+         cloud_auth => "{{ elasticsearch_user }}:{{ elasticsearch_password }}"
+         index => "auditbeat-%{+dd.MM.YYYY}"
+         document_type => "%{[@metadata][type]}"
+       }
+    }
+    else if [fields][from] == "metricbeat" {
+       elasticsearch {
+         ssl => true
+         ilm_enabled => false
+         manage_template => false
+         cloud_id => "{{ elasticsearch_cloud_id }}"
+         cloud_auth => "{{ elasticsearch_user }}:{{ elasticsearch_password }}"
+         index => "metricbeat-%{+dd.MM.YYYY}"
+         document_type => "%{[@metadata][type]}"
+       }
+    }
+    else if [from] == "appbeat" {
+       elasticsearch {
+         ssl => true
+         ilm_enabled => false
+         manage_template => false
+         cloud_id => "{{ elasticsearch_cloud_id }}"
+         cloud_auth => "{{ elasticsearch_user }}:{{ elasticsearch_password }}"
+         index => "%{index_name}-%{+dd.MM.YYYY}"
+         document_type => "%{[@metadata][type]}"
+       }
+    }
+    else {
+       elasticsearch {
+         ssl => true
+         ilm_enabled => false
+         manage_template => false
+         cloud_id => "{{ elasticsearch_cloud_id }}"
+         cloud_auth => "{{ elasticsearch_user }}:{{ elasticsearch_password }}"
+         index => "logstash-%{+dd.MM.YYYY}"
+         document_type => "%{[@metadata][type]}"
+      }
+    }
+}

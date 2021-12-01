@@ -1,0 +1,31 @@
+---
+- name: Configure logstash input, output and filtering
+  block:
+    - name: Configure logstash input (log shipper connector)
+      template:
+        src: '../templates/beats-input.conf.j2'
+        dest: "{{ beats_input_conf }}"
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart_logstash
+
+    - name: Configure logstash filtering
+      template:
+        src: '../templates/syslog-filter.conf.j2'
+        dest: "{{ logstash_filter_conf }}"
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart_logstash
+
+    - name: Configure logstash output
+      template:
+        src: '../templates/elasticsearch-output.conf.j2'
+        dest: "{{ elasticsearch_output_conf }}"
+        owner: root
+        group: root
+        mode: 0644
+      notify: restart_logstash
+  tags: ['configuration']
+
