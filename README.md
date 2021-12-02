@@ -23,7 +23,9 @@ Sysmon configuration can be customized for either groups or individual hosts, as
 For instance:
 
 [Modular sysmon config 1](https://github.com/olafhartong/sysmon-modular/blob/master/sysmonconfig.xml)
+
 [Modular sysmon config 2](https://github.com/SwiftOnSecurity/sysmon-config/blob/master/sysmonconfig-export.xml)
+
 [Full logging sysmon config](https://raw.githubusercontent.com/MotiBa/Sysmon/master/FullLogging_v1.xml)
 
 Tested on Windows 10 (64, 32bits)
@@ -34,11 +36,11 @@ How to call the playbook:
 
 Credits:
 
-Talk _SysFu: How to use sysmon at scale to kick attacker asses_ at I CONForense by *@antoniosanzlc*
+Talk _SysFu: How to use sysmon at scale to kick attacker asses_ at I CONForense by **@antoniosanzlc**
 
 Slides here:
 
-[Google docs] (https://docs.google.com/spreadsheets/d/1t3BL09-K3wZ7TpG1B26o2f-TOadF4H1TRpXj6GInsDI/edit#gid=0)
+[Google docs](https://docs.google.com/spreadsheets/d/1t3BL09-K3wZ7TpG1B26o2f-TOadF4H1TRpXj6GInsDI/edit#gid=0)
 
 ### WAF
 Web application firewall with apache2+modsecurity+fail2ban.
@@ -90,6 +92,9 @@ Credits:
 References:
 
 [Google authenticator and openVPN](https://medium.com/we-have-all-been-there/using-google-authenticator-mfa-with-openvpn-on-ubuntu-16-04-774e4acc2852)
+
 [MFA on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-configure-multi-factor-authentication-on-ubuntu-18-04)
+
 [2FA for SSH on Ubuntu](https://www.linuxbabe.com/ubuntu/two-factor-authentication-ssh-key-ubuntu-18-04)
+
 
