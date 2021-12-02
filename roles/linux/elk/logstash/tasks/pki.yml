@@ -27,7 +27,7 @@
 - name: Generate server certificates
   block:
     - name: Generate self-signed CA for logstash server
-      shell: 'openssl req -x509 -sha512 -nodes -days {{ logstash_cert_days }} -newkey rsa:4096 -keyout ca.key -out ca.crt -subj "/C=ES/ST=Gipuzkoa/L=Olaberria/O=Arcelormittal/OU=IT/CN={{ inventory_hostname }}.{{ domain_name }}"'
+      shell: 'openssl req -x509 -sha512 -nodes -days {{ logstash_cert_days }} -newkey rsa:4096 -keyout ca.key -out ca.crt -subj "/C=ES/ST=State/L=Location/O=MyOrganization/OU=IT/CN={{ inventory_hostname }}.{{ domain_name }}"'
       args:
         chdir: '{{ logstash_certs_folder }}'
         creates: '{{ logstash_certs_folder }}/{{ logstash_ca_pubkey }}'
@@ -51,7 +51,7 @@
       notify: restart_logstash
 
     - name: Generate logstash certificate signing request 
-      shell: 'openssl req -out {{ logstash_csr }} -key {{ logstash_privkey }} -new -subj "/C=ES/ST=Gipuzkoa/L=Olaberria/O=ArcelorMittal/OU=IT/CN={{ inventory_hostname }}.{{ domain_name }}" -addext "subjectAltName=IP:{{ ansible_default_ipv4.address }}"'
+      shell: 'openssl req -out {{ logstash_csr }} -key {{ logstash_privkey }} -new -subj "/C=ES/ST=State/L=Location/O=MyOrganization/OU=IT/CN={{ inventory_hostname }}.{{ domain_name }}" -addext "subjectAltName=IP:{{ ansible_default_ipv4.address }}"'
       args:
         chdir: '{{ logstash_certs_folder }}'
         creates: '{{ logstash_certs_folder }}/{{ logstash_csr }}'
@@ -87,7 +87,7 @@
       notify: restart_logstash
 
     - name: Generate logstash client certificates signing requests
-      shell: 'openssl req -out {{ item }}.csr -key {{ item }}.key -new -subj "/C=ES/ST=Gipuzkoa/L=Olaberria/O=ArcelorMittal/OU=IT/CN={{ item }}"'
+      shell: 'openssl req -out {{ item }}.csr -key {{ item }}.key -new -subj "/C=ES/ST=State/L=Location/O=MyOrganization/OU=IT/CN={{ item }}"'
       args:
         chdir: '{{ logstash_certs_folder }}'
         creates: '{{ logstash_certs_folder }}/{{ item }}.csr'
