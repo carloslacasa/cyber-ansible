@@ -1,3 +1,4 @@
 ---
 sysmon_config_path: 'C:\\Windows\\sysmon.xml'
-sysmon_url: 'https://raw.githubusercontent.com/olafhartong/sysmon-modular/master/sysmonconfig.xml'
+#sysmon_url: 'https://raw.githubusercontent.com/olafhartong/sysmon-modular/master/sysmonconfig.xml'
+sysmon_url: 'https://github.com/olafhartong/sysmon-modular/blob/master/sysmonconfig.xml'

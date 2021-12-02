@@ -1,3 +1,4 @@
 ---
 sysmon_config_path: 'C:\\Windows\\TEMP\\sysmon.xml'
-sysmon_url: 'https://raw.githubusercontent.com/MotiBa/Sysmon/master/FullLogging_v1.xml'
+#sysmon_url: 'https://raw.githubusercontent.com/MotiBa/Sysmon/master/FullLogging_v1.xml'
+sysmon_url: 'https://github.com/SwiftOnSecurity/sysmon-config/blob/master/sysmonconfig-export.xml'

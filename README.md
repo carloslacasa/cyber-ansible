@@ -27,7 +27,11 @@ How to call the playbook:
 ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags sysmon,logshipping,install,configuration,services 
 
 Credits:
-CONForense talk by @antoniosanzlc
+
+DFIR talk at CONForense by @antoniosanzlc
+
+Slides here:
+
 https://docs.google.com/spreadsheets/d/1t3BL09-K3wZ7TpG1B26o2f-TOadF4H1TRpXj6GInsDI/edit#gid=0
 
 WAF
