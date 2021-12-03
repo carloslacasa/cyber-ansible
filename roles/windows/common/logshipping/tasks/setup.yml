@@ -1,4 +1,15 @@
 ---
+- name: Copy certificates for SSL 
+  win_copy:
+    src: '../../../../linux/elk/logstash/certs/{{ item }}'
+    dest: '%programdata%\winlogbeat\{{ item }}'
+  with_items:
+    - 'ca.crt'
+    - '{{ inventory_hostname }}.crt'
+    - '{{ inventory_hostname }}.key'
+  notify: restart_winlogbeat
+  tags: ['configuration']
+  
 - name: Configure winlogbeat
   template:
     src: '../templates/winlogbeat.yml.j2'

@@ -45,5 +45,8 @@ setup.template.settings:
   index.number_of_shards: 1
 
 output.logstash:
-  hosts:
+  hosts: 
     {{ logstash_host }}:{{ logstash_port }}
+  ssl.certificate_authorities: ["%programdata%\winlogbeat\ca.crt"]
+  ssl.certificate: "%programdata%\winlogbeat\{{ inventory_hostname }}.crt"
+  ssl.key: "%programdata%\winlogbeat\{{ inventory_hostname }}.key"
