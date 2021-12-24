@@ -1,0 +1,27 @@
+---
+administrator_group: 'Administrators'
+local_administrators:
+  - 'Administrator'
+  #- '{{ vault_domain_admin_user }}'
+  - '{{ vault_local_admin_user }}'
+
+basic_services_host_level:
+  #- { name: Windefend, state: started, start_mode: auto }
+  - { name: Wuauserv, state: started, start_mode: auto }
+  - { name: W32Time, state: started, start_mode: auto }
+  - { name: PolicyAgent, state: stopped, start_mode: disabled }
+  - { name: IKEEXT, state: stopped, start_mode: disabled }
+  - { name: lfsvc, state: stopped, start_mode: disabled }
+  - { name: DiagTrack, state: stopped, start_mode: disabled }
+  - { name: XblAuthManager, state: stopped, start_mode: disabled }
+  - { name: XblGameSave, state: stopped, start_mode: disabled }
+  - { name: XboxGipSvc, state: stopped, start_mode: disabled }
+  - { name: RasAuto, state: stopped, start_mode: disabled }
+  - { name: MapsBroker, state: stopped, start_mode: disabled }
+  - { name: SEMgrSvc, state: stopped, start_mode: disabled }
+  - { name: WpcMonSvc, state: stopped, start_mode: disabled }
+  - { name: upnphost, state: stopped, start_mode: disabled }
+  - { name: dmwappushservice, state: stopped, start_mode: disabled }
+  - { name: QWAVE, state: stopped, start_mode: disabled }
+  - { name: PrintNotify, state: stopped, start_mode: disabled }
+  - { name: Fax, state: stopped, start_mode: disabled }

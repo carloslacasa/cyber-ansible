@@ -1,0 +1,109 @@
+---
+- name: Windows registry configuration
+  win_regedit:
+     path: '{{ item.path }}'
+     name: '{{ item.name }}'
+     data: '{{ item.data }}' 
+     type: '{{ item.type }}'
+  with_items:
+     # Prevent suggested applications to return
+     - path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent
+       name: DisableWindowsConsumerFeatures
+       data: 1
+       type: dword
+
+     # Disable Cortana
+     - path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search
+       name: AllowCortana
+       data: 0
+       type: dword
+
+     # Disable Microsoft Telemetry
+     - path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection
+       name: AllowTelemetry
+       data: 0
+       type: dword
+
+     # Disable Game DVR and Game Bar
+     - path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR
+       name: AllowgameDVR
+       data: 0
+       type: dword
+
+     # Unset disable compression on SMBv3 (CVE-2020-0796 fixed since 04/2020)
+     - path: HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters
+       name: DisableCompression
+       data: 0
+       type: dword
+
+     # Disable IPv6
+     - path: HKLM:\System\Currentcontrolset\Services\Tcpip6\Parameters
+       name: "DisabledComponents"
+       data: 0xff
+       type: dword
+
+     # Disable WPAD	
+     - path: HKLM:\SYSTEM\CurrentControlSet\Services\WinHttpAutoProxySvc
+       name: Start
+       data: 4
+       type: dword
+
+     ## Enable Windows Updates
+     #- path: HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate
+     #  name: "DisableWindowsUpdateAccess"
+     #  data: 0x0
+     #  type: dword
+  tags: ['configuration']
+
+- name: Disable LLMNR and NBT-NS
+  vars:
+    registry_path: 'HKLM:\SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces'
+  block:
+    - name: Get information of network interfaces
+      win_reg_stat:
+        path: '{{ registry_path }}'
+      register: interfaces
+
+    - name: Disable LLMNR and NBT-NS settings on each network interface
+      win_regedit:
+        path: '{{ registry_path }}\{{ item }}'                                                
+        name: NetbiosOptions
+        data: 2
+        type: dword
+      loop: '{{ interfaces.sub_keys }}'
+  tags: ['configuration']
+
+#- name: Fix Windows Updates
+#  win_regedit:
+#     path: HKLM:\Software\Policies\Microsoft\Windows\WindowsUpdate
+#     name: DisableWindowsUpdateAccess
+#     state: absent
+#  tags: ['configuration']
+
+- name: "{{ (firewall_enabled|default(True) == True ) | ternary('Enabled', 'Disabled') }} firewall for Domain, Public and Private profiles"
+  win_firewall:
+    state: "{{ (firewall_enabled|default(True) == True ) | ternary('enabled', 'disabled') }}"
+    profiles:
+    - Domain
+    - Private
+    - Public
+  tags: ['configuration']
+
+- name: Configuracion de administradores locales
+  win_group_membership:
+    name: '{{ administrator_group }}'
+    members: '{{ local_administrators }}'
+    state: pure
+  tags: ['configuration']
+
+- name: Update password for '{{ vault_local_admin_user }}'
+  win_user:
+    name: '{{ vault_local_admin_user }}'
+    password: '{{ vault_local_admin_password }}'
+    description: 'Cuenta de administracion local'
+    update_password: always
+    state: present
+  when: 
+    - "'site1_windows_laptops_it' not in group_names"
+    - "'site2_windows_laptops_it' not in group_names"
+  tags: ['configuration']

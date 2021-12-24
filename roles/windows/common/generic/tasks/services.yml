@@ -1,0 +1,20 @@
+---
+- name: Set status of basic services (started/stopped) at host level
+  win_service:
+     name: '{{ item.name }}'
+     state: '{{ item.state }}'
+     start_mode: '{{ item.start_mode }}'
+     force_dependent_services: true
+  with_items: '{{ basic_services_host_level }}'
+  ignore_errors: true
+  tags: ['services']
+
+- name: Set status of basic services (started/stopped) at group level
+  win_service:
+     name: '{{ item.name }}'
+     state: '{{ item.state }}'
+     start_mode: '{{ item.start_mode }}'
+     force_dependent_services: true
+  with_items: '{{ basic_services_group_level }}'
+  ignore_errors: true
+  tags: ['services']

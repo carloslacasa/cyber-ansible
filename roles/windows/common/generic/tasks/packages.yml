@@ -1,0 +1,43 @@
+---
+- name: Make sure chocolatey packages are not installed
+  win_chocolatey:
+    name: '{{ item }}'
+    state: absent
+  #async: 300
+  #poll: 5
+  with_items: '{{ chocolatey_software_absent }}'
+  ignore_errors: yes
+  when: > 
+    ansible_facts['os_family']|lower == "windows" and 
+    "'site1_windows_ot_hmi' not in group_names"
+  tags: ['install']
+
+- name: Install packages from chocolatey repository
+  win_chocolatey:
+    #proxy_url: 'http://proxy.{{ domain_name }}:3128'
+    name: '{{ item.packagename }}'
+    state: present
+    install_args: '{{ item.options }}'
+  #async: 300
+  #poll: 5
+  loop: '{{ chocolatey_packages_present }}'
+  ignore_errors: yes
+  when: > 
+    ansible_facts['os_family']|lower == "windows" and 
+    "'site1_windows_ot_hmi' not in group_names"
+  tags: ['install']
+
+- name: Install packages from chocolatey repository particular for the host
+  win_chocolatey:
+    #proxy_url: 'http://proxy.{{ domain_name }}:3128'
+    name: '{{ item.packagename }}'
+    state: present
+    install_args: '{{ item.options }}'
+  #async: 300
+  #poll: 5
+  loop: '{{ chocolatey_packages_present_host_level }}'
+  ignore_errors: yes
+  when: > 
+    ansible_facts['os_family']|lower == "windows" and 
+    chocolatey_packages_present_host_level is defined
+  tags: ['install']

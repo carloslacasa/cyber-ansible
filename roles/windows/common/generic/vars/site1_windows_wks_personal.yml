@@ -1,0 +1,68 @@
+---
+chocolatey_software_absent:
+  - dropbox
+  - flashplayerplugin
+  - flashplayeractivex
+  - openssh
+  - git
+  - firefox
+  - citrix-workspace
+  - vlc
+
+chocolatey_packages_present:
+  - { packagename: 'powershell', options: '-y' }
+  - { packagename: 'ccleaner', options: '-y' }
+  - { packagename: 'googlechrome', options: '-y' }
+  - { packagename: 'https-everywhere-chrome', options: '-y' }
+  - { packagename: 'adguard-chrome', options: '-y' }
+  - { packagename: 'windows-defender-browser-protection-chrome', options: '-y' }
+  - { packagename: 'adobereader', options: '/DesktopIcon /UpdateMode:4' }
+  - { packagename: 'jre8', options: '-y' }
+  - { packagename: 'notepadplusplus.install', options: '-y' }
+  - { packagename: 'keepass', options: '-y' }
+  - { packagename: 'onedrive', options: '-y' }
+
+basic_services_group_level:
+  #- { name: WinDefend, state: started, start_mode: auto }
+  #- { name: WdNisSvc, state: started, start_mode: auto }
+  #- { name: mpssvc, state: started, start_mode: auto }
+  #- { name: Sense, state: started, start_mode: auto }
+  - { name: EventLog, state: started, start_mode: auto }
+  - { name: Audiosrv, state: started, start_mode: auto }
+  - { name: AudioEndpointBuilder, state: started, start_mode: auto }
+  - { name: AJRouter, state: stopped, start_mode: disabled }
+  - { name: ALG, state: stopped, start_mode: disabled }
+  - { name: AppMgmt, state: stopped, start_mode: disabled }
+  - { name: AxInstSV, state: stopped, start_mode: disabled }
+  - { name: Bthserv, state: stopped, start_mode: disabled }
+  - { name: CDPSvc, state: stopped, start_mode: disabled }
+  - { name: DevQueryBroker, state: stopped, start_mode: disabled }
+  - { name: DPS, state: stopped, start_mode: disabled }
+  - { name: FrameServer, state: stopped, start_mode: disabled }
+  - { name: hidserv, state: stopped, start_mode: disabled }
+  - { name: Icssvc, state: stopped, start_mode: disabled }
+  - { name: LicenseManager, state: stopped, start_mode: disabled }
+  - { name: NcbService, state: stopped, start_mode: disabled }
+  - { name: PcaSvc, state: stopped, start_mode: disabled }
+  - { name: PhoneSvc, state: stopped, start_mode: disabled }
+  - { name: RasMan, state: started, start_mode: auto }
+  - { name: RmSvc, state: stopped, start_mode: disabled }
+  - { name: RpcLocator, state: stopped, start_mode: disabled }
+  - { name: ScDeviceEnum, state: stopped, start_mode: disabled }
+  - { name: SCPolicySvc, state: stopped, start_mode: disabled }
+  - { name: SensorDataService, state: stopped, start_mode: disabled }
+  - { name: SensrSvc, state: stopped, start_mode: disabled }
+  - { name: SharedAccess, state: stopped, start_mode: disabled }
+  - { name: ShellHWDetection, state: started, start_mode: auto }
+  - { name: SSDPSRV, state: stopped, start_mode: disabled }
+  - { name: stisvc, state: stopped, start_mode: disabled }
+  - { name: WalletService, state: stopped, start_mode: disabled }
+  - { name: WbioSrvc, state: stopped, start_mode: disabled }
+  - { name: wercplsupport, state: stopped, start_mode: disabled }
+  - { name: WiaRpc, state: stopped, start_mode: disabled }
+  - { name: wisvc, state: stopped, start_mode: disabled }
+  - { name: wlidsvc, state: stopped, start_mode: disabled }
+  - { name: WPDBusEnum, state: stopped, start_mode: disabled }
+  - { name: WpnService, state: stopped, start_mode: disabled }
+  - { name: SNMPTRAP, state: stopped, start_mode: disabled }
+  - { name: spooler, state: started, start_mode: auto }
