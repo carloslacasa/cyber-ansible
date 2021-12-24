@@ -8,10 +8,10 @@ chocolatey_software_absent:
   - firefox
   - citrix-workspace
   - vlc
+  - ccleaner
 
 chocolatey_packages_present:
   - { packagename: 'powershell', options: '-y' }
-  - { packagename: 'ccleaner', options: '-y' }
   - { packagename: 'googlechrome', options: '-y' }
   - { packagename: 'https-everywhere-chrome', options: '-y' }
   - { packagename: 'adguard-chrome', options: '-y' }
