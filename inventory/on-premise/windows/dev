@@ -24,17 +24,17 @@ site1_windows_wks_shared
 site1_windows_wks_personal
 site1_windows_laptops
 
-[ola_windows_ot_servers]
+[site1_windows_ot_servers]
 
-[ola_windows_ot_dmz_servers]
+[site1_windows_ot_dmz_servers]
 
-[ola_windows_ot_hmi]
+[site1_windows_ot_hmi]
 
 
 [site1_windows_ot:children]
-ola_windows_ot_servers
-ola_windows_ot_dmz_servers
-ola_windows_ot_hmi
+site1_windows_ot_servers
+site1_windows_ot_dmz_servers
+site1_windows_ot_hmi
 
 [site1_windows:children]
 site1_windows_it

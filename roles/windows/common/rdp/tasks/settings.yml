@@ -1,0 +1,8 @@
+---
+- name: Asignacion de usuarios a grupo de acceso RDP
+  win_group_membership:
+    #name: 'Usuarios de escritorio remoto'
+    name: 'Remote Desktop Users'
+    members: '{{ rdp_allowed_users }}'
+    state: pure
+  tags: ['configuration']

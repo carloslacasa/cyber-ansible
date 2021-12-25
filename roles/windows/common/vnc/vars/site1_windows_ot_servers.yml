@@ -1,0 +1,6 @@
+---
+vnc_control_password:  'AB,21,08,B7,7C,5E,B4,68'
+vnc_client_password: 'EA,46,B4,E3,1A,1C,ED,33'
+vnc_allowed_ip_addresses: '192.168.3.40/32,192.168.3.50/32,192.168.3.60/32'
+proxy_ip: 192.168.3.30
+proxy_port: 3128

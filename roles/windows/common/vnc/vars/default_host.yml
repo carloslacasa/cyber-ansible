@@ -1,0 +1,3 @@
+---
+vnc_required: True
+vnc_mode: 'Server'

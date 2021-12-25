@@ -1,0 +1,9 @@
+---
+- name: RDP server is started where required else stopped
+  win_service:
+     name: TermService
+     state: "{{ (rdp_required|default(False) == True or ansible_virtualization_role == 'guest') | ternary('started', 'stopped') }}"
+     force_dependent_services: yes
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['services']

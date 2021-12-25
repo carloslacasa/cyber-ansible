@@ -1,0 +1,9 @@
+---
+- name: TeamViewer install where required else uninstall
+  win_chocolatey:
+    name: teamviewer
+    state: "{{ (teamviewer_required|default(False) == True) | ternary('present', 'absent') }}"
+    install_args: '-y'
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['install']

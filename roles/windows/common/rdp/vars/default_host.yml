@@ -1,0 +1,5 @@
+---
+rdp_allowed_ip_addresses: '192.168.1.0/24,192.168.2.0/24'
+rdp_allowed_users:
+ - '{{ vault_domain_admin_user }}'
+ - '{{ vault_local_admin_user }}'

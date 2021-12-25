@@ -1,0 +1,5 @@
+---
+rdp_required: True
+rdp_allowed_ip_addresses: '192.168.1.10/32,192.168.1.20/32'
+rdp_allowed_users:
+ - '{{ vault_local_admin_user }}'

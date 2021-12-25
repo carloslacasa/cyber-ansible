@@ -1,0 +1,9 @@
+---
+- name: TeamViewer server running where required
+  win_service:
+     name: TeamViewer
+     state: started
+  when: > 
+    ansible_facts['os_family']|lower == "windows" and 
+    teamviewer_required|default(False) == True
+  tags: ['services']

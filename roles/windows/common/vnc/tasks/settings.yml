@@ -1,0 +1,82 @@
+---
+- name: VNC connection password
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: Password
+     data: 'hex:{{ vnc_client_password }}'
+     type: binary
+  notify: restart_vnc_service
+  tags: ['configuration']
+
+- name: VNC admin password
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: ControlPassword
+     data: 'hex:{{ vnc_control_password }}'
+     type: binary
+  notify: restart_vnc_service
+  tags: ['configuration']
+
+- name: VNC use control authentication
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: UseControlAuthentication
+     data: 1
+     type: dword
+  notify: restart_vnc_service
+  tags: ['configuration']
+
+- name: VNC use client authentication
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: UseVNCAuthentication
+     data: 1
+     type: dword
+  notify: restart_vnc_service
+  tags: ['configuration']
+
+- name: Disable VNC over HTTP
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: AcceptHttpConnections
+     data: 0
+     type: dword
+  notify: restart_vnc_service
+  tags: ['configuration']
+
+- name: Enable VNC over RFB
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: AcceptRfbConnections
+     data: 1
+     type: dword
+  notify: restart_vnc_service
+  tags: ['configuration']
+
+- name: VNC set RFB port
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: RfbPort
+     data: 5900
+     type: dword
+  notify: restart_vnc_service
+  tags: ['configuration']
+
+- name: Disable VNC file transfers
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: EnableFileTransfers
+     data: 0
+     type: dword
+  notify: restart_vnc_service
+  tags: ['configuration']
+
+- name: VNC remove wallpaper
+  win_regedit:
+     path: HKLM:\SOFTWARE\TightVNC\Server
+     name: RemoveWallpaper
+     data: 1
+     type: dword
+  notify: restart_vnc_service
+  tags: ['configuration']
+

@@ -1,0 +1,34 @@
+---
+- name: Include variables genericas para la distribucion
+  include_vars: '{{ item }}'
+  with_first_found:
+  - '{{ ansible_distribution }}.yml'
+  - '{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml'
+  - default_distro.yml
+  tags: ['teamviewer']
+
+- name: Include variables genericas para el grupo principal
+  include_vars: '{{ item }}'
+  with_first_found:
+  - '{{ ansible_limit }}.yml'
+  - default_group.yml
+  tags: ['teamviewer']
+
+- name: Include variables particulares para el host
+  include_vars: '{{ item }}'
+  with_first_found:
+    - '{{ inventory_hostname }}.yml'
+    - default_host.yml
+  tags: ['teamviewer']
+
+- name: TeamViewer install
+  include_tasks: packages.yml
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['teamviewer']
+
+- name: TeamViewer services
+  include_tasks: services.yml
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['teamviewer']

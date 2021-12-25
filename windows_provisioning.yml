@@ -6,9 +6,9 @@
     #- windows/common/domain
     - windows/common/generic
     - windows/common/sysmon
-    #- windows/common/vnc
-    #- windows/common/rdp
-    #- windows/common/teamviewer
+    - windows/common/vnc
+    - windows/common/rdp
+    - windows/common/teamviewer
     #- windows/compliance/cis
     #- windows/compliance/gsa
     #- windows/compliance/stig

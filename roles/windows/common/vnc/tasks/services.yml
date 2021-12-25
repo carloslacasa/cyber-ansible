@@ -1,0 +1,8 @@
+---
+- name: VNC server is started where required else stopped
+  win_service:
+     name: tvnserver
+     state: "{{ (vnc_required|default(False) == True) | ternary('started', 'stopped') }}"
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['services']

@@ -1,0 +1,15 @@
+---
+- name: Inbound firewall allow rules VNC
+  win_firewall_rule:
+    name: VNC
+    localport: 5900
+    action: allow
+    direction: in
+    protocol: tcp
+    remoteip: '{{ vnc_allowed_ip_addresses }}'
+    profiles: ['domain','private','public']
+    state: present
+    enabled: yes
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['configuration']

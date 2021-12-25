@@ -1,0 +1,12 @@
+---
+- name: VNC install where required else uninstall
+  win_chocolatey:
+    name: tightvnc 
+    state: "{{ (vnc_required|default(False) == True) | ternary('present', 'absent') }}"
+    install_args: '-y --installArguments ADDLOCAL={{ vnc_mode }}'
+    #proxy_url: 'http://{{ proxy_ip }}:{{ proxy_port }}/'
+  #async: 300
+  #poll: 5
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags: ['install']

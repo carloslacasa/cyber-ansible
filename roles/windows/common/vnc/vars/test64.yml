@@ -1,0 +1,4 @@
+---
+vnc_required: True
+#vnc_mode: 'Viewer'
+vnc_mode: 'Server'
