@@ -89,7 +89,7 @@
     - Public
   tags: ['configuration']
 
-- name: Configuracion de administradores locales
+- name: Configure local administrators
   win_group_membership:
     name: '{{ administrator_group }}'
     members: '{{ local_administrators }}'
