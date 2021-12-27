@@ -2,6 +2,21 @@
 
 ## Ansible playbooks related to Cybersecurity
 
+### Generic protective measures for Windows systems
+Define which services must be running or stopped, which software packages must be installed or removed.
+Workaround for known vulnerabilities (such as CVE-2021-34527 and CVE-2021-40444).
+Generic configuration settings such as:
+- NTLM relay protection (disabling LLMNR, NBT-NS, IPv6, WPAD)
+- Windows firewall enabled
+- Define local administrators
+- Update administrator password
+
+Tested on Windows 10 (64, 32bits)
+
+How to call the playbook:
+
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags generic,install,configuration,services -vault-password-file ./.vault`
+
 ### Windows remote access
 #### RDP
 Define which machines require the RDP service. Custom firewall rules for the RDP service as well as restricted access to a defined set of users.
