@@ -11,9 +11,9 @@ Tested on Ubuntu >= 18.04 LTS
 
 How to call the playbook:
 
-`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_logstash_it_dmz -T 5 ./logstash_provisioning.yml --tags logstash,fail2ban,install,configuration,services`
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_logstash_it_dmz -T 5 ./logstash_provisioning.yml --tags logstash,fail2ban,install,configuration,services -vault-password-file ./.vault`
 
-`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_logstash_ot_dmz -T 5 ./logstash_provisioning.yml --tags logstash,fail2ban,install,configuration,services`
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_logstash_ot_dmz -T 5 ./logstash_provisioning.yml --tags logstash,fail2ban,install,configuration,services -vault-password-file ./.vault`
 
 ### Sysmon + logshipping
 Sysmon monitoring and logshipping to external logstash service.
@@ -32,7 +32,7 @@ Tested on Windows 10 (64, 32bits)
 
 How to call the playbook:
 
-`ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags sysmon,logshipping,install,configuration,services`
+`ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags sysmon,logshipping,install,configuration,services -vault-password-file ./.vault`
 
 Credits:
 
@@ -49,9 +49,9 @@ Tested on Ubuntu >= 18.04 LTS
 
 How to call the playbook:
 
-`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_reverse_proxies_it_dmz_ha -T 5 ./reverse_proxy_provisioning.yml --tags haproxy,waf,fail2ban,keepalived,install,configuration,services`
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_reverse_proxies_it_dmz_ha -T 5 ./reverse_proxy_provisioning.yml --tags haproxy,waf,fail2ban,keepalived,install,configuration,services -vault-password-file ./.vault`
 
-`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_reverse_proxies_ot_dmz_ha -T 5 ./reverse_proxy_provisioning.yml --tags haproxy,waf,fail2ban,keepalived,install,configuration,services`
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_reverse_proxies_ot_dmz_ha -T 5 ./reverse_proxy_provisioning.yml --tags haproxy,waf,fail2ban,keepalived,install,configuration,services -vault-password-file ./.vault`
 
 ### 2FA
 Multifactor authentication with Google Authenticator for both console and SSH access.
@@ -60,7 +60,7 @@ Tested on Ubuntu >= 18.04 LTS
 
 How to call the playbook:
 
-`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_linux_it -T 5 ./openvpn_provisioning.yml --tags 2fa,install,configuration,services`
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_linux_it -T 5 ./openvpn_provisioning.yml --tags 2fa,install,configuration,services -vault-password-file ./.vault`
 
 
 ### OpenVPN + 2FA
@@ -81,7 +81,7 @@ Tested with Ubuntu-18.04 LTS server
 
 How to call the playbook:
 
-`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_vpn_servers -T 300 ./openvpn_provisioning.yml --tags 2fa,openvpn,install,configuration,services`
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_vpn_servers -T 300 ./openvpn_provisioning.yml --tags 2fa,openvpn,install,configuration,services -vault-password-file ./.vault`
 
 Note that the timeout parameter (`-T`) is quite high due to the time required to run some of the PKI playbooks the first time the playbooks are applied on a system..
 
