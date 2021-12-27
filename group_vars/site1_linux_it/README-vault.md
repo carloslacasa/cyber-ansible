@@ -1,6 +1,6 @@
 ## README Vault 
 
-An Ansible vault file containing sensitive variables (such as credentials) must exist in this folder. 
+An Ansible vault file containing sensitive variables must exist in this folder. 
 
 It can be generated with the command below:
 
