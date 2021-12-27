@@ -15,7 +15,7 @@ Tested on Windows 10 (64, 32bits)
 
 How to call the playbook:
 
-`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags generic,install,configuration,services -vault-password-file ./.vault`
+`ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags generic,install,configuration,services -vault-password-file ./.vault`
 
 ### Windows remote access
 #### RDP
@@ -31,7 +31,7 @@ Tested on Windows 10 (64, 32bits)
 
 How to call the playbook:
 
-`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags rdp,vnc,teamviewer,install,configuration,services -vault-password-file ./.vault`
+`ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags rdp,vnc,teamviewer,install,configuration,services -vault-password-file ./.vault`
 
 ### logstash
 Logstash server acting as an message broker from linux and windows clients towards an external (cloud) Elasticsearch and Kibana instance.
