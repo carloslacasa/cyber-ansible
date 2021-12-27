@@ -8,11 +8,19 @@ It can be generated with the command below:
 
 The following variables must be defined:
 
-vault_linux_admin_user: CHANGEME
-vault_linux_admin_password: CHANGEME
-vault_domain_admin: CHANGEME
-vault_domain_password: CHANGEME
-vault_kibana_user: CHANGEME 
-vault_kibana_passwords: CHANGEME
-elasticsearch_user: CHANGEME
-elasticsearch_password: CHANGEME
+`vault_linux_admin_user: CHANGEME`
+
+`vault_linux_admin_password: CHANGEME`
+
+`vault_domain_admin: CHANGEME`
+
+`vault_domain_password: CHANGEME`
+
+`vault_kibana_user: CHANGEME`
+
+`vault_kibana_passwords: CHANGEME`
+
+`elasticsearch_user: CHANGEME`
+
+`elasticsearch_password: CHANGEME`
+
