@@ -2,6 +2,22 @@
 
 ## Ansible playbooks related to Cybersecurity
 
+### Windows remote access
+#### RDP
+Define which machines require the RDP service. Custom firewall rules for the RDP service as well as restricted access to a defined set of users.
+
+#### VNC
+Define which machines require VNC (either in server or client mode). Install TightVNC from Chocolatey repositories and make sure it is an up-to-date version. Configure different settings (remote access through HTTP, file sharing, remote access password, control password). Define customized firewall rules for the VNC service.
+
+#### TeamViewer
+Define which machines require the TeamViewer service. Install the software from Chocolatey repositories and make sure it is and up-to-date version. Remove TeamViewer where this service is not required or not allowed.
+
+Tested on Windows 10 (64, 32bits)
+
+How to call the playbook:
+
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags rdp,vnc,teamviewer,install,configuration,services -vault-password-file ./.vault`
+
 ### logstash
 Logstash server acting as an message broker from linux and windows clients towards an external (cloud) Elasticsearch and Kibana instance.
 
