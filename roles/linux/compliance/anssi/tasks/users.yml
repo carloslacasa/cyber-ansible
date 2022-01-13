@@ -1,0 +1,87 @@
+---
+- name: OS users
+  block:
+    - name: Ensure ownership and mode on /etc/passwd
+      file:
+        path: '/etc/passwd'
+        owner: '0'
+        group: '0'
+        mode: '0644'
+
+    - name: Ensure ownership and mode on /etc/group
+      file:
+        path: '/etc/group'
+        owner: '0'
+        group: '0'
+        mode: '0644'
+
+    - name: Ensure ownership and mode on /etc/shadow
+      file:
+        path: '/etc/shadow'
+        owner: '0'
+        group: '42'
+        mode: '0640'
+
+    - name: Ensure ownership and mode on /etc/gshadow
+      file:
+        path: '/etc/gshadow'
+        owner: '0'
+        group: '42'
+        mode: '0640'
+  tags: ['configuration']
+
+- name: Prevent memory dumps
+  lineinfile: 
+    path: /etc/security/limits.conf
+    create: false
+    owner: root
+    group: root
+    mode: '0644'
+    line: '{{ line }}'
+    state: present
+    insertbefore: ^[#\s]*End of file
+  loop:
+    - '* soft core 0'
+    - '* hard core 0'
+  loop_control:
+    loop_var: line
+  tags: ['configuration']
+
+- name: Hardening usuarios
+  block:
+    - name: Permisos en carpeta base '{{ ansible_ssh_user }}'
+      file:
+        path: '/home/{{ ansible_ssh_user }}'
+        owner: '{{ ansible_ssh_user }}'
+        group: '{{ ansible_ssh_user }}'
+        mode: 0750
+
+    - name: Configure password settings
+      lineinfile: 
+        path: /etc/login.defs
+        create: false
+        owner: root
+        group: root
+        mode: '0644'
+        regexp: '{{ param.regexp }}'
+        line: '{{ param.line }}'
+        state: present
+      loop:
+        - regexp: '^#?\s?UMASK\s'
+          line: 'UMASK 077'
+        - regexp: '^#?\s?PASS_MAX_DAYS\s'
+          line: 'PASS_MAX_DAYS 90'
+        - regexp: '^#?\s?PASS_MIN_DAYS\s'
+          line: 'PASS_MIN_DAYS 7'
+        - regexp: '^#?\s?PASS_WARN_AGE\s'
+          line: 'PASS_WARN_AGE 3'
+        - regexp: '^#?\s?ENCRYPT_METHOD\s'
+          line: 'ENCRYPT_METHOD SHA512'
+        - regexp: '^#?\s?SHA_CRYPT_MIN_ROUNDS\s'
+          line: 'SHA_CRYPT_MIN_ROUNDS 10000'
+        - regexp: '^#?\s?SHA_CRYPT_MAX_ROUNDS\s'
+          line: 'SHA_CRYPT_MAX_ROUNDS 10000'
+      loop_control:
+        loop_var: param
+  tags: ['configuration']
+

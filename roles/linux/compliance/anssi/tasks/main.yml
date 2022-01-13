@@ -1,0 +1,28 @@
+---
+- name: Include variables
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_distribution }}.yml"
+  - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+  - default_distro.yml
+  tags:
+   - compliance
+   - anssi
+
+- name: ANSSI policies for software
+  include_tasks: packages.yml
+  tags:
+   - compliance
+   - anssi
+
+- name: ANSSI policies for services
+  include_tasks: services.yml
+  tags:
+   - compliance
+   - anssi
+
+- name: ANSSI configuration policies
+  include_tasks: settings.yml
+  tags:
+   - compliance
+   - anssi

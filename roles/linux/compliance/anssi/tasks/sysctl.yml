@@ -1,0 +1,137 @@
+---
+- name: Configure sysctl according to CIS, NIST, DISA standards
+  block:
+    - name: Ensure sysctl fs.protected_symlinks is set to 1
+      sysctl:
+        name: fs.protected_symlinks
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl fs.protected_hardlinks is set to 1
+      sysctl:
+        name: fs.protected_hardlinks
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl kernel.randomize_va_space is set to 2
+      sysctl:
+        name: kernel.randomize_va_space
+        value: '2'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl fs.suid_dumpable is set to 0
+      sysctl:
+        name: fs.suid_dumpable
+        value: '0'
+        state: present
+        reload: true
+    
+    - name: Ensure sysctl dev.tty.ldisc_autoload is set to 0
+      sysctl:
+        name: dev.tty.ldisc_autoload
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl fs.protected_fifos is set to 2
+      sysctl:
+        name: fs.protected_fifos
+        value: '2'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl fs.protected_regular is set to 2
+      sysctl:
+        name: fs.protected_regular
+        value: '2'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl fs.suid_dumpable is set to 0
+      sysctl:
+        name: fs.suid_dumpable
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl kernel.core_uses_pid is set to 1
+      sysctl:
+        name: kernel.core_uses_pid
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl kernel.ctrl-alt-del is set to 0
+      sysctl:
+        name: kernel.ctrl-alt-del
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl kernel.dmesg_restrict is set to 1
+      sysctl:
+        name: kernel.dmesg_restrict
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl kernel.kptr_restrict is set to 2
+      sysctl:
+        name: kernel.kptr_restrict
+        value: '2'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl kernel.modules_disabled is set to 1
+      sysctl:
+        name: kernel.modules_disabled
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl kernel.unprivileged_bpf_disabled is set to 1
+      sysctl:
+        name: kernel.unprivileged_bpf_disabled
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl net.core.bpf_jit_harden is set to 2
+      sysctl:
+        name: net.core.bpf_jit_harden
+        value: '2'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl net.ipv4.conf.all.log_martians is set to 1
+      sysctl:
+        name: net.ipv4.conf.all.log_martians
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl net.ipv4.conf.all.send_redirects is set to 0
+      sysctl:
+        name: net.ipv4.conf.all.send_redirects
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl net.ipv4.conf.default.accept_source_route is set to 0
+      sysctl:
+        name: net.ipv4.conf.default.accept_source_route
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Ensure sysctl net.ipv4.conf.default.log_martians is set to 1
+      sysctl:
+        name: net.ipv4.conf.default.log_martians
+        value: '1'
+        state: present
+        reload: true
+
+  tags: ['configuration']

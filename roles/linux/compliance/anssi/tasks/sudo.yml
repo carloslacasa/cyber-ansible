@@ -1,0 +1,18 @@
+---
+- name: Permisos en carpeta base sudoers 
+  file:
+    path: '/etc/sudoers.d' 
+    owner: root
+    group: root
+    mode: 0750
+  tags: ['configuration']
+
+- name: sudoers configuration for oscap scans
+  lineinfile:
+    path: /etc/sudoers
+    state: present
+    mode: '0440'
+    regexp: '^{{ ansible_ssh_user }} ALL='
+    line: '{{ ansible_ssh_user }} ALL=(ALL) NOPASSWD: /usr/bin/oscap'
+    validate: /usr/sbin/visudo -cf %s
+  tags: ['configuration']

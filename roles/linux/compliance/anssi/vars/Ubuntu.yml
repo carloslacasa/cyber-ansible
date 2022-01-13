@@ -1,0 +1,44 @@
+---
+packages_present:
+  - libopenscap8
+  - ssg-base
+  - ssg-debderived
+  - ssg-debian
+  - ssg-nondebian
+  - ssg-applications
+  - auditd
+  - rsyslog
+  - cron
+  - debsums
+  - apt-show-versions
+
+packages_absent:
+  - nis
+  - telnetd
+  - telnetd-ssl
+  - inetutils-telnetd
+  - ntpdate
+  - chrony
+
+services_running:
+  - auditd
+  - rsyslog
+  - cron
+  #- systemd-timesyncd # service masked
+  - sshd
+
+services_stopped:
+  - ntp
+  - apport.service
+
+scap_guides_version: '0.1.57'
+scap_guides_folder: '/usr/share/xml/scap'
+
+ssh_simmetric_ciphers: 'aes128-ctr,aes192-ctr,aes256-ctr'
+ssh_mac_ciphers: 'hmac-sha2-256,hmac-sha2-512'
+ssh_hostkey_ciphers: 'ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521,ssh-rsa,ssh-dss'
+ssh_kex_ciphers: 'ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha256'
+ssh_clientalivecountmax: 0
+ssh_clientaliveinterval: 300 
+ssh_maxauthtries: 6
+ssh_maxsessions: 2

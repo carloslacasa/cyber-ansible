@@ -1,0 +1,49 @@
+---
+- name: SSH configuration according to CIS, NIST and DISA standards
+  lineinfile: 
+    path: /etc/ssh/sshd_config 
+    create: false
+    owner: root
+    group: root
+    mode: '0644'
+    regexp: '{{ item.regexp }}'
+    line: '{{ item.line }}'
+    state: present
+    insertbefore: ^[#\s]*Match
+  loop:
+    - regexp: '(?i)^\s*PermitEmptyPasswords\s+'
+      line: 'PermitEmptyPasswords no'
+    - regexp: '(?i)^\s*PermitRootLogin\s+'
+      line: 'PermitRootLogin no'
+    - regexp: '(?i)^\s*Protocol\s+'
+      line: 'Protocol 2'
+    - regexp: '(?i)^\s*Ciphers\s+'
+      line: 'Ciphers {{ ssh_simmetric_ciphers }}'
+    - regexp: '(?i)^\s*MACs\s+'
+      line: 'MACs {{ ssh_mac_ciphers }}'
+    - regexp: '(?i)^\s*HostKeyAlgorithms\s+'
+      line: 'HostKeyAlgorithms {{ ssh_hostkey_ciphers }}'
+    - regexp: '(?i)^\s*KexAlgorithms\s+'
+      line: 'KexAlgorithms {{ ssh_kex_ciphers }}'
+    - regexp: '(?i)^\s*AllowTcpForwarding\s+'
+      line: 'AllowTcpForwarding no'
+    - regexp: '(?i)^\s*ClientAliveCountMax\s+'
+      line: 'ClientAliveCountMax {{ ssh_clientalivecountmax }}'
+    - regexp: '(?i)^\s*ClientAliveInterval\s+'
+      line: 'ClientAliveInterval {{ ssh_clientaliveinterval }}'
+    - regexp: '(?i)^\s*Compression\s+'
+      line: 'Compression no'
+    - regexp: '(?i)^\s*LogLevel\s+'
+      line: 'LogLevel VERBOSE'
+    - regexp: '(?i)^\s*MaxAuthTries\s+'
+      line: 'MaxAuthTries {{ ssh_maxauthtries }}'
+    - regexp: '(?i)^\s*MaxSessions\s+'
+      line: 'MaxSessions {{ ssh_maxsessions }}'
+    - regexp: '(?i)^\s*TCPKeepAlive\s+'
+      line: 'TCPKeepAlive no'
+    - regexp: '(?i)^\s*X11Forwarding\s+'
+      line: "X11Forwarding {{ (enable_ssh_xforwarding|default(False) == True) | ternary('yes', 'no') }}"
+    - regexp: '(?i)^\s*AllowAgentForwarding\s+'
+      line: "AllowAgentForwarding {{ (enable_ssh_xforwarding|default(False) == True) | ternary('yes', 'no') }}"
+  notify: restart_sshd 
+  tags: ['configuration']

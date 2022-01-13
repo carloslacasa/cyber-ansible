@@ -1,0 +1,8 @@
+---
+- name: Configuracion de sudoers para administradores
+  template: 
+    src: '../templates/sudoers.conf.j2' 
+    dest: /etc/sudoers.d/sudoers
+    validate: 'visudo -cf %s'
+    mode: '0440'
+  tags: ['configuration']

@@ -1,0 +1,22 @@
+---
+- name: Include variables
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_distribution }}.yml"
+  - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+  - default.yml
+  tags:
+   - compliance
+   - sox
+
+- name: SOx password complexity policies
+  include_tasks: password-complexity.yml
+  tags:
+   - compliance
+   - sox
+
+- name: SOx sudo policies
+  include_tasks: sudo.yml
+  tags:
+   - compliance
+   - sox

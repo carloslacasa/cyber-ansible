@@ -1,0 +1,21 @@
+---
+- name: Configuracion de servicio timesync systemctl
+  template:
+    src: ../templates/systemd-timesyncd.service.j2
+    dest: /lib/systemd/system/systemd-timesyncd.service
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify: reload_systemd
+  tags: ['configuration']
+
+- name: Configuracion de servidores horarios
+  template:
+    src: ../templates/timesyncd.conf.j2
+    dest: /etc/systemd/timesyncd.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify: restart_timesyncd
+  tags: ['configuration']
+

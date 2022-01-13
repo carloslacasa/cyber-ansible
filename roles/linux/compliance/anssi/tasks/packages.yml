@@ -1,0 +1,57 @@
+---
+- name: Make sure that software required by CIS, NIST, DISA standards is present
+  apt:
+    name: '{{ packages_present }}'
+    state: present
+    update_cache: yes
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Install and  systemd-timesyncd 
+  block: 
+    - name: Ensure systemd-timesyncd is installed
+      package:
+        name: systemd-timesyncd
+        state: present
+
+    - name: Gather the package facts
+      package_facts:
+        manager: auto
+
+    - name: Enable service systemd-timesyncd
+      service:
+        name: systemd-timesyncd
+        enabled: 'yes'
+        state: started
+        masked: 'no'
+      when:
+        - '"systemd-timesyncd" in ansible_facts.packages'
+  tags: ['install']
+
+- name: Install up-to-date SCAP guides
+  block:
+    - name: Make sure destination folder exists
+      file:
+        path: '{{ scap_guides_folder }}'
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Download and extract SCAP guides
+      unarchive:
+        src: 'https://github.com/ComplianceAsCode/content/releases/download/v{{ scap_guides_version }}/scap-security-guide-{{ scap_guides_version }}.zip'
+        dest: '{{ scap_guides_folder }}'
+        remote_src: yes
+  tags: ['install']
+
+- name: Make sure that software prohibited by CIS, NIST, DISA standards is absent
+  apt:
+    name: '{{ packages_absent }}'
+    state: absent
+    update_cache: yes
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+

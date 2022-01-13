@@ -1,0 +1,33 @@
+---
+- name: Grants for oscap scans
+  include_tasks: sudo.yml
+  tags:
+   - configuration
+
+- name: Logrotate policies
+  include_tasks: logrotate.yml
+  tags:
+   - configuration
+
+- name: ANSSI policies for OS users
+  include_tasks: users.yml 
+  tags:
+   - configuration
+
+- name: ANSSI policies for ssh 
+  include_tasks: ssh.yml
+  tags:
+   - configuration
+
+- name: ANSSI policies for sysctl 
+  include_tasks: sysctl.yml
+  tags:
+   - configuration
+
+- name: ANSSI policies for time synchronization 
+  include_tasks: timesync.yml
+  when: >
+    'site1_ntp_servers' not in group_names and
+    'site2_ntp_servers' not in group_names 
+  tags:
+   - configuration

@@ -1,0 +1,16 @@
+---
+- name: Roles de provisioning para workstations y servers on-premise Linux
+  hosts:
+    - site1_linux_it
+  gather_facts: true
+  become: true
+  roles:
+    #- linux/kvm
+    #- linux/common/generic
+    #- linux/fail2ban
+    #- linux/updates
+    #- linux/compliance/sox
+    - linux/compliance/anssi
+    #- linux/compliance/stig
+    #- linux/common/domain
+    #- linux/common/logshipping

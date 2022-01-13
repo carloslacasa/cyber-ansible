@@ -1,0 +1,13 @@
+---
+- name: restart_timesyncd
+  systemd:
+    state: restarted
+    name: systemd-timesyncd
+
+- name: reload_systemd
+  shell: systemctl daemon-reload
+
+- name: restart_sshd
+  systemd:
+    state: restarted
+    name: sshd

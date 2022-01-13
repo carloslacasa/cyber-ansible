@@ -1,0 +1,18 @@
+---
+- name: Include variables
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_distribution }}.yml"
+  - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+  - default_distro.yml
+  tags:
+   - compliance
+   - stig
+   - disa
+
+- name: STIG policies for custom Message Of The Day banner 
+  include_tasks: motd.yml
+  tags:
+   - compliance
+   - stig
+   - disa

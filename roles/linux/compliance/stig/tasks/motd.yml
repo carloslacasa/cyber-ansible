@@ -1,0 +1,23 @@
+---
+- name: Message Of The Day customization
+  block:
+    - name: Disable some default motd messages
+      file: 
+        path: '{{ motd_folder }}/{{ item }}'
+        state: file
+        mode: '0644'
+      loop:
+        - 91-release-upgrade
+        #- 99-esm
+        - 10-help-text
+        - 50-motd-news
+        - 92-unattended-upgrades
+
+    - name: Custom motd messages
+      copy:
+        src: '../conf/motd'
+        dest: '/etc/motd'
+        mode: '0640'
+        owner: 'root'
+        group: 'root'
+  tags: ['configuration']
