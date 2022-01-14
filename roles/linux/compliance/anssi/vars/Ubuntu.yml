@@ -42,3 +42,5 @@ ssh_clientalivecountmax: 0
 ssh_clientaliveinterval: 300 
 ssh_maxauthtries: 6
 ssh_maxsessions: 2
+
+grub2_conf_file: '/etc/default/grub'

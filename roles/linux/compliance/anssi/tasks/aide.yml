@@ -1,0 +1,41 @@
+---
+- name: Install AIDE (Advanced Intrusion Detection Environment)
+  block: 
+
+    - name: Ensure AIDE HIDS is installed
+      package:
+        name: aide
+        state: present
+
+    - name: Build and test AIDE database
+      command: 
+        cmd: /usr/sbin/aideinit
+        creates: /var/lib/aide/aide.db.new.gz
+      changed_when: True
+
+    - name: Check whether the stock AIDE Database exists
+      stat:
+        path: /var/lib/aide/aide.db.new.gz
+      register: aide_database_stat
+
+    - name: Stage AIDE Database
+      copy:
+        src: /var/lib/aide/aide.db.new.gz
+        dest: /var/lib/aide/aide.db.gz
+        backup: true
+        remote_src: true
+      when:
+        - (aide_database_stat.stat.exists is defined and aide_database_stat.stat.exists)
+
+    - name: Configure Periodic Execution of AIDE
+      cron:
+        name: run AIDE check
+        minute: 15
+        hour: 13
+        weekday: 5
+        user: root
+        job: /usr/sbin/aide --check
+
+  tags: ['install']
+
+

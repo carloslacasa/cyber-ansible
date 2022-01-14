@@ -24,6 +24,11 @@
   tags:
    - configuration
 
+- name: ANSSI policies for auditd 
+  include_tasks: auditd.yml
+  tags:
+   - configuration
+
 - name: ANSSI policies for time synchronization 
   include_tasks: timesync.yml
   when: >

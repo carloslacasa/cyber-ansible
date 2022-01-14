@@ -8,7 +8,7 @@
     - ansible_facts['os_family']|lower == "debian"
   tags: ['install']
 
-- name: Install and  systemd-timesyncd 
+- name: Install and enable systemd-timesyncd 
   block: 
     - name: Ensure systemd-timesyncd is installed
       package:
@@ -44,6 +44,11 @@
         src: 'https://github.com/ComplianceAsCode/content/releases/download/v{{ scap_guides_version }}/scap-security-guide-{{ scap_guides_version }}.zip'
         dest: '{{ scap_guides_folder }}'
         remote_src: yes
+  tags: ['install']
+
+- name: Make sure AIDE HIDS is installed
+  include_tasks: aide.yml
+  when: (aide_required|default(False) == True)
   tags: ['install']
 
 - name: Make sure that software prohibited by CIS, NIST, DISA standards is absent

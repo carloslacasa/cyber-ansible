@@ -11,3 +11,11 @@
   systemd:
     state: restarted
     name: sshd
+
+- name: restart_auditd
+  systemd:
+    state: restarted
+    name: auditd
+
+- name: update_grub2
+  command: /usr/sbin/update-grub
