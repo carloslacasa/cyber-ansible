@@ -16,3 +16,22 @@
     line: '{{ ansible_ssh_user }} ALL=(ALL) NOPASSWD: /usr/bin/oscap'
     validate: /usr/sbin/visudo -cf %s
   tags: ['configuration']
+
+- name: Ensure use_pty is enabled in /etc/sudoers
+  lineinfile:
+    path: /etc/sudoers
+    regexp: ^[\s]*Defaults.*\buse_pty\b.*$
+    line: 'Defaults    use_pty'
+    insertafter: '^[\s]*Defaults.*\bsecure_path'
+    validate: /usr/sbin/visudo -cf %s
+  tags: ['configuration']
+
+- name: Ensure logfile is enabled with the appropriate value in /etc/sudoers
+  lineinfile:
+    path: /etc/sudoers
+    regexp: ^[\s]*Defaults.*\blogfile=\b.*$
+    line: 'Defaults    logfile="{{ var_sudo_logfile }}"'
+    insertafter: '^[\s]*Defaults.*\buse_pty'
+    validate: /usr/sbin/visudo -cf %s
+  tags: ['configuration']
+

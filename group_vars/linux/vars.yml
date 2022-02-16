@@ -2,3 +2,8 @@ ansible_port: 22
 ansible_connection: ssh
 ansible_ssh_pass: '{{ vault_linux_admin_password }}'
 ansible_become_pass: '{{ vault_linux_admin_password }}'
+linux_admins: 
+  - name: ocf
+    sudo: true
+admin_ip_addresses:
+  - 192.168.1.0/24

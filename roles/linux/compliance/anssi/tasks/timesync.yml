@@ -1,7 +1,7 @@
 ---
 - name: Configuracion de servicio timesync systemctl
-  template:
-    src: ../templates/systemd-timesyncd.service.j2
+  copy:
+    src: ../conf/systemd-timesyncd.service
     dest: /lib/systemd/system/systemd-timesyncd.service
     owner: root
     group: root

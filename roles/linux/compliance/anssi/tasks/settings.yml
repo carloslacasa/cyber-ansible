@@ -1,5 +1,5 @@
 ---
-- name: Grants for oscap scans
+- name: sudo configuration
   include_tasks: sudo.yml
   tags:
    - configuration
@@ -12,7 +12,7 @@
 - name: ANSSI policies for OS users
   include_tasks: users.yml 
   tags:
-   - configuration
+  - configuration
 
 - name: ANSSI policies for ssh 
   include_tasks: ssh.yml
@@ -21,6 +21,21 @@
 
 - name: ANSSI policies for sysctl 
   include_tasks: sysctl.yml
+  tags:
+   - configuration
+
+- name: Filesystem policies
+  include_tasks: filesystems.yml
+  tags:
+   - configuration
+
+- name: Network policies
+  include_tasks: network.yml
+  tags:
+   - configuration
+
+- name: Cron policies
+  include_tasks: cron.yml
   tags:
    - configuration
 

@@ -1,0 +1,23 @@
+---
+- name: Fix permissions on files and folders related to cron daemon
+  block:
+    - name: Ensure permission 0700 on folders related to cron daemon
+      file:
+        path: '{{ item }}'
+        owner: root
+        group: root
+        mode: '0700'
+      loop:
+        - /etc/cron.d
+        - /etc/cron.daily
+        - /etc/cron.hourly
+        - /etc/cron.monthly
+        - /etc/cron.weekly
+    - name: Ensure permission 0600 on /etc/crontab
+      file:
+        path: '/etc/crontab'
+        owner: root
+        group: root
+        mode: '0600'
+  tags: ['configuration']
+

@@ -1,0 +1,13 @@
+---
+- name: Restrict uncommon network protocolos
+  lineinfile:
+    create: true
+    dest: '/etc/modprobe.d/{{ item }}.conf'
+    regexp: '{{  item }}'
+    line: 'install {{ item }} /bin/true'
+  loop:
+    - dccp
+    - rds
+    - sctp
+    - tipc
+  tags: ['configuration']

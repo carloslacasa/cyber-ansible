@@ -47,14 +47,31 @@
     loop_var: line
   tags: ['configuration']
 
-- name: Hardening usuarios
+- name: Hardening users
   block:
-    - name: Permisos en carpeta base '{{ ansible_ssh_user }}'
+    - name: Grants on base folder '{{ ansible_ssh_user }}'
       file:
         path: '/home/{{ ansible_ssh_user }}'
         owner: '{{ ansible_ssh_user }}'
         group: '{{ ansible_ssh_user }}'
         mode: 0750
+
+    - name: Ensure interactive local users are the owners of their respective initialization files
+      shell:
+        cmd: |-
+          for dir in $(awk -F':' '{ if ($3 >= 1000 && $3 != 65534) print $6}' /etc/passwd); do
+            for file in $(find $dir -maxdepth 1 -type f -name ".*"); do
+              sed -i 's/^\([\s]*umask\s*\)/#\1/g' $file
+            done
+          done
+
+    - name: Ensure interactive local users are the group-owners of their respective initialization files
+      command:
+        cmd: awk -F':' '{ if ($3 >= 1000 && $3 != 65534) system("chgrp -f " $3" "$6"/.[^\.]?*") }' /etc/passwd
+
+    - name: Verify that All World-Writable Directories Have Sticky Bits Set
+      command: 
+        cmd: find / -type d \( -path /run -o -path /tmp -o -path /proc \) -prune -o -perm 777 -exec chmod +t '{}' \; 
 
     - name: Configure password settings
       lineinfile: 
@@ -70,11 +87,11 @@
         - regexp: '^#?\s?UMASK\s'
           line: 'UMASK 077'
         - regexp: '^#?\s?PASS_MAX_DAYS\s'
-          line: 'PASS_MAX_DAYS 90'
+          line: 'PASS_MAX_DAYS {{ pwd_max_days }}'
         - regexp: '^#?\s?PASS_MIN_DAYS\s'
-          line: 'PASS_MIN_DAYS 7'
+          line: 'PASS_MIN_DAYS {{ pwd_min_days }}'
         - regexp: '^#?\s?PASS_WARN_AGE\s'
-          line: 'PASS_WARN_AGE 3'
+          line: 'PASS_WARN_AGE {{ pwd_warn_age }}'
         - regexp: '^#?\s?ENCRYPT_METHOD\s'
           line: 'ENCRYPT_METHOD SHA512'
         - regexp: '^#?\s?SHA_CRYPT_MIN_ROUNDS\s'
@@ -85,3 +102,101 @@
         loop_var: param
   tags: ['configuration']
 
+- name: Password settings
+  block:
+    - name: Password complexity settings
+      template:
+        src: '../templates/pwquality.conf.j2'
+        dest: '/etc/security/pwquality.conf'
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+
+    - name: Limit password reuse
+      lineinfile:
+        path: '/etc/pam.d/common-password'
+        state: present
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+        regexp: '^password\s+requisite\s+pam_pwhistory.so\s+'
+        line: 'password     requisite                       pam_pwhistory.so remember={{ pwd_remember }} use_authok'
+
+  tags: ['configuration']
+
+- name: Lock user after a certain number of failed login attempts
+  block:
+    - name: Configuracion de pam tally2 en common-auth
+      lineinfile:
+        path: '/etc/pam.d/common-auth'
+        state: present
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+        regexp: '^auth\s+required\s+pam_tally2.so\s+'
+        line: 'auth     required                       pam_tally2.so onerr=fail silent audit deny={{ max_failed_login_attempts }}'
+
+    - name: Configuracion de pam tally2 en common-account
+      lineinfile:
+        path: '/etc/pam.d/common-account'
+        state: present
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+        regexp: '^auth\s+required\s+pam_tally2.so\s?'
+        line: 'auth     required                       pam_tally2.so'
+
+  tags: ['configuration']
+
+- name: Disable users after expiration time
+  lineinfile:
+    path: /etc/default/useradd
+    create: false
+    owner: root
+    group: root
+    mode: '0644'
+    regexp: '^(#\s+INACTIVE|INACTIVE)=.*'
+    line: 'INACTIVE={{ user_inactivity }}'
+  tags: ['configuration']
+
+- name: Enforce usage of pam_wheel for su authentication
+  replace:
+    path: /etc/pam.d/su
+    regexp: '^#\s+auth\s*required\s*pam_wheel.so\s?.*$'
+    replace: 'auth       required   pam_wheel.so	use_uid'
+  tags: ['configuration']
+
+- name: Configure umask for interactive shells
+  lineinfile: 
+    path: '{{ item }}'
+    create: true
+    owner: root
+    group: root
+    mode: '0644'
+    regexp: '^umask\s+'
+    line:  'umask {{ default_umask }}'
+  loop:
+    - /etc/profile
+    - /etc/bash.bashrc
+    - /etc/bashrc
+    - /etc/csh.cshrc
+  tags: ['configuration']
+
+- name: Interactive sessions and history limits
+  lineinfile:
+    path: '/etc/profile.d/tmout.sh'
+    create: false
+    state: present
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    regexp: '^{{ item.key }}'
+    line: '{{ item.value }}'
+  loop:
+      - key: HISTFILESIZE
+        value: 'HISTFILESIZE={{ histfilesize }}'
+      - key: HISTSIZE
+        value: 'HISTSIZE={{ histsize }}'
+      - key: TMOUT
+        value: 'TMOUT={{ session_timeout }}'
+  tags: ['configuration']

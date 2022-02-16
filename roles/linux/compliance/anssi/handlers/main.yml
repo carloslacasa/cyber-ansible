@@ -19,3 +19,8 @@
 
 - name: update_grub2
   command: /usr/sbin/update-grub
+
+- name: initialize_AIDE_database
+  command:
+    cmd: /usr/sbin/aideinit
+    creates: /var/lib/aide/aide.db.new.gz

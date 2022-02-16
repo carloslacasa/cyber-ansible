@@ -1,5 +1,5 @@
 ---
-- name: Configure sysctl according to CIS, NIST, DISA standards
+- name: Kernel parameters affecting memory and filesystems
   block:
     - name: Ensure sysctl fs.protected_symlinks is set to 1
       sysctl:
@@ -85,12 +85,12 @@
         state: present
         reload: true
 
-    - name: Ensure sysctl kernel.modules_disabled is set to 1
-      sysctl:
-        name: kernel.modules_disabled
-        value: '1'
-        state: present
-        reload: true
+    #- name: 'Ensure sysctl kernel.modules_disabled is set to 1 (** EXCEPTION ** Kernel modules are required for normal OS operation)'
+    #  sysctl:
+    #    name: kernel.modules_disabled
+    #    value: 1
+    #    state: present
+    #    reload: true
 
     - name: Ensure sysctl kernel.unprivileged_bpf_disabled is set to 1
       sysctl:
@@ -99,6 +99,10 @@
         state: present
         reload: true
 
+  tags: ['configuration']
+
+- name: Kernel parameter affecting IPv4 networking
+  block:
     - name: Ensure sysctl net.core.bpf_jit_harden is set to 2
       sysctl:
         name: net.core.bpf_jit_harden
@@ -131,6 +135,143 @@
       sysctl:
         name: net.ipv4.conf.default.log_martians
         value: '1'
+        state: present
+        reload: true
+
+    - name: Disable Accepting ICMP Redirects for All IPv4 Interfaces
+      sysctl:
+        name: net.ipv4.conf.all.accept_redirects
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces
+      sysctl:
+        name: net.ipv4.conf.all.accept_source_route
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces
+      sysctl:
+        name: net.ipv4.conf.all.rp_filter
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces
+      sysctl:
+        name: net.ipv4.conf.all.secure_redirects
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces
+      sysctl:
+        name: net.ipv4.conf.default.accept_redirects
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default
+      sysctl:
+        name: net.ipv4.conf.default.rp_filter
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Configure Kernel Parameter for Accepting Secure Redirects By Default
+      sysctl:
+        name: net.ipv4.conf.default.secure_redirects
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Enable Kernel Parameter to Ignore ICMP Broadcast Echo Requests on IPv4 Interfaces
+      sysctl:
+        name: net.ipv4.icmp_echo_ignore_broadcasts
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces
+      sysctl:
+        name: net.ipv4.icmp_ignore_bogus_error_responses
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces
+      sysctl:
+        name: net.ipv4.tcp_syncookies
+        value: '1'
+        state: present
+        reload: true
+
+    - name: Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces by Default
+      sysctl:
+        name: net.ipv4.conf.default.send_redirects
+        value: '0'
+        state: present
+        reload: true
+
+    - name: 'Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces (not applicable to routers or switches)'
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: "{{ (ipforwarding_enabled|default(False) == False)  | ternary('0', '1') }}"
+        state: present
+        reload: true
+
+  tags: ['configuration']
+
+- name: Kernel parameter affecting IPv6 networking
+  block:
+    - name: Disable Accepting Router Advertisements on All IPv6 Interfaces
+      sysctl:
+        name: net.ipv6.conf.all.accept_ra
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Disable Accepting ICMP Redirects for All IPv6 Interfaces
+      sysctl:
+        name: net.ipv6.conf.all.accept_redirects
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces
+      sysctl:
+        name: net.ipv6.conf.all.accept_source_route
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Disable Kernel Parameter for IPv6 Forwarding
+      sysctl:
+        name: net.ipv6.conf.all.forwarding
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Disable Accepting Router Advertisements on all IPv6 Interfaces by Default
+      sysctl:
+        name: net.ipv6.conf.default.accept_ra
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces
+      sysctl:
+        name: net.ipv6.conf.default.accept_redirects
+        value: '0'
+        state: present
+        reload: true
+
+    - name: Disable Kernel Parameter for Accepting Source-Routed Packets on IPv6 Interfaces by Default
+      sysctl:
+        name: net.ipv6.conf.default.accept_source_route
+        value: '0'
         state: present
         reload: true
 

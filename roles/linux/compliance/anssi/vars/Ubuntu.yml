@@ -6,6 +6,10 @@ packages_present:
   - ssg-debian
   - ssg-nondebian
   - ssg-applications
+  - libpam-runtime
+  - libpam-cracklib
+  - libpam-pwquality
+  - libpwquality-tools
   - auditd
   - rsyslog
   - cron
@@ -14,6 +18,8 @@ packages_present:
 
 packages_absent:
   - nis
+  - avahi-daemon
+  - telnet
   - telnetd
   - telnetd-ssl
   - inetutils-telnetd
@@ -24,14 +30,16 @@ services_running:
   - auditd
   - rsyslog
   - cron
+  - ufw
   #- systemd-timesyncd # service masked
   - sshd
 
 services_stopped:
   - ntp
+  - cups
   - apport.service
 
-scap_guides_version: '0.1.57'
+scap_guides_version: '0.1.60'
 scap_guides_folder: '/usr/share/xml/scap'
 
 ssh_simmetric_ciphers: 'aes128-ctr,aes192-ctr,aes256-ctr'
@@ -42,5 +50,29 @@ ssh_clientalivecountmax: 0
 ssh_clientaliveinterval: 300 
 ssh_maxauthtries: 6
 ssh_maxsessions: 2
+ssh_loglevel: 'INFO'
+
+var_sudo_logfile: '/var/log/sudo.log'
 
 grub2_conf_file: '/etc/default/grub'
+
+minlen: 10
+lcredit: -1
+ucredit: -1
+dcredit: -1
+ocredit: -1
+difok: 5
+retry: 3
+minclass: 4
+pwd_remember: 5
+pwd_max_days: 60
+pwd_min_days: 1
+pwd_warn_age: 7
+max_failed_login_attempts: 6
+user_inactivity: 30
+default_umask: '027'
+
+file_environment: '/etc/environment'
+histfilesize: 30
+histsize: 30
+session_timeout: 600

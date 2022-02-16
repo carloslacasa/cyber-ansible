@@ -5,7 +5,7 @@
     create: false
     owner: root
     group: root
-    mode: '0644'
+    mode: '0600'
     regexp: '{{ item.regexp }}'
     line: '{{ item.line }}'
     state: present
@@ -34,7 +34,7 @@
     - regexp: '(?i)^\s*Compression\s+'
       line: 'Compression no'
     - regexp: '(?i)^\s*LogLevel\s+'
-      line: 'LogLevel VERBOSE'
+      line: 'LogLevel INFO'
     - regexp: '(?i)^\s*MaxAuthTries\s+'
       line: 'MaxAuthTries {{ ssh_maxauthtries }}'
     - regexp: '(?i)^\s*MaxSessions\s+'

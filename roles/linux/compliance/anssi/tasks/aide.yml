@@ -6,12 +6,7 @@
       package:
         name: aide
         state: present
-
-    - name: Build and test AIDE database
-      command: 
-        cmd: /usr/sbin/aideinit
-        creates: /var/lib/aide/aide.db.new.gz
-      changed_when: True
+      notify: initialize_AIDE_database
 
     - name: Check whether the stock AIDE Database exists
       stat:
@@ -27,6 +22,17 @@
       when:
         - (aide_database_stat.stat.exists is defined and aide_database_stat.stat.exists)
 
+    - name: Generate aide configuration file
+      copy:
+        src: '../conf/aide.conf.debian'
+        dest: '/etc/aide/aide.conf'
+        owner: root
+        group: root
+        mode: '0644'
+      when:
+        - ansible_facts['os_family']|lower == "debian"
+      notify: restart_auditd
+
     - name: Configure Periodic Execution of AIDE
       cron:
         name: run AIDE check
@@ -34,7 +40,7 @@
         hour: 13
         weekday: 5
         user: root
-        job: /usr/sbin/aide --check
+        job: /usr/bin/aide --config /etc/aide/aide.conf --check
 
   tags: ['install']
 

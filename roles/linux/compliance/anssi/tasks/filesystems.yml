@@ -1,0 +1,75 @@
+---
+- name: Restrict dynamic mounting or unmounting of filesystems
+  lineinfile:
+    create: true
+    dest: '/etc/modprobe.d/{{ item }}.conf'
+    regexp: '{{  item }}'
+    line: 'install {{ item }} /bin/true'
+  loop:
+    - cramfs
+    - freevxfs
+    - hfs
+    - hfsplus
+    - jffs2
+    - udf
+  tags: ['configuration']
+
+- name: Disable USB storage drivers
+  lineinfile:
+    create: true
+    dest: '/etc/modprobe.d/usb-storage.conf'
+    regexp: 'usb-storage'
+    line: 'install usb-storage /bin/true'
+  when: (usbstorage_disabled|default(False) == True)
+  tags: ['configuration']
+
+- name: /dev/shm must be mounted with noexec option set
+  block:
+    - name: Check information associated to mountpoint
+      command: findmnt  '/dev/shm'
+      register: device_name
+      failed_when: device_name.rc > 1
+      changed_when: false      
+
+    - name: Create mount_info dictionary variable
+      set_fact:
+        mount_info: '{{ mount_info|default({})|combine({item.0: item.1}) }}'
+      with_together:
+        - '{{ device_name.stdout_lines[0].split() | list | lower }}'
+        - '{{ device_name.stdout_lines[1].split() | list }}'
+      when:
+        - device_name.stdout is defined and device_name.stdout_lines is defined
+        - (device_name.stdout | length > 0)
+
+    - name: If /dev/shm not mounted, craft mount_info manually
+      set_fact:
+        mount_info: '{{ mount_info|default({})|combine({item.0: item.1}) }}'
+      with_together:
+        - - target
+          - source
+          - fstype
+          - options
+        - - /dev/shm
+          - tmpfs
+          - tmpfs
+          - defaults
+      when:
+        - ("" | length == 0)
+        - (device_name.stdout | length == 0)
+
+    - name: Make sure noexec option is part of the to /dev/shm options
+      set_fact:
+        mount_info: '{{ mount_info | combine( {''options'':''''~mount_info.options~'',noexec'' }) }}'
+      when:
+        - mount_info is defined and "noexec" not in mount_info.options
+
+    - name: Ensure /dev/shm is mounted with noexec option
+      mount:
+        path: /dev/shm
+        src: '{{ mount_info.source }}'
+        opts: '{{ mount_info.options }}'
+        state: mounted
+        fstype: '{{ mount_info.fstype }}'
+      when:
+        - (device_name.stdout is defined and (device_name.stdout | length > 0)) or ("" | length == 0)
+  tags: ['configuration']
