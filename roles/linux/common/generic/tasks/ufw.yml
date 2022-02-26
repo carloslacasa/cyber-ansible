@@ -1,0 +1,33 @@
+---
+- name: Habilitar UFW
+  ufw:
+    state: enabled
+  tags: ['configuration']
+
+- name: Politicas por defecto (restriccion de conexiones entrantes)
+  ufw:
+    direction: '{{ item.direction }}'
+    policy: '{{ item.policy }}'
+  with_items:
+   - direction: 'incoming'
+     policy: 'deny'
+   - direction: 'outgoing'
+     policy: 'allow'
+  tags: ['configuration']
+
+- name: Incoming SSH
+  ufw:
+    direction: in
+    proto: tcp
+    from_port: '1024:65535'
+    to_port: '22'
+    from_ip: '{{ item }}'
+    rule: allow
+  with_items: '{{ admin_ip_addresses }}'
+  tags: ['configuration']
+
+- name: Asegurar que el servicio ufw esta arrancado
+  systemd:
+    name: ufw
+    state: started
+  tags: ['services']

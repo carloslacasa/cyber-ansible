@@ -1,0 +1,21 @@
+---
+- name: restart_timesyncd
+  systemd: 
+    state: restarted
+    name: systemd-timesyncd
+
+- name: restart_syslog
+  systemd: 
+    state: restarted
+    name: syslog
+
+- name: reconfigure_timedate
+  command: timedatectl set-timezone '{{ timezone }}'
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+    - ansible_facts['distribution_version']|lower >= "18.04"
+
+- name: restart_fail2ban
+  systemd: 
+    state: restarted
+    name: fail2ban

@@ -1,0 +1,46 @@
+---
+- name: Include variables
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_distribution }}.yml"
+  - "{{ ansible_distribution }}-{{ ansible_distribution_version }}.yml"
+  - default.yml
+  tags: ['generic']
+
+- name: Configuracion de variables de entorno
+  include_tasks: environment.yml
+  when: >
+    'azure_linux' not in group_names and
+    'aws_linux' not in group_names
+  tags: ['generic']
+
+- name: Configuracion de zona horaria
+  include_tasks: timezone.yml
+  when: >
+    'azure_linux' not in group_names and
+    'aws_linux' not in group_names
+  tags: ['generic']
+
+- name: Configuracion de repositorios Ubuntu Microsoft Azure
+  include_tasks: microsoft_repositories.yml
+  when: '"azure_ubuntu" in group_names'
+  tags: ['generic']
+
+- name: Instalacion de software
+  include_tasks: packages.yml
+  tags: ['generic']
+
+- name: Configuracion de firewall
+  include_tasks: ufw.yml
+  when: >
+    'azure_linux' not in group_names and
+    'aws_linux' not in group_names
+  tags: ['generic']
+
+- name: Configuracion de apparmor
+  include_tasks: apparmor.yml
+  tags: ['generic']
+
+#- name: Configuracion avahi-daemon (mDNS)
+#  include_tasks: avahi.yml
+#  tags: ['avahi']

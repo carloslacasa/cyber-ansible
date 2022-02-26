@@ -8,6 +8,11 @@
 -a always,exit -F arch=b32 -S clock_settime -F a0=0x0 -F key=time-change
 -w /etc/localtime -p wa -k time-change
 
+## Record information on kernel module loading and unloading
+-a always,exit -F arch=b32 -S delete_module -F key=modules
+-a always,exit -F arch=b32 -S init_module -F key=modules
+-a always,exit -F arch=b32 -S finit_module -F key=modules
+
 ## Things that affect identity
 -w /etc/group -p wa -k identity
 -w /etc/passwd -p wa -k identity
@@ -27,8 +32,8 @@
 -a always,exit -F dir=/etc/selinux/ -F perm=wa -F key=MAC-policy
 
 ## Logon (unsuccessful and successful) and logout (successful)
+-w /var/log/faillog -p wa -k logins
 -w /var/log/tallylog -p wa -k logins
--w /var/run/faillock/ -p wa -k logins
 -w /var/log/lastlog -p wa -k logins
 
 ## Process and session initiation (unsuccessful and successful)
@@ -66,6 +71,9 @@
 -a always,exit -F path=/usr/bin/chsh -F auid>=1000 -F auid!=unset -F key=privileged
 -a always,exit -F path=/usr/bin/crontab -F auid>=1000 -F auid!=unset -F key=privileged
 -a always,exit -F path=/usr/bin/gpasswd -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/usr/bin/chcon -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
 -w /sbin/insmod -p x -k modules
 -w /sbin/modprobe -p x -k modules
 -w /sbin/rmmod -p x -k modules

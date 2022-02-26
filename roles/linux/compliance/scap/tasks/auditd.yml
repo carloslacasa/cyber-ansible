@@ -1,0 +1,92 @@
+---
+- name: Generate auditd configuration file for 32bits processes
+  copy:
+    src: '../conf/auditd-x86.rules'
+    dest: '/etc/audit/rules.d/cis-x86.rules'
+    owner: root
+    group: root
+    mode: '0640'
+  when: > 
+     ansible_architecture == 'x86' or
+     ansible_architecture == 'x86_64'
+  notify: restart_auditd 
+  tags: ['configuration']
+
+- name: Generate auditd configuration file for 64bits processes
+  copy:
+    src: '../conf/auditd-x86-64.rules'
+    dest: '/etc/audit/rules.d/cis-x86-64.rules'
+    owner: root
+    group: root
+    mode: '0640'
+  when: ansible_architecture == 'x86_64' 
+  notify: restart_auditd 
+  tags: ['configuration']
+
+- name: Auditd behaviour on low disk space
+  lineinfile:
+    path: '/etc/audit/auditd.conf'
+    state: present
+    regexp: '^space_left_action'
+    line: 'space_left_action = SYSLOG'
+  tags: ['configuration']
+
+- name: Configure periodic audits
+  block:
+    - name: Audit summary
+      cron:
+        name: Audit summary
+        minute: '00'
+        hour: '10'
+        day: '5'
+        user: root
+        job: /usr/sbin/aureport --summary -i -ts this-month -te now | mail -s "Audit summary" {{ vault_linux_admin_user }}
+
+    - name: Audit authentication events
+      cron:
+        name: Audit authentication events
+        minute: '05'
+        hour: '10'
+        day: '5'
+        user: root
+        job: /usr/sbin/aureport -au -i -ts this-month -te now | mail -s "Audit authentication events" {{ vault_linux_admin_user }}
+
+    - name: Audit account modifications events
+      cron:
+        name: Audit account modifications events
+        minute: '15'
+        hour: '10'
+        day: '5'
+        user: root
+        job: /usr/sbin/aureport -m -i -ts this-month -te now | mail -s "Audit account modification events" {{ vault_linux_admin_user }} 
+
+    - name: Audit anomalies events
+      cron:
+        name: Audit anomalies events
+        minute: '25'
+        hour: '10'
+        day: '5'
+        user: root
+        job: /usr/sbin/aureport -n -i -ts this-month -te now | mail -s "Audit anomalies events" {{ vault_linux_admin_user }}
+  tags: ['configuration']
+
+- name: GRUB2 configuration
+  block:
+    - name: Make sure the system is GRUB2 compatible
+      stat:
+        path: '{{ grub2_conf_file }}'
+      register: grub2_compatible
+
+    - name: Set boot parameters for audit in GRUB2 configuration
+      lineinfile:
+        path: '{{ grub2_conf_file }}'
+        state: present
+        owner: root
+        group: root
+        mode: "u=rw,g=r,o=r"
+        regexp: '^GRUB_CMDLINE_LINUX='
+        line: 'GRUB_CMDLINE_LINUX="audit_backlog_limit=8192"'
+      when: grub2_compatible.stat.exists == true
+      notify: update_grub2
+  tags: ['configuration']
+

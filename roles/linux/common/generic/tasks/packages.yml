@@ -1,0 +1,32 @@
+---
+- name: Install generic packages
+  apt:
+    name: '{{ item.name }}'
+    state: present
+    update_cache: yes
+  with_items:
+      - name: software-properties-common
+      - name: unattended-upgrades
+      - name: update-notifier-common
+      - name: apparmor
+      - name: apparmor-profiles
+      - name: apparmor-utils
+      - name: python3
+      - name: libpam-cracklib
+      - name: ufw
+      - name: mailutils
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']
+
+- name: Uninstall generic packages
+  apt:
+    name: '{{ item.name }}'
+    state: absent
+    update_cache: yes
+  with_items:
+      - name: avahi-daemon
+      - name: python2
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['install']

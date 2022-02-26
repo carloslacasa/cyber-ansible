@@ -1,0 +1,9 @@
+---
+- name: Configuracion de zona horaria a CET
+  timezone:
+    name: Europe/Madrid
+  notify: 
+    - restart_timesyncd
+    - restart_syslog
+    - restart_fail2ban
+  tags: ['configuration']

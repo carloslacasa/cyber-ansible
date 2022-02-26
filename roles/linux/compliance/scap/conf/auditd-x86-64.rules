@@ -1,0 +1,59 @@
+-D
+-b 8192
+--backlog_wait_time 0
+-f 1
+
+## Things that could affect time
+-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-change
+-a always,exit -F arch=b64 -S clock_settime -F a0=0x0 -F key=time-change
+
+## Record information on kernel module loading and unloading
+-a always,exit -F arch=b64 -S delete_module -F key=modules
+-a always,exit -F arch=b64 -S init_module -F key=modules
+-a always,exit -F arch=b64 -S finit_module -F key=modules
+
+## Things that affect identity
+
+## Things that could affect system locale
+-a always,exit -F arch=b64 -S sethostname,setdomainname -F key=system-locale
+
+## Things that could affect MAC policy
+
+## Logon (unsuccessful and successful) and logout (successful)
+
+## Process and session initiation (unsuccessful and successful)
+
+## Discretionary access control permission modification (unsuccessful
+## and successful use of chown/chmod)
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod
+-a always,exit -F arch=b64 -S chown,fchown,lchown,fchownat -F auid>=1000 -F auid!=unset -F key=perm_mod
+-a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid>=1000 -F auid!=unset -F key=perm_mod
+
+##- Unauthorized access attempts to files (unsuccessful) 
+-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open,truncate,ftruncate,creat,openat,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=access
+
+## Export to media (successful)
+## You have to mount media before using it. You must disable all automounting
+## so that its done manually in order to get the correct user requesting the
+## export
+-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=unset -F key=export
+
+## Files and programs deleted by the user (successful and unsuccessful)
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F auid>=1000 -F auid!=unset -F key=delete
+
+## Modifications on sudoers files
+
+## Use of privileged commands
+
+## Events that modify time
+-a always,exit -F arch=b64 -S clock_settime -F a0=0x0 -F key=time-changes
+-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=time-changes
+
+## Events with privileged executables
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid
+
+## Make the configuration immutable - reboot is required to change audit rules
+-e 2
+

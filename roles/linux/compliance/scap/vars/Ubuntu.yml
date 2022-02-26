@@ -56,7 +56,7 @@ var_sudo_logfile: '/var/log/sudo.log'
 
 grub2_conf_file: '/etc/default/grub'
 
-minlen: 10
+minlen: 14
 lcredit: -1
 ucredit: -1
 dcredit: -1
@@ -65,10 +65,11 @@ difok: 5
 retry: 3
 minclass: 4
 pwd_remember: 5
-pwd_max_days: 60
+pwd_max_days: 99999
 pwd_min_days: 1
 pwd_warn_age: 7
-max_failed_login_attempts: 6
+max_failed_login_attempts: 10 
+unlock_timeout: 300 
 user_inactivity: 30
 default_umask: '027'
 

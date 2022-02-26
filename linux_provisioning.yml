@@ -6,11 +6,9 @@
   become: true
   roles:
     #- linux/kvm
-    #- linux/common/generic
-    #- linux/fail2ban
-    #- linux/updates
-    - linux/compliance/sox
-    - linux/compliance/anssi
-    #- linux/compliance/stig
+    - linux/common/generic
+    - linux/fail2ban
+    - linux/updates
+    - linux/compliance/scap
     #- linux/common/domain
     #- linux/common/logshipping

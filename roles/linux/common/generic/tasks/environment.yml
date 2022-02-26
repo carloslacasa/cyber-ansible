@@ -1,0 +1,105 @@
+---
+- name: Modificacion de hostname a partir de nombre de inventario
+  hostname:
+    name: '{{ inventory_hostname }}'
+  tags: ['configuration']
+
+- name: Modificacion de hosts a partir de nombre de inventario
+  lineinfile:
+    path: '/etc/hosts'
+    state: present
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    regexp: '^127.0.1.1\s+[a-z].*$'
+    line: '127.0.1.1 {{ inventory_hostname }}'
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['configuration']
+
+- name: Variables de entorno generales
+  lineinfile:
+    path: '{{ file_environment }}'
+    state: present
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    regexp: '^{{ item.key }}'
+    line: '{{ item.value }}'
+  with_items: 
+      - key: HISTFILESIZE
+        value: 'HISTFILESIZE=30'
+      - key: HISTSIZE
+        value: 'HISTSIZE=30'
+      - key: TMOUT
+        value: 'TMOUT=600'
+      #- key: http_proxy
+      #  value: 'http_proxy=http://{{ proxyserver }}:3128'
+      #- key: https_proxy
+      #  value: 'https_proxy=http://{{ proxyserver }}:3128'
+      #- key: ftp_proxy
+      #  value: 'ftp_proxy=ftp://{{ proxyserver }}:3128'
+      #- key: no_proxy
+      #  value: 'no_proxy={{ no_proxy }}'
+  tags: ['configuration']
+
+#- name: Configuracion de proxy para apt
+#  block:
+#    - name: Configure '{{ file_apt_conf }}'
+#      copy:
+#        dest: '{{ file_apt_conf }}'
+#        owner: root
+#        group: root
+#        mode: "u=rw,g=r,o=r"
+#        content: |
+#          Acquire {
+#            HTTP::proxy "http://{{ proxyserver }}:3128";
+#            HTTPS::proxy "http://{{ proxyserver }}:3128";
+#          }
+#
+#    - name: Configure '/etc/apt/apt.conf'
+#      copy:
+#        dest: '/etc/apt/apt.conf'
+#        owner: root
+#        group: root
+#        mode: "u=rw,g=r,o=r"
+#        content: ""
+#
+#  when:
+#    - ansible_facts['os_family']|lower == "debian"
+#  tags: ['configuration']
+
+- name: Configuracion de alias
+  copy:
+    dest: '{{ item.home }}/.bash_aliases'
+    owner: '{{ item.name }}'
+    group: '{{ item.name }}'
+    mode: "u=rw,g=r,o=r"
+    content: |
+        alias d='ls -ltrh'
+        alias ll='ls -lgh'
+        alias df='df -h'
+        alias free='free -h'
+        alias h='history'
+        alias t='tail'
+        alias up='uptime'
+  with_items: 
+     - name: root
+       home: '/root'
+     - name: '{{ ansible_ssh_user }}'
+       home: '/home/{{ ansible_ssh_user }}'
+  when:
+    - ansible_facts['os_family']|lower == "debian"
+  tags: ['configuration']
+
+#- name: Configuracion de timezone
+#  copy:
+#    dest: '{{ file_timezone }}'
+#    owner: root
+#    group: root
+#    mode: "u=rw,g=r,o=r"
+#    content: |
+#       {{ timezone }}
+#  notify: reconfigure_timedate
+#  tags: ['configuration']
+

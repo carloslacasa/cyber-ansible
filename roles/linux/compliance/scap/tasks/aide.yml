@@ -36,11 +36,11 @@
     - name: Configure Periodic Execution of AIDE
       cron:
         name: run AIDE check
-        minute: 15
-        hour: 13
-        weekday: 5
-        user: root
-        job: /usr/bin/aide --config /etc/aide/aide.conf --check
+        minute: '15'
+        hour: '13'
+        weekday: '5'
+        user: 'root'
+        job: /usr/bin/aide --config /etc/aide/aide.conf --check | mail -s "AIDE report" {{ vault_linux_admin_user }}
 
   tags: ['install']
 

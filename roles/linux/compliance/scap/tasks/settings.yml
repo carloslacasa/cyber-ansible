@@ -9,17 +9,17 @@
   tags:
    - configuration
 
-- name: ANSSI policies for OS users
+- name: Hardening policies for OS users
   include_tasks: users.yml 
   tags:
   - configuration
 
-- name: ANSSI policies for ssh 
+- name: Hardening policies for ssh 
   include_tasks: ssh.yml
   tags:
    - configuration
 
-- name: ANSSI policies for sysctl 
+- name: Hardening policies for sysctl 
   include_tasks: sysctl.yml
   tags:
    - configuration
@@ -39,12 +39,12 @@
   tags:
    - configuration
 
-- name: ANSSI policies for auditd 
+- name: Hardening policies for auditd 
   include_tasks: auditd.yml
   tags:
    - configuration
 
-- name: ANSSI policies for time synchronization 
+- name: Hardening policies for time synchronization 
   include_tasks: timesync.yml
   when: >
     'site1_ntp_servers' not in group_names and

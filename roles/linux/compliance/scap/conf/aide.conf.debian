@@ -184,9 +184,24 @@ SerMemberDELog = Full+ANF
 LinkedLog = Log-n
 
 !/var/log/aide/aide.log
+!/var/backups/.*
+!/var/cache/.*
+!/var/lib/.*
+!/var/log/audit/.*
+!/var/log/journal/.*
+!/var/mail/.*
+!/var/spool/.*
+!/var/tmp/.*
+!/var/osquery/.*
+!/var/crash/.*
+!/var/snap/.*
+!/var/log/.*
+#/var/log/.* Log
 /var VarDir
 !/etc/mtab
-!/home/.*/.cache/.*
-!/home/.*/.mozilla/.*
-!/home/.*/.ansible/.*
+!/home/.*/.*
+!/opt/.*/.*
 !/run/.*
+!/proc/.*
+!/sys/.*
+!/dev/.*

@@ -8,7 +8,7 @@
     - name: waf
       path: /etc/modsecurity/owasp-crs
     - name: openvpn
-      path: /etc/openvpn/server
+      path: /etc/openvpn/server/server.conf
   register: fail2ban_system_list
   tags: ['configuration']
 

@@ -7,7 +7,7 @@
   - default_distro.yml
   tags:
    - compliance
-   - anssi
+   - scap
 
 - name: Include particular variables for the inventory group
   include_vars: '{{ item }}'
@@ -16,7 +16,7 @@
   - default_group.yml
   tags:
    - compliance
-   - anssi
+   - scap
 
 - name: Include variables particulares para el host
   include_vars: '{{ item }}'
@@ -25,22 +25,22 @@
     - default_host.yml
   tags:
    - compliance
-   - anssi
+   - scap
 
-- name: ANSSI policies for software
+- name: Hardening policies for software
   include_tasks: packages.yml
   tags:
    - compliance
-   - anssi
+   - scap
 
-- name: ANSSI policies for services
+- name: Hardening policies for services
   include_tasks: services.yml
   tags:
    - compliance
-   - anssi
+   - scap
 
-- name: ANSSI configuration policies
+- name: Hardening configuration policies
   include_tasks: settings.yml
   tags:
    - compliance
-   - anssi
+   - scap

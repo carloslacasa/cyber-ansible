@@ -1,0 +1,23 @@
+---
+- name: Parametrizacion de avahi-daemon para evitar respawn
+  ini_file:
+    path: /etc/avahi/avahi-daemon.conf
+    section: server
+    option: '{{ item.option }}'
+    value: '{{ item.value }}'
+    backup: no
+  loop:
+    - option: 'use-ipv4'
+      value: 'no'
+    - option: 'use-ipv6'
+      value: 'no'
+  tags: ['services']
+
+- name: Asegurar que avahi-daemon esta parado
+  systemd:
+    name: '{{ item }}'
+    state: stopped
+  loop:
+    - 'avahi-daemon.socket'
+    - 'avahi-daemon.service'
+  tags: ['services']

@@ -1,0 +1,23 @@
+---
+- block:
+  - name: Evaluate Ubuntu codename
+    shell: lsb_release -cs
+    no_log: true
+    register: codename
+
+  - name: Evaluate Ubuntu release
+    shell: lsb_release -rs
+    no_log: true
+    register: release
+
+  - name: Add Microsoft apt-key
+    apt_key:
+      url: "{{ microsoft_repo_key }}"
+      state: present
+
+  - name: Add Microsoft APT repository
+    apt_repository:
+      repo: 'deb https://packages.microsoft.com/ubuntu/{{ release.stdout }}/prod {{ codename.stdout }} main'
+      state: present
+      filename: microsoft
+  tags: ['install']

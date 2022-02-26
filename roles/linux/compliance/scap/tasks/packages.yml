@@ -31,6 +31,11 @@
 
 - name: Install up-to-date SCAP guides
   block:
+    - name: Evaluate Ubuntu codename
+      shell: lsb_release -cs
+      no_log: true
+      register: codename
+
     - name: Make sure destination folder exists
       file:
         path: '{{ scap_guides_folder }}'
@@ -44,6 +49,12 @@
         src: 'https://github.com/ComplianceAsCode/content/releases/download/v{{ scap_guides_version }}/scap-security-guide-{{ scap_guides_version }}.zip'
         dest: '{{ scap_guides_folder }}'
         remote_src: yes
+
+    - name: Download and extract OVAL guides
+      command: /bin/bash -c "wget https://security-metadata.canonical.com/oval/com.ubuntu.{{ codename.stdout }}.usn.oval.xml.bz2 | bunzip2"
+      args:
+        chdir: '{{ scap_guides_folder }}'
+        creates: '{{ scap_guides_folder }}/com.ubuntu.{{ codename.stdout }}.usn.oval.xml'
   tags: ['install']
 
 - name: Make sure AIDE HIDS is installed

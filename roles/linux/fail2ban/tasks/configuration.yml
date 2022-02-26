@@ -52,17 +52,17 @@
   notify: reload_fail2ban
   tags: ['configuration']
 
-- name: Fail2ban actions configuration
-  block:
-    - name: Fail2ban actions for abuseipdb
-      lineinfile:
-        path: '/etc/fail2ban/action.d/abuseipdb.conf' 
-        state: present
-        owner: root
-        group: root
-        mode: '0644'
-        regexp: '^actionban\s?=\s?.*$'
-        line: "actionban = curl --fail --ciphers ecdhe_ecdsa_aes_256_sha 'https://api.abuseipdb.com/api/v2/report' -H 'Accept: application/json' -H 'Key: <abuseipdb_apikey>' --data-urlencode 'comment=<matches>' --data-urlencode 'ip=<ip>' --data 'categories=<abuseipdb_category>'"
-      notify: reload_fail2ban
-  tags: ['configuration']
+#- name: Fail2ban actions configuration
+#  block:
+#    - name: Fail2ban actions for abuseipdb
+#      lineinfile:
+#        path: '/etc/fail2ban/action.d/abuseipdb.conf' 
+#        state: present
+#        owner: root
+#        group: root
+#        mode: '0644'
+#        regexp: '^actionban\s?=\s?.*$'
+#        line: "actionban = curl --fail --ciphers ecdhe_ecdsa_aes_256_sha 'https://api.abuseipdb.com/api/v2/report' -H 'Accept: application/json' -H 'Key: <abuseipdb_apikey>' --data-urlencode 'comment=<matches>' --data-urlencode 'ip=<ip>' --data 'categories=<abuseipdb_category>'"
+#      notify: reload_fail2ban
+#  tags: ['configuration']
 
