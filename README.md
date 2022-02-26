@@ -2,6 +2,26 @@
 
 ## Ansible playbooks related to Cybersecurity
 
+### Keeping Windows systems up-to-date
+Automated upgrade of Windows servers and workstations. The upgrade can be launched in a controlled way to different groups of boxes defined in the inventories. 
+It takes care of Windows updates as well as packages installed through Chocolatey repositories.
+
+Tested on Windows 10 (64, 32bits), Windows Server 2016, Windows Server 2019
+
+How to call the playbook:
+
+`ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags upgrade -vault-password-file ./.vault`
+
+
+### Keeping Linux (Ubuntu) systems up-to-date
+Automated upgrade of Ubuntu servers and workstations. The upgrade can be launched in a controlled way to different groups of boxes defined in the inventories. 
+
+Tested on Ubuntu>=18.04 LTS
+
+How to call the playbook:
+
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_linux_wks_it -T 5 ./linux_provisioning.yml --tags upgrade --vault-password-file ./.vault`
+
 ### Hardening rules for Windows systems
 Security configuration for Windows systems according to recommendations published by CIS, GSA and ACSC.
 CIS: Center for Internet Security

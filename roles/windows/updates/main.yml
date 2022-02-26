@@ -1,0 +1,20 @@
+- name: Upgrade 3rd party installed packages
+  win_chocolatey:
+    name: all
+    state: latest
+  ignore_errors: yes
+  tags: ['3rdparty','all']
+
+- name: Upgrade windows packages
+  win_updates:
+    category_names: ['UpdateRollups', 'Updates', 'DefinitionUpdates', 'SecurityUpdates', 'CriticalUpdates']
+    reboot: yes
+    reboot_timeout: 1800
+  tags: ['windows','all']
+
+#- name: Uninstall hotfix with KB (not recommended)
+#  community.windows.win_hotfix:
+#    hotfix_kb: KB5000802
+#    state: absent
+#  register: hotfix_uninstall
+#  tags: ['windows','all']

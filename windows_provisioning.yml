@@ -4,6 +4,7 @@
   gather_facts: true
   roles:
     #- windows/common/domain
+    - windows/updates
     - windows/common/generic
     - windows/common/sysmon
     - windows/common/vnc
