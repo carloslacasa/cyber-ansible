@@ -12,7 +12,6 @@ How to call the playbook:
 
 `ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags upgrade -vault-password-file ./.vault`
 
-
 ### Keeping Linux (Ubuntu) systems up-to-date
 Automated upgrade of Ubuntu servers and workstations. The upgrade can be launched in a controlled way to different groups of boxes defined in the inventories. 
 
@@ -24,13 +23,17 @@ How to call the playbook:
 
 ### Hardening rules for Windows systems
 Security configuration for Windows systems according to recommendations published by CIS, GSA and ACSC.
+
 CIS: Center for Internet Security
+
 GSA: US General Services Administration
+
 ACSC: Australian Cyber Security Center
 
 Different configuration options can be customized at group level or host level defined in the Ansible inventories.
 
 Tested on Windows 10 (64, 32bits), Windows Server 2016, Windows Server 2019
+
 DISCLAIMER: These rules must be seen as an example. They must be reviewed/modified in order to suit the needs of any particular environments. Do NOT apply them in production without a previous and careful testing.
 
 How to call the playbook:
@@ -40,10 +43,13 @@ How to call the playbook:
 
 ### Hardening rules for Linux (Ubuntu) systems
 Configuration of Ubuntu systems according to CIS security baselines.
+
 OpenSCAP software and up-to-date security guides are included in order to audit our security posture against different security profiles and Cybersecurity frameworks.
+
 Different configuration options can be customized at group level or host level defined in the Ansible inventories.
 
 Tested on Ubuntu>=18.04 LTS
+
 DISCLAIMER: These rules must be seen as an example. They must be reviewed/modified in order to suit the needs of any particular environments. Do NOT apply them in production without a previous and careful testing.
 
 How to call the playbook:
