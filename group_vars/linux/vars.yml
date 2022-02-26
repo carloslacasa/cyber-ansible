@@ -3,9 +3,8 @@ ansible_connection: ssh
 ansible_ssh_pass: '{{ vault_linux_admin_password }}'
 ansible_become_pass: '{{ vault_linux_admin_password }}'
 linux_admins: 
-  - name: ocf
+  - name: admin
     sudo: true
 admin_ip_addresses:
-  - 192.168.0.0/24
   - 192.168.1.0/24
   - 127.0.0.1/8 
