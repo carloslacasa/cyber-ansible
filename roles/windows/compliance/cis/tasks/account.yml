@@ -1,0 +1,44 @@
+---
+- name: Windows Default Guest Account is Disabled | windows-account-101
+  win_security_policy:
+      section: 'System Access'
+      key: EnableGuestAccount
+      value: '0'
+  tags: ['configuration']
+
+- name: Windows Password Complexity is Enabled | windows-account-102
+  win_security_policy:
+      section: 'System Access'
+      key: PasswordComplexity
+      value: '1'
+  tags: ['configuration']
+
+- name: Minimum Windows Password Length Configured to be at Least 8 Characters | windows-account-103
+  win_security_policy:
+      section: 'System Access'
+      key: MinimumPasswordLength
+      value: '8'
+  tags: ['configuration']
+
+- name: Set Windows Account lockout threshold | windows-account-104
+  win_security_policy:
+      section: 'System Access'
+      key: LockoutBadCount
+      value: 5 
+  tags: ['configuration']
+
+- name: Windows Account Lockout Duration Configured to at Least 30 Minutes | windows-account-106
+  win_security_policy:
+      section: 'System Access'
+      key: LockoutDuration
+      value: 1800 
+  tags: ['configuration']
+
+# Funciona solo despues de la asignacion de LockoutDuration (windows-account-106)
+- name: Windows Account Lockout Counter Configured to Wait at Least 30 Minutes Before Reset | windows-account-105
+  win_security_policy:
+      section: 'System Access'
+      key: ResetLockoutCount
+      value: 1800
+  tags: ['configuration']
+

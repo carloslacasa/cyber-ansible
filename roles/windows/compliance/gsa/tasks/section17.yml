@@ -1,0 +1,26 @@
+---
+# No aplica a maquinas de planta
+- name: Configure Windows Audit settings (windows 2012R2)
+  include_tasks: windows_2012r2/section17.yml
+  when: >
+    ansible_facts['os_family']|lower == "windows" and
+    (
+      ansible_facts['os_name']|lower == "microsoft windows server 2012 r2 standard" or
+      ansible_facts['os_name']|lower == "microsoft windows 10 enterprise" or
+      ansible_facts['os_name']|lower == "microsoft windows 10 pro"
+    ) and
+    (audit_enabled|default(True) == True)
+  tags: ['configuration']
+
+# No aplica a maquinas de planta
+- name: Configure Windows Audit settings (windows default)
+  include_tasks: windows_default/section17.yml
+  when: >
+    ansible_facts['os_family']|lower == "windows" and
+    (
+      ansible_facts['os_name']|lower == "microsoft windows server 2016" or
+      ansible_facts['os_name']|lower == "microsoft windows server 2019"
+    ) and
+    (audit_enabled|default(True) == True)
+  tags: ['configuration']
+

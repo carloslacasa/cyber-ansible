@@ -1,0 +1,2186 @@
+---
+- name: "MEDIUM | V-1099 | PATCH | The account lockout duration must be configured to require an administrator to unlock an account."
+  win_security_policy: 
+      section: 'System Access'
+      key: LockoutDuration
+      value: -1
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1098 | PATCH | The period of time before the invalid logon counter is reset must be configured to at least 60 minutes."
+  win_security_policy: 
+      section: 'System Access'
+      key: ResetLockoutCount
+      value: 99999
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1107 | PATCH | The password history must be configured to 12 passwords remembered."
+  win_security_policy: 
+      section: 'System Access'
+      key: PasswordHistorySize
+      value: '12'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1113 | PATCH | The built-in guest account must be disabled."
+  win_security_policy: 
+      section: 'System Access'
+      key: EnableGuestAccount
+      value: '0'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1141 | PATCH | Unencrypted passwords must not be sent to third-party SMB Servers."
+  win_regedit:
+      key: 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters'
+      value: EnablePlainTextPassword
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1145 | PATCH | Automatic logons must be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon'
+      value: AutoAdminLogon
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1150 | PATCH | The built-in Windows password complexity policy must be enabled."
+  win_security_policy: 
+      section: 'System Access'
+      key: PasswordComplexity
+      value: '1'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1154 | PATCH | The Ctrl+Alt+Del security attention sequence for logons will be enabled."
+  win_regedit: 
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: DisableCAD
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1155 | PATCH | The Deny access to this computer from the network user right on member servers must be configured to prevent access from highly privileged domain accounts and all local accounts on domain systems and unauthenticated access on all systems."
+  win_user_right:
+      name: SeDenyNetworkLogonRight
+      users: ['Invitados']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1163 | PATCH | Outgoing secure channel traffic will be encrypted when possible."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Services\Netlogon\Parameters'
+      value: SealSecureChannel
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1164 | PATCH | Outgoing secure channel traffic will be signed when possible."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Services\Netlogon\Parameters'
+      value: SignSecureChannel
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-1171 | PATCH | Ejection of removable NTFS media is not restricted to Administrators."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon'
+      value: AllocateDASD
+      data: 0
+      datatype: string
+  tags: ['cat2']
+
+- name: "MEDIUM | V-2372 | PATCH | Reversible password encryption will be disabled."
+  win_security_policy: 
+      section: 'System Access'
+      key: ClearTextPassword
+      value: '0'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3374 | PATCH | The system must be configured to require a strong session key."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Services\Netlogon\Parameters\'
+      value: RequireStrongKey
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3376 | PATCH | The system will be configured to prevent the storage of passwords and credentials"
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: DisableDomainCreds
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3377 | PATCH | The system will be configured to prevent anonymous users from having the same rights as the Everyone group."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: EveryoneIncludesAnonymous
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3378 | PATCH | The system will be configured to use the Classic security model."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: ForceGuest
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3381 | PATCH | The system will be configured to the required LDAP client signing level."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Services\LDAP'
+      value: LDAPClientIntegrity
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3382 | PATCH | The system will be configured to meet the minimum session security requirement for NTLM SSP based clients."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0'
+      value: NTLMMinClientSec
+      data: 0x20080000
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3385 | PATCH | The system must be configured to require case insensitivity for non-Windows subsystems."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Session Manager\Kernel'
+      value: ObCaseInsensitive
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3449 | PATCH | Remote Desktop Services will limit users to one remote session."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fSingleSessionPerUser
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3453 | PATCH | Remote Desktop Services will always prompt a client for passwords upon connection."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fPromptForPassword
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3455 | PATCH | Remote Desktop Services will be configured to use session-specific temporary folders."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: PerSessionTempDir
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3456 | PATCH | Remote Desktop Services will delete temporary folders when a session is terminated."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: DeleteTempDirsOnExit
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3457 | PATCH | Remote Desktop Services will be configured to set a time limit for disconnected sessions."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: MaxDisconnectionTime
+      data: 0x0000ea60
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3458 | PATCH | Remote Desktop Services will be configured to disconnect an idle session after the specified time period."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: MaxIdleTime
+      data: 0x000dbba0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3469 | PATCH | The system will be configured to enable the background refresh of Group Policy."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\system'
+      value: DisableBkGndGroupPolicy
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3470 | PATCH | The system will be configured to prevent unsolicited remote assistance offers."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fAllowUnsolicited
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3479 | PATCH | The system will be configured to use Safe DLL Search Mode."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Session Manager'
+      value: SafeDllSearchMode
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3480 | PATCH | Media Player must be configured to prevent automatic checking for updates."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\WindowsMediaPlayer'
+      value: DisableAutoupdate
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3481 | PATCH | Media Player will be configured to prevent automatic Codec downloads."
+  win_regedit:
+      key: 'HKCU:\Software\Policies\Microsoft\WindowsMediaPlayer'
+      value: PreventCodecDownload
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-3666 | PATCH | The system will be configured to meet the minimum session security requirement for NTLM SSP based servers."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa\MSV1_0'
+      value: NTLMMinServerSec
+      data: 0x20080000
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-4446 | PATCH | Software certificate restriction policies will be enforced."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\Safer\CodeIdentifiers'
+      value: AuthenticodeEnabled
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-4447 | PATCH | The Remote Desktop Session Host will require secure RPC communications."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fEncryptRPCTraffic
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-4448 | PATCH | Group Policy objects will be reprocessed even if they have not changed."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\Group Policy\{35378EAC-683F-11D2-A89A-00C04FBBCFA2}'
+      value: NoGPOListChanges
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-6831 | PATCH | Outgoing secure channel traffic will be encrypted or signed."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Services\Netlogon\Parameters'
+      value: RequireSignOrSeal
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-6833 | PATCH | The Windows SMB server will be enabled to always perform SMB packet signing."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters'
+      value: RequireSecuritySignature
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-6836 | PATCH | For systems utilizing a logon ID as the individual identifier, passwords will, at a minimum, be 14 characters."
+  win_security_policy: 
+      section: 'System Access'
+      key: MinimumPasswordLength
+      value: '8'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14228 | PATCH | Auditing Access of Global System Objects must be turned off."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: AuditBaseObjects
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14229 | PATCH | Audit of Backup and Restore Privileges will be turned off."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: FullPrivilegeAuditing
+      data: 0x0,0x0
+      datatype: binary
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14230 | PATCH | Audit policy using subcategories will be enabled."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: SCENoApplyLegacyAuditPolicy
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14234 | PATCH | User Account Control approval mode for the built-in Administrator will be enabled."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: FilterAdministratorToken
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14235 | PATCH | User Account Control will, at a minimum, prompt administrators for consent."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: ConsentPromptBehaviorAdmin
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14236 | PATCH | User Account Control will automatically deny standard user requests for elevation."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: ConsentPromptBehaviorUser
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14239 | PATCH | User Account Control will only elevate UIAccess applications that are installed in secure locations"
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: EnableSecureUIAPaths
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14240 | PATCH | User Account Control will run all administrators in Admin Approval Mode, enabling UAC."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: EnableLUA
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14241 | PATCH | User Account Control will switch to the secure desktop when prompting for elevation."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: PromptOnSecureDesktop
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14242 | PATCH | User Account Control will virtualize file and registry write failures to per-user locations."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: EnableVirtualization
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14247 | PATCH | Passwords will not be saved in the Remote Desktop Client."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: DisablePasswordSaving
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14249 | PATCH | Local drives will be prevented from sharing with Remote Desktop Session Hosts (Remote Desktop Services Role)."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fDisableCdm
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14253 | PATCH | Unauthenticated RPC clients must be restricted from connecting to the RPC server."
+  win_regedit: 
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc'
+      value: RestrictRemoteClients
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14254 | PATCH | Client computers must be required to authenticate for RPC communication."
+  win_regedit: 
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Rpc'
+      value: EnableAuthEpResolution
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14259 | PATCH | Printing over HTTP will be prevented."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Printers'
+      value: DisableHTTPPrinting
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14260 | PATCH | Downloading print driver packages over HTTP will be prevented."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Printers'
+      value: DisableWebPnPDownload
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14261 | PATCH | Windows will be prevented from using Windows Update to search for drivers."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\DriverSearching'
+      value: DontSearchWindowsUpdate
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14268 | PATCH | Zone information will be preserved when saving attachments."
+  win_regedit:
+      key: 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments'
+      value: SaveZoneInformation
+      data: 2
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-14269 | PATCH | Mechanisms for removing zone information from file attachments will be hidden."
+  win_regedit:
+      key: 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments'
+      value: HideZoneInfoOnProperties
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15666 | PATCH | Windows Peer-to-Peer networking services will be turned off."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Peernet'
+      value: Disabled
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15667 | PATCH | Network Bridges will be prohibited in Windows."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\Network Connections'
+      value: NC_AllowNetBridge_NLA
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15682 | PATCH | Attachments must be prevented from being downloaded from RSS feeds."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Internet Explorer\Feeds'
+      value: DisableEnclosureDownload
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15683 | PATCH | Windows Explorer shell protocol will run in protected mode."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer'
+      value: PreXPSP2ShellProtocolBehavior
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15684 | PATCH | Users will be notified if a web-based program attempts to install software."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\Installer'
+      value: SafeForScripting
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15696 | PATCH | The Mapper I/O network protocol driver will be disabled."
+  win_regedit: 
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\LLTD'
+      value: "{{ item }}"
+      data: 0
+      datatype: dword
+  with_items: 
+      - AllowLLTDIOOndomain
+      - AllowLLTDIOOnPublicNet
+      - EnableLLTDIO
+      - ProhibitLLTDIOOnPrivateNet
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15697 | PATCH | The Responder network protocol driver will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\LLTD'
+      value: "{{ item }}"
+      data: 0
+      datatype: dword
+  with_items:
+      - AllowRspndrOndomain
+      - AllowRspndrOnPublicNet
+      - EnableRspndr
+      - ProhibitRspndrOnPrivateNet
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15698 | PATCH | The configuration of wireless devices using Windows Connect Now will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\WCN\Registrars'
+      value: "{{ item }}"
+      data: 0
+      datatype: dword
+  with_items:
+      - DisableFlashConfigRegistrar
+      - DisableInBand802DOT11Registrar
+      - DisableUPnPRegistrar
+      - DisableWPDRegistrar
+      - EnableRegistrars
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15699 | PATCH | The Windows Connect Now wizards will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\WCN\UI'
+      value: DisableWcnUi
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15700 | PATCH | Remote access to the Plug and Play interface will be disabled for device installation."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\DeviceInstall\Settings'
+      value: AllowRemoteRPC
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15705 | PATCH | Users will be prompted for a password on resume from sleep (on battery).  (Applicable to Server 2008 R2 if the system is configured to sleep.)"
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51'
+      value: DCSettingIndex
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15706 | PATCH | The user will be prompted for a password on resume from sleep (Plugged In).  (Applicable on Server 2008 R2 if the system is configured to sleep.)"
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Power\PowerSettings\0e796bdb-100d-47d6-a2d5-f7d2daa51f51'
+      value: ACSettingIndex
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15713 | PATCH | Windows Defender SpyNet membership will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows Defender\Spynet'
+      value: SpyNetReporting
+      state: absent
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15714 | PATCH | The system must be configured to save Error Reporting events and messages to the system event log."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: LoggingDisabled
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15715 | PATCH | The system must be configured to generate error reports."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: Disabled
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15722 | PATCH | Windows Media Digital Rights Management will be prevented from accessing the Internet."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\WMDRM'
+      value: DisableOnline
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15727 | PATCH | Users will be prevented from sharing files in their profiles."
+  win_regedit:
+      key: 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer'
+      value: NoInPlaceSharing
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15991 | PATCH | UIAccess applications will not be allowed to prompt for elevation without using the secure desktop."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: EnableUIADesktopToggle
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15997 | PATCH | The system will be configured to prevent users from mapping local COM ports and redirecting data from the Remote Desktop Session Host to local COM ports. (Remote Desktop Services Role)"
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fDisableCcm
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15998 | PATCH | The system will be configured to prevent users from mapping local LPT ports and redirecting data from the Remote Desktop Session Host to local LPT ports. (Remote Desktop Services Role)"
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fDisableLPT
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-15999 | PATCH | The system will be configured to prevent users from redirecting Plug and Play devices to the Remote Desktop Session Host. (Remote Desktop Services Role)"
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fDisablePNPRedir
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-16000 | PATCH | The system will be configured to ensure smart card devices can be redirected to the Remote Desktop Session. (Remote Desktop Services Role)"
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fEnableSmartCard
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-16008 | PATCH | Windows will elevate all applications in User Account Control, not just signed ones."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: ValidateAdminCodeSignatures
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-16020 | PATCH | The Windows Customer Experience Improvement Program will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\SQMClient\Windows'
+      value: CEIPEnable
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-16021 | PATCH | The Windows Help Experience Improvement Program will be disabled"
+  win_regedit:
+      key: 'HKCU:\Software\Policies\Microsoft\Assistance\Client\1.0'
+      value: NoImplicitFeedback
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-16048 | PATCH | Windows Help Ratings feedback will be turned off."
+  win_regedit:
+      key: 'HKCU:\Software\Policies\Microsoft\Assistance\Client\1.0'
+      value: NoExplicitFeedback
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-21950 | PATCH | The service principal name (SPN) target name validation level will be turned off."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Services\LanmanServer\Parameters'
+      value: SmbServerNameHardeningLevel
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-21951 | PATCH | Services using Local System that use negotiate when reverting to NTLM authentication will use the computer identity vs. authenticating anonymously."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\LSA'
+      value: UseMachineId
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-21952 | PATCH | NTLM will be prevented from falling back to a Null session."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\LSA\MSV1_0'
+      value: allownullsessionfallback
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-21953 | PATCH | PKU2U authentication using online identities will be prevented."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\LSA\pku2u'
+      value: AllowOnlineID
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-21954 | PATCH | Kerberos encryption types must be configured to prevent the use of DES encryption suites."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters'
+      value: SupportedEncryptionTypes
+      data: 0x7ffffffc
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-21980 | PATCH | Explorer Data Execution Prevention will be enabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\Explorer'
+      value: NoDataExecutionPrevention
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26469 | PATCH | Unauthorized accounts must not have the Access Credential Manager as a trusted caller user right."
+  win_user_right:
+      name: SeTrustedCredManAccessPrivilege
+      users: [] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26470 | PATCH | Unauthorized accounts must not have the Access this computer from the network user right on member servers."
+  win_user_right:
+      name: SeNetworkLogonRight
+      users: ['Usuarios autentificados','Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26471 | PATCH | Unauthorized accounts must not have the Adjust memory quotas for a process user right."
+  win_user_right:
+      name: SeIncreaseQuotaPrivilege
+      users: ['Servicio local','Servicio de red','Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26472 | PATCH | Unauthorized accounts must not have the Allow log on locally user right."
+  win_user_right:
+      name: SeInteractiveLogonRight
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26473 | PATCH | The Allow log on through Remote Desktop Services user right must only be assigned to the Administrators group and other approved groups."
+  win_user_right:
+      name: SeRemoteInteractiveLogonRight
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26474 | PATCH | Unauthorized accounts must not have the Back up files and directories user right."
+  win_user_right:
+      name: SeBackupPrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26476 | PATCH | Unauthorized accounts must not have the Change the system time user right."
+  win_user_right:
+      name: SeSystemtimePrivilege
+      users: ['Servicio local','Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26478 | PATCH | Unauthorized accounts must not have the Create a pagefile user right."
+  win_user_right:
+      name: SeCreatePagefilePrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26480 | PATCH | Unauthorized accounts must not have the Create global objects user right."
+  win_user_right:
+      name: SeCreateGlobalPrivilege
+      users: ['Servicio local','Servicio de red','Servicio','Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26481 | PATCH | Unauthorized accounts must not have the Create permanent shared objects user right."
+  win_user_right:
+      name: SeCreatePermanentPrivilege
+      users: [] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26482 | PATCH | Unauthorized accounts must not have the Create symbolic links user right."
+  win_user_right:
+      name: SeCreateSymbolicLinkPrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26483 | PATCH | The Deny log on as a batch job user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems."
+  win_user_right:
+      name: SeDenyBatchLogonRight
+      users: ['Invitados']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26484 | PATCH | The Deny log on as a service user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems.  No other groups or accounts must be assigned this right."
+  win_user_right:
+      name: SeDenyServiceLogonRight
+      users: [] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26485 | PATCH | The Deny log on locally user right on member servers must be configured to prevent access from highly privileged domain accounts on domain systems and unauthenticated access on all systems."
+  win_user_right:
+      name: SeDenyInteractiveLogonRight
+      users: ['Invitados'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26486 | PATCH | The Deny log on through Remote Desktop Services user right on member servers must be configured to prevent access from highly privileged domain accounts and all local accounts on domain systems and unauthenticated access on all systems."
+  win_user_right:
+      name: SeDenyRemoteInteractiveLogonRight
+      users: ['Invitados'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26487 | PATCH | Unauthorized accounts must not have the Enable computer and user accounts to be trusted for delegation user right."
+  win_user_right:
+      name: SeEnableDelegationPrivilege
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26488 | PATCH | Unauthorized accounts must not have the Force shutdown from a remote system user right."
+  win_user_right:
+      name: SeRemoteShutdownPrivilege
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26489 | PATCH | Unauthorized accounts must not have the Generate security audits user right."
+  win_user_right:
+      name: SeAuditPrivilege
+      users: ['Servicio local','Servicio de red'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26490 | PATCH | Unauthorized accounts must not have the Impersonate a client after authentication user right."
+  win_user_right:
+      name: SeImpersonatePrivilege
+      users: ['Servicio local','Servicio de red','Servicio','Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26491 | PATCH | Unauthorized accounts must not have the Increase a process working set user right."
+  win_user_right:
+      name: SeIncreaseWorkingSetPrivilege
+      users: ['Servicio local','Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26492 | PATCH | Unauthorized accounts must not have the Increase scheduling priority user right."
+  win_user_right:
+      name: SeIncreaseBasePriorityPrivilege
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26493 | PATCH | Unauthorized accounts must not have the Load and unload device drivers user right."
+  win_user_right:
+      name: SeLoadDriverPrivilege
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26494 | PATCH | Unauthorized accounts must not have the Lock pages in memory user right."
+  win_user_right:
+      name: SeLockMemoryPrivilege
+      users: [] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26495 | PATCH | Unauthorized accounts must not have the Log on as a batch job user right."
+  win_user_right:
+      name: SeBatchLogonRight
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26496 | PATCH | Unauthorized accounts must not have the Manage auditing and security log user right."
+  win_user_right:
+      name: SeSecurityPrivilege
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26497 | PATCH | Unauthorized accounts must not have the Modify an object label user right."
+  win_user_right:
+      name: SeRelabelPrivilege
+      users: [] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26498 | PATCH | Unauthorized accounts must not have the Modify firmware environment values user right."
+  win_user_right:
+      name: SeSystemEnvironmentPrivilege
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26499 | PATCH | Unauthorized accounts must not have the Perform volume maintenance tasks user right."
+  win_user_right:
+      name: SeManageVolumePrivilege
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26500 | PATCH | Unauthorized accounts must not have the Profile single process user right."
+  win_user_right:
+      name: SeProfileSingleProcessPrivilege
+      users: ['Administradores'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26501 | PATCH | Unauthorized accounts must not have the Profile system performance user right."
+  win_user_right:
+      name: SeSystemProfilePrivilege
+      users: ['Administradores','NT Service\WdiServiceHost'] 
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26497 | PATCH | Unauthorized accounts must not have the Modify an object label user right."
+  win_user_right:
+      name: SeRelabelPrivilege
+      users: []
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26498 | PATCH | Unauthorized accounts must not have the Modify firmware environment values user right."
+  win_user_right:
+      name: SeSystemEnvironmentPrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26499 | PATCH | Unauthorized accounts must not have the Perform volume maintenance tasks user right."
+  win_user_right:
+      name: SeManageVolumePrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26500 | PATCH | Unauthorized accounts must not have the Profile single process user right."
+  win_user_right:
+      name: SeProfileSingleProcessPrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26501 | PATCH | Unauthorized accounts must not have the Profile system performance user right."
+  win_user_right:
+      name: SeSystemProfilePrivilege
+      users: ['Administradores','NT Service\WdiServiceHost']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26503 | PATCH | Unauthorized accounts must not have the Replace a process level token user right."
+  win_user_right:
+      name: SeAssignPrimaryTokenPrivilege
+      users: ['Servicio local','Servicio de red']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26504 | PATCH | Unauthorized accounts must not have the Restore files and directories user right."
+  win_user_right:
+      name: SeRestorePrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26505 | PATCH | Unauthorized accounts must not have the Shut down the system user right."
+  win_user_right:
+      name: SeShutdownPrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26506 | PATCH | Unauthorized accounts must not have the Take ownership of files or other objects user right."
+  win_user_right:
+      name: SeTakeOwnershipPrivilege
+      users: ['Administradores']
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26529 | AUDIT | The system will be configured to audit 'Account Logon -> Credential Validation' successes."
+  win_shell: 'AuditPol /get /subcategory:"Validación de credenciales"'
+  register: cred_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26529 | PATCH | The system will be configured to audit 'Account Logon -> Credential Validation' successes."
+  win_shell: 'AuditPol /set /subcategory:"Validación de credenciales" /success:enable'
+  when: '"aciertos" not in cred_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26530 | PATCH | The system will be configured to audit 'Account Logon -> Credential Validation' failures."
+  win_shell: 'AuditPol /set /subcategory:"Validación de credenciales" /failure:enable'
+  when: '"errores" not in cred_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26531 | AUDIT | The system will be configured to audit 'Account Management -> Computer Account Management' successes."
+  win_shell: 'AuditPol /get /subcategory:"Administración de cuentas de equipo"'
+  register: computer_account_management_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26531 | PATCH | The system will be configured to audit 'Account Management -> Computer Account Management' successes."
+  win_shell: 'AuditPol /set /subcategory:"Administración de cuentas de equipo" /success:enable'
+  when: '"aciertos" not in computer_account_management_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26532 | PATCH | The system will be configured to audit 'Account Management -> Computer Account Management' failures."
+  win_shell: 'AuditPol /set /subcategory:"Administración de cuentas de equipo" /failure:enable'
+  when: '"errores" not in computer_account_management_audit.stdout|lower'
+  tags: ['cat2']
+
+
+- name: "MEDIUM | V-26533 | AUDIT | The system will be configured to audit 'Account Management -> Other Account Management Events' successes."
+  win_shell: AuditPol /get /subcategory:"Otros eventos de inicio de sesión de cuentas"
+  register: other_account_management_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26533 | PATCH | The system will be configured to audit 'Account Management -> Other Account Management Events' successes."
+  win_shell: 'AuditPol /set /subcategory:"Otros eventos de inicio de sesión de cuentas" /success:enable'
+  when: '"aciertos" not in other_account_management_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26534 | PATCH | The system will be configured to audit 'Account Management -> Other Account Management Events' failures."
+  win_shell: 'AuditPol /set /subcategory:"Otros eventos de inicio de sesión de cuentas" /failure:enable'
+  when: '"errores" not in other_account_management_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26535 | AUDIT | The system will be configured to audit 'Account Management -> Security Group Management' successes."
+  win_shell: 'AuditPol /get /subcategory:"Administración de grupos de seguridad"'
+  register: security_group_management_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26535 | PATCH | The system will be configured to audit 'Account Management -> Security Group Management' successes."
+  win_shell: AuditPol /set /subcategory:"Administración de grupos de seguridad" /success:enable
+  when: '"aciertos" not in security_group_management_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26536 | PATCH | The system will be configured to audit 'Account Management -> Security Group Management' failures."
+  win_shell: AuditPol /set /subcategory:"Administración de grupos de seguridad" /failure:enable
+  when: '"errores" not in security_group_management_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26537 | AUDIT | The system will be configured to audit 'Account Management -> User Account Management' successes."
+  win_shell: 'AuditPol /get /subcategory:"Administración de cuentas de usuario"'
+  register: user_account_management_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26537 | PATCH | The system will be configured to audit 'Account Management -> User Account Management' successes."
+  win_shell: 'AuditPol /set /subcategory:"Administración de cuentas de usuario" /success:enable'
+  when: '"aciertos" not in user_account_management_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26538 | PATCH | The system will be configured to audit 'Account Management -> User Account Management' failures."
+  win_shell: 'AuditPol /set /subcategory:"Administración de cuentas de usuario" /failure:enable'
+  when: '"errores" not in user_account_management_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26539 | AUDIT | The system will be configured to audit 'Detailed Tracking -> Process Creation' successes."
+  win_shell: 'AuditPol /get /subcategory:"Creación del proceso"'
+  register: process_creation_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26539 | PATCH | The system will be configured to audit 'Detailed Tracking -> Process Creation' successes."
+  win_shell: 'AuditPol /set /subcategory:"Creación del proceso" /success:enable'
+  when: '"aciertos" not in process_creation_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26540 | AUDIT | The system will be configured to audit 'Logon/Logoff -> Logoff' successes."
+  win_shell: 'AuditPol /get /subcategory:"Cerrar sesión"'
+  register: logoff_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26540 | PATCH | The system will be configured to audit 'Logon/Logoff -> Logoff' successes."
+  win_shell: 'AuditPol /set /subcategory:"Cerrar sesión" /success:enable'
+  when: '"aciertos" not in logoff_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26541 | AUDIT | The system will be configured to audit 'Logon/Logoff -> Logon' successes."
+  win_shell: 'AuditPol /get /subcategory:"Inicio de sesión"'
+  register: logon_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26541 | PATCH | The system will be configured to audit 'Logon/Logoff -> Logon' successes."
+  win_shell: AuditPol /set /subcategory:"Inicio de sesión" /success:enable
+  when: '"aciertos" not in logon_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26542 | PATCH | The system will be configured to audit 'Logon/Logoff -> Logon' failures."
+  win_shell: 'AuditPol /set /subcategory:"Inicio de sesión" /failure:enable'
+  when: '"errores" not in logon_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26543 | AUDIT | The system will be configured to audit 'Logon/Logoff -> Special Logon' successes."
+  win_shell: 'AuditPol /get /subcategory:"Inicio de sesión especial"'
+  register: special_logon_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26543 | PATCH | The system will be configured to audit 'Logon/Logoff -> Special Logon' successes."
+  win_shell: 'AuditPol /set /subcategory:"Inicio de sesión especial" /success:enable'
+  when: '"aciertos" not in special_logon_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26547 | AUDIT | The system will be configured to audit 'Policy Change -> Audit Policy Change' failures."
+  win_shell: 'AuditPol /get /subcategory:"Cambio en la directiva de auditoría"'
+  register: audit_policy_change_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26547 | PATCH | The system will be configured to audit 'Policy Change -> Audit Policy Change' failures."
+  win_shell: 'AuditPol /set /subcategory:"Cambio en la directiva de auditoría" /failure:enable'
+  when: '"errores" not in audit_policy_change_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26548 | AUDIT | The system will be configured to audit 'Policy Change -> Authentication Policy Change' successes."
+  win_shell: 'AuditPol /get /subcategory:"Cambio de la directiva de autenticación"'
+  register: authentication_policy_change_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26548 | PATCH | The system will be configured to audit 'Policy Change -> Authentication Policy Change' successes."
+  win_shell: 'AuditPol /set /subcategory:"Cambio de la directiva de autenticación" /success:enable'
+  when: '"aciertos" not in authentication_policy_change_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26549 | AUDIT | The system will be configured to audit 'Privilege Use -> Sensitive Privilege Use' successes."
+  win_shell: 'AuditPol /get /subcategory:"Uso de privilegio confidencial"'
+  register: sensitive_privilege_use_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26551 | AUDIT | The system will be configured to audit 'System -> IPSec Driver' successes."
+  win_shell: 'AuditPol /get /subcategory:"Controlador IPSec"'
+  register: IPSec_driver_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26551 | PATCH | The system will be configured to audit 'System -> IPSec Driver' successes."
+  win_shell: 'AuditPol /set /subcategory:"Controlador IPSec" /success:enable'
+  when: '"aciertos" not in IPSec_driver_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26552 | PATCH | The system will be configured to audit 'System -> IPSec Driver' failures."
+  win_shell: 'AuditPol /set /subcategory:"Controlador IPSec" /failure:enable'
+  when: '"errores" not in IPSec_driver_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26553 | AUDIT | The system will be configured to audit 'System -> Security State Change' successes."
+  win_shell: 'AuditPol /get /subcategory:"Cambio de estado de seguridad"'
+  register: security_state_change_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26553 | PATCH | The system will be configured to audit 'System -> Security State Change' successes."
+  win_shell: 'AuditPol /set /subcategory:"Cambio de estado de seguridad" /success:enable'
+  when: '"aciertos" not in security_state_change_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26554 | PATCH | The system will be configured to audit 'System -> Security State Change' failures."
+  win_shell: 'AuditPol /set /subcategory:"Cambio de estado de seguridad" /failure:enable'
+  when: '"errores" not in security_state_change_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26555 | AUDIT | The system will be configured to audit 'System -> Security System Extension' successes."
+  win_shell: 'AuditPol /get /subcategory:"Extensión del sistema de seguridad"'
+  register: security_system_extension_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26555 | PATCH | The system will be configured to audit 'System -> Security System Extension' successes."
+  win_shell: 'AuditPol /set /subcategory:"Extensión del sistema de seguridad" /success:enable'
+  when: '"aciertos" not in security_system_extension_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26556 | PATCH | The system will be configured to audit 'System -> Security System Extension' failures."
+  win_shell: 'AuditPol /set /subcategory:"Extensión del sistema de seguridad" /failure:enable'
+  when: '"errores" not in security_system_extension_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26557 | AUDIT | The system will be configured to audit 'System -> System Integrity' successes."
+  win_shell: 'AuditPol /get /subcategory:"Integridad del sistema"'
+  register: system_integrity_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26557 | PATCH | The system will be configured to audit 'System -> System Integrity' successes."
+  win_shell: 'AuditPol /set /subcategory:"Integridad del sistema" /success:enable'
+  when: '"aciertos" not in system_integrity_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26558 | PATCH | The system will be configured to audit 'System -> System Integrity' failures."
+  win_shell: 'AuditPol /set /subcategory:"Integridad del sistema" /failure:enable'
+  when: '"errores" not in system_integrity_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26575 | PATCH | The 6to4 IPv6 transition technology will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\TCPIP\v6Transition'
+      value: 6to4_State
+      data: Disabled
+      datatype: string
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26576 | PATCH | The IP-HTTPS IPv6 transition technology will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\TCPIP\v6Transition\IPHTTPS\IPHTTPSInterface'
+      value: IPHTTPS_ClientState
+      data: 3
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26577 | PATCH | The ISATAP IPv6 transition technology will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\TCPIP\v6Transition'
+      value: ISATAP_State
+      data: Disabled
+      datatype: string
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26578 | PATCH | The Teredo IPv6 transition technology will be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\TCPIP\v6Transition'
+      value: Teredo_State
+      data: Disabled
+      datatype: string
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26579 | PATCH | The Application event log must be configured to a minimum size requirement."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Application'
+      value: MaxSize
+      data: 0x00008000
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26580 | PATCH | The Security event log must be configured to a minimum size requirement."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Security'
+      value: MaxSize
+      data: 0x00030000
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26581 | PATCH | The Setup event log must be configured to a minimum size requirement."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\Setup'
+      value: MaxSize
+      data: 0x00008000
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26582 | PATCH | The System event log must be configured to a minimum size requirement."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\EventLog\System'
+      value: MaxSize
+      data: 0x00008000
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26600 | PATCH | The Fax service will be disabled."
+  win_service:
+      name: fax
+      state: absent
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26604 | PATCH | The Peer Networking Identity Manager service will be disabled."
+  win_service:
+      name: p2pimsvc
+      state: absent
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26605 | PATCH | The Simple TCP/IP Services service will be disabled."
+  win_service:
+      name: simptcp
+      state: absent
+  tags: ['cat2']
+
+- name: "MEDIUM | V-26606 | PATCH | The Telnet service will be disabled."
+  win_service:
+      name: tlntsvr
+      state: absent
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36439 | PATCH | Local administrator accounts must have their privileged token filtered to prevent elevated privileges from being used over the network on domain systems."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System'
+      value: LocalAccountTokenFilterPolicy
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36656 | PATCH | A screen saver must be enabled on the system."
+  win_regedit:
+      key: 'HKCU:\Software\Policies\Microsoft\Windows\Control Panel\Desktop\'
+      value: ScreenSaveActive
+      data: 1
+      datatype: string
+  when: > 
+      ansible_virtualization_role != "guest" and
+      ansible_system_vendor != "QEMU"
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36657 | PATCH | The screen saver must be password protected."
+  win_regedit:
+      key: 'HKCU:\Software\Policies\Microsoft\Windows\Control Panel\Desktop\'
+      value: ScreenSaverIsSecure
+      data: 1
+      datatype: string
+  when: > 
+      ansible_virtualization_role != "guest" and
+      ansible_system_vendor != "QEMU"
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36667 | AUDIT | The system must be configured to audit Object Access - Removable Storage failures."
+  win_shell: 'AuditPol /get /subcategory:"Almacenamiento extraíble"'
+  register: removable_storage_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36667 | PATCH | The system must be configured to audit Object Access - Removable Storage failures."
+  win_shell: 'AuditPol /set /subcategory:"Almacenamiento extraíble" /failure:enable'
+  when: '"errores" not in removable_storage_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36668 | PATCH | The system must be configured to audit Object Access - Removable Storage successes."
+  win_shell: 'AuditPol /set /subcategory:"Almacenamiento extraíble" /success:enable'
+  when: '"aciertos" not in removable_storage_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36679 | PATCH | Early Launch Antimalware, Boot-Start Driver Initialization Policy must be enabled and configured to only Good and Unknown."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Policies\EarlyLaunch\'
+      value: DriverLoadPolicy
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36680 | PATCH | Access to the Windows Store must be turned off."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer\'
+      value: NoUseStoreOpenWith
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36681 | PATCH | Copying of user input methods to the system account for sign-in must be prevented."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Control Panel\International\'
+      value: BlockUserInputMethodsForSignIn
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36684 | PATCH | Local users on domain-joined computers must not be enumerated."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\System\'
+      value: EnumerateLocalUsers
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36687 | PATCH | App notifications on the lock screen must be turned off."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\System\'
+      value: DisableLockScreenAppNotifications
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36698 | PATCH | The use of biometrics must be disabled."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Biometrics\'
+      value: Enabled
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36700 | PATCH | The password reveal button must not be displayed."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\CredUI\'
+      value: DisablePasswordReveal
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36708 | PATCH | The location feature must be turned off."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\LocationAndSensors\'
+      value: DisableLocation
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36709 | PATCH | Basic authentication for RSS feeds over HTTP must be turned off."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Internet Explorer\Feeds\'
+      value: AllowBasicAuthInClear
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36711 | PATCH | The Windows Store application must be turned off."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\WindowsStore\'
+      value: RemoveWindowsStore
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36713 | PATCH | The Windows Remote Management (WinRM) client must not allow unencrypted traffic."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\WinRM\Client\'
+      value: AllowUnencryptedTraffic
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36714 | PATCH | The Windows Remote Management (WinRM) client must not use Digest authentication."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\WinRM\Client\'
+      value: AllowDigest
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36719 | PATCH | The Windows Remote Management (WinRM) service must not allow unencrypted traffic."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\WinRM\Service\'
+      value: AllowUnencryptedTraffic
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36720 | PATCH | The Windows Remote Management (WinRM) service must not store RunAs credentials."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\WinRM\Service\'
+      value: DisableRunAs
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+
+- name: "MEDIUM | V-36722 | AUDIT | Permissions for the Application event log must prevent access by nonprivileged accounts."
+  win_shell: 'Get-Acl -PATH "C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Application.evtx" | Format-List'
+  register: eventlog_permissions_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     eventlog_permissions_audit.stderr != "" and
+     '"path_not_found" not in eventlog_permissions_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36722 | AUDIT | Permissions for the Application event log must prevent access by nonprivileged accounts."
+  win_shell: '(Get-Acl -PATH "C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Application.evtx").Access.IdentityReference.Value'
+  register: eventlog_permissions_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     eventlog_permissions_audit.stderr != "" and
+     '"path_not_found" not in eventlog_permissions_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36722 | PATCH | Permissions for the Application event log must prevent access by nonprivileged accounts."
+  block:
+    - name: "REMOVAL MEDIUM | V-36722 | PATCH | Permissions for the Application event log must prevent access by nonprivileged accounts."
+      win_acl:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Application.evtx'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('EventLog' in item[0] or 'SYSTEM' in item[0] or 'Administradores' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - "{{ eventlog_permissions_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "MEDIUM | V-36722 | PATCH | Permissions for the Application event log must prevent access by nonprivileged accounts."
+      win_acl:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Application.evtx'
+          user: '{{ item }}'
+          rights: 'FullControl'
+          type: 'allow'
+          state: 'present'
+          inherit: 'ContainerInherit, ObjectInherit'
+          propagation: 'None'
+      with_items:
+          - 'NT SERVICE\EventLog'
+          - 'NT AUTHORITY\SYSTEM'
+          - 'BUILTIN\Administradores'
+
+    - name: "REMOVAL MEDIUM | V-36722 | PATCH | Permissions for the Application event log must prevent access by nonprivileged accounts."
+      win_acl_inheritance:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Application.evtx'
+          state: 'absent'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36723 | AUDIT | Permissions for the Security event log must prevent access by nonprivileged accounts."
+  win_shell: 'Get-Acl -PATH "C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Security.evtx" | Format-List'
+  register: security_evtx_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     security_evtx_audit.stderr != "" and
+     '"path_not_found" not in security_evtx_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36723 | AUDIT | Permissions for the Security event log must prevent access by nonprivileged accounts."
+  win_shell: '(Get-Acl -PATH "C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Security.evtx").Access.IdentityReference.Value'
+  register: security_evtx_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     security_evtx_audit.stderr != "" and
+     '"path_not_found" not in security_evtx_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36723 | PATCH | Permissions for the Security event log must prevent access by nonprivileged accounts."
+  block:
+    - name: "REMOVAL MEDIUM | V-36723 | PATCH | Permissions for the Security event log must prevent access by nonprivileged accounts."
+      win_acl:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Security.evtx'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('EventLog' in item[0] or 'SYSTEM' in item[0] or 'Administradores' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - "{{ security_evtx_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "MEDIUM | V-36723 | PATCH | Permissions for the Security event log must prevent access by nonprivileged accounts."
+      win_acl:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Security.evtx'
+          user: '{{ item }}'
+          rights: 'FullControl'
+          type: 'allow'
+          state: 'present'
+          inherit: 'ContainerInherit, ObjectInherit'
+          propagation: 'None'
+      with_items:
+          - 'NT SERVICE\Eventlog'
+          - 'NT AUTHORITY\SYSTEM'
+          - 'BUILTIN\Administradores'
+
+    - name: "REMOVAL MEDIUM | V-36723 | PATCH | Permissions for the Security event log must prevent access by nonprivileged accounts."
+      win_acl_inheritance:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\Security.evtx'
+          state: 'absent'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36724 | AUDIT | Permissions for the System event log must prevent access by nonprivileged accounts."
+  win_shell: 'Get-Acl -PATH "C:\WINDOWS\SYSTEM32\WINEVT\LOGS\System.evtx" | Format-List'
+  register: system_evtx_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     system_evtx_audit.stderr != "" and
+     '"path_not_found" not in system_evtx_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36724 | AUDIT | Permissions for the System event log must prevent access by nonprivileged accounts."
+  win_shell: '(Get-Acl -PATH "C:\WINDOWS\SYSTEM32\WINEVT\LOGS\System.evtx").Access.IdentityReference.Value'
+  register: system_evtx_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     system_evtx_audit.stderr != "" and
+     '"path_not_found" not in system_evtx_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36724 | PATCH | Permissions for the System event log must prevent access by nonprivileged accounts."
+  block:
+    - name: "REMOVAL MEDIUM | V-36724 | PATCH | Permissions for the System event log must prevent access by nonprivileged accounts."
+      win_acl:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\System.evtx'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('EventLog' in item[0] or 'SYSTEM' in item[0] or 'Administradores' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - "{{ system_evtx_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "MEDIUM | V-36724 | PATCH | Permissions for the System event log must prevent access by nonprivileged accounts."
+      win_acl:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\System.evtx'
+          user: '{{ item }}'
+          rights: 'FullControl'
+          type: 'allow'
+          state: 'present'
+          inherit: 'ContainerInherit, ObjectInherit'
+          propagation: 'None'
+      with_items:
+          - 'NT SERVICE\EventLog'
+          - 'NT AUTHORITY\SYSTEM'
+          - 'BUILTIN\Administradores'
+
+    - name: "REMOVAL MEDIUM | V-36724 | PATCH | Permissions for the System event log must prevent access by nonprivileged accounts."
+      win_acl_inheritance:
+          path: 'C:\WINDOWS\SYSTEM32\WINEVT\LOGS\System.evtx'
+          state: 'absent'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-36773 | PATCH | The machine inactivity limit must be set to 15 minutes, locking the system with the screensaver."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\'
+      value: InactivityTimeout
+      data: 0x00000384
+      datatype: dword
+  when: >
+      ansible_virtualization_role != "guest" and
+      ansible_system_vendor != "QEMU"
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40177 | AUDIT | Permissions for program file directories must conform to minimum requirements."
+  win_shell: 'Get-Acl -PATH "\Program Files" | Format-List'
+  register: program_files_minimum_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     program_files_minimum_audit.stderr != "" and
+     '"path_not_found" not in program_files_minimum_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40177 | AUDIT | Permissions for program file directories must conform to minimum requirements."
+  win_shell: '(Get-Acl -PATH "\Program Files").Access.IdentityReference.Value'
+  register: program_files_minimum_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     program_files_minimum_audit.stderr != "" and
+     '"path_not_found" not in program_files_minimum_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40177 | AUDIT | Permissions for program file directories must conform to minimum requirements."
+  win_shell: 'Get-Acl -PATH "\Program Files (x86)" | Format-List'
+  register: program_filesx86_minimum_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     program_filesx86_minimum_audit.stderr != "" and
+     '"path_not_found" not in program_filesx86_minimum_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40177 | AUDIT | Permissions for program file directories must conform to minimum requirements."
+  win_shell: '(Get-Acl -PATH "\Program Files (x86)").Access.IdentityReference.Value'
+  register: program_filesx86_minimum_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     program_filesx86_minimum_audit.stderr != "" and
+     '"path_not_found" not in program_filesx86_minimum_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40177 | AUDIT | Permissions for program file directories must conform to minimum requirements."
+  block:
+    - name: "REMOVAL MEDIUM | V-40177 | PATCH | Permissions for program file directories must conform to minimum requirements."
+      win_acl:
+          path: '\Program Files'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('TrustedInstaller' in item[0] or 'SYSTEM' in item[0] or 'Administradores' in item[0] or 'CREATOR OWNER' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - '{{ program_files_minimum_audit.stdout_lines }}'
+          - [ allow, deny ]
+
+    - name: "REMOVAL MEDIUM | V-40177 | PATCH | Permissions for program file directories must conform to minimum requirements."
+      win_acl:
+          path: '\Program Files (x86)'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('TrustedInstaller' in item[0] or 'SYSTEM' in item[0] or 'Administradores' in item[0] or 'CREATOR OWNER' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - '{{ program_filesx86_minimum_audit.stdout_lines }}'
+          - [ allow, deny ]
+
+    - name: "MEDIUM | V-40177 | PATCH | Permissions for program file directories must conform to minimum requirements."
+      win_acl:
+          path: '\Program Files'
+          user: '{{ item.user }}'
+          rights: '{{ item.rights }}'
+          type: 'allow'
+          state: 'present'
+          inherit: '{{ item.inherit }}'
+          propagation: '{{ item.propagation }}'
+      with_items:
+          - user: 'NT SERVICE\TrustedInstaller'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit'
+            propagation: 'InheritOnly'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'Modify'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'BUILTIN\Administradores'
+            rights: 'Modify'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'BUILTIN\Administradores'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'BUILTIN\Usuarios'
+            rights: 'ReadAndExecute'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'None'
+          - user: 'CREATOR OWNER'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'TODOS LOS PAQUETES DE APLICACIONES'
+            rights: 'ReadAndExecute'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+
+    - name: "MEDIUM | V-40177 | PATCH | Permissions for program file directories must conform to minimum requirements."
+      win_acl:
+          path: '\Program Files (x86)'
+          user: '{{ item.user }}'
+          rights: '{{ item.rights }}'
+          type: 'allow'
+          state: 'present'
+          inherit: '{{ item.inherit }}'
+          propagation: '{{ item.propagation }}'
+      with_items:
+          - user: 'NT SERVICE\TrustedInstaller'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit'
+            propagation: 'InheritOnly'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'Modify'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'BUILTIN\Administradores'
+            rights: 'Modify'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'BUILTIN\Administradores'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'BUILTIN\Usuarios'
+            rights: 'ReadAndExecute'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'None'
+          - user: 'CREATOR OWNER'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'TODOS LOS PAQUETES DE APLICACIONES'
+            rights: 'ReadAndExecute'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+
+    - name: "REMOVAL MEDIUM | V-40177 | PATCH | Permissions for program file directories must conform to minimum requirements."
+      win_acl_inheritance:
+          path: '{{ item }}'
+          state: absent
+      with_items:
+          - '\Program Files'
+          - '\Program Files (x86)'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40178 | AUDIT | Permissions for system drive root directory must conform to minimum requirements."
+  win_shell: 'Get-Acl -PATH "C:" | Format-List'
+  register: root_permissions_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     root_permissions_audit.stderr != "" and
+     '"path_not_found" not in root_permissions_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40178 | AUDIT | Permissions for system drive root directory must conform to minimum requirements."
+  win_shell: (Get-Acl -PATH 'C:').Access.IdentityReference.Value
+  register: root_permissions_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     root_permissions_audit.stderr != "" and
+     '"path_not_found" not in root_permissions_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40178 | PATCH | Permissions for system drive root directory must conform to minimum requirements."
+  block:
+    - name: "REMOVAL MEDIUM | V-40178 | PATCH | Permissions for system drive root directory must conform to minimum requirements."
+      win_acl:
+          path: 'C:'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('SYSTEM' in item[0] or 'Administradores' in item[0] or 'CREATOR OWNER' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - '{{ root_permissions_audit.stdout_lines }}'
+          - [ allow, deny ]
+
+    - name: "MEDIUM | V-40178 | PATCH | Permissions for system drive root directory must conform to minimum requirements."
+      win_acl:
+          path: 'C:'
+          user: '{{ item.user }}'
+          rights: '{{ item.rights }}'
+          type: 'allow'
+          state: 'present'
+          inherit: '{{ item.inherit }}'
+          propagation: '{{ item.propagation }}'
+      with_items:
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Administradores'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Usuarios'
+            rights: 'ReadAndExecute'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Users'
+            rights: 'AppendData'
+            inherit: 'ContainerInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Usuarios'
+            rights: 'CreateFiles,WriteData'
+            inherit: 'ContainerInherit'
+            propagation: 'InheritOnly'
+          - user: 'CREATOR OWNER'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+
+    - name: "MEDIUM | V-40178 | PATCH | Permissions for system drive root directory must conform to minimum requirements."
+      win_acl_inheritance:
+          path: 'C:'
+          state: 'absent'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40179 | AUDIT | Permissions for Windows installation directory must conform to minimum requirements."
+  win_command: 'reg query HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion /v ProgramFilesDir'
+  register: windows_installation_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     windows_installation_audit.stderr != "" and
+     '"path_not_found" not in windows_installation_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40179 | AUDIT | Permissions for Windows installation directory must conform to minimum requirements."
+  win_shell: '(Get-Acl -PATH "C:\Windows").Access.IdentityReference.Value'
+  register: windows_installation_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     windows_installation_audit.stderr != "" and
+     '"path_not_found" not in windows_installation_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40179 | PATCH | Permissions for Windows installation directory must conform to minimum requirements."
+  block:
+    - name: "REMOVAL MEDIUM | V-40179 | PATCH | Permissions for Windows installation directory must conform to minimum requirements."
+      win_acl:
+          path: 'C:\Windows'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('TrustedInstaller' in item[0] or 'SYSTEM' in item[0] or 'Administradores' in item[0] or 'CREATOR OWNER' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - "{{ windows_installation_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "MEDIUM | V-40179 | PATCH | Permissions for Windows installation directory must conform to minimum requirements."
+      win_acl:
+          path: 'C:\Windows'
+          user: '{{ item.user }}'
+          rights: '{{ item.rights }}'
+          type: 'allow'
+          state: 'present'
+          inherit: '{{ item.inherit }}'
+          propagation: '{{ item.propagation }}'
+      with_items:
+          - user: 'NT SERVICE\TrustedInstaller'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit'
+            propagation: 'None'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'Modify'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'BUILTIN\Administradores'
+            rights: 'Modify'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'BUILTIN\Administradores'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'CREATOR OWNER'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'InheritOnly'
+          - user: 'TODOS LOS PAQUETES DE APLICACIONES'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit,ObjectInherit'
+            propagation: 'None'
+
+    - name: "REMOVAL MEDIUM | V-40179 | PATCH | Permissions for Windows installation directory must conform to minimum requirements."
+      win_acl_inheritance:
+          path: 'C:\Windows'
+          state: 'absent'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40200 | AUDIT | The system must be configured to audit Object Access - Central Access Policy Staging failures."
+  win_shell: 'AuditPol /get /subcategory:"Almacenamiento provisional de directiva central"'
+  register: central_access_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40200 | PATCH | The system must be configured to audit Object Access - Central Access Policy Staging failures."
+  win_shell: 'AuditPol /set /subcategory:"Almacenamiento provisional de directiva central" /failure:enable'
+  when: '"errores" not in central_access_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-40202 | PATCH | The system must be configured to audit Object Access - Central Access Policy Staging successes."
+  win_shell: 'AuditPol /set /subcategory:"Almacenamiento provisional de directiva central" /success:enable'
+  when: '"aciertos" not in central_access_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-43238 | PATCH | The display of slide shows on the lock screen must be disabled (Windows 2012 R2)."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization\'
+      value: NoLockScreenSlideshow
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-43239 | PATCH | Command line data must be prevented from inclusion in process creation events (Windows 2012 R2)."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit\'
+      value: ProcessCreationIncludeCmdLine_Enabled
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-43240 | PATCH | The network selection user interface (UI) must not be displayed on the logon screen (Windows 2012 R2)."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System\'
+      value: DontDisplayNetworkSelectionUI
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-43245 | PATCH | Automatically signing in the last interactive user after a system-initiated restart must be disabled (Windows 2012 R2)."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\'
+      value: DontDisplayNetworkSelectionUI
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-56511 | PATCH | The Windows Error Reporting Service must be running and configured to start automatically."
+  win_service:
+      name: WerSvc
+      start_mode: auto
+      state: started
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57453 | PATCH | The system must be configured to collect multiple error reports of the same event type."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting\'
+      value: BypassDataThrottling
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57455 | PATCH | The system must be configured to prevent the display of error messages to the user."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: DontShowUI
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57457 | PATCH | The system must be configured to store error reports locally, on the system or in the enclave, and not send them to Microsoft."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: CorporateWerServer
+      data: " "
+      datatype: string
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57459 | PATCH | The system must be configured to use SSL to forward error reports."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: CorporateWerUseSSL
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57461 | PATCH | The system must be configured to send error reports on TCP port 1232."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: CorporateWerPortNumber
+      data: 0x000004d0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57463 | PATCH | The system must be configured to archive error reports."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: DisableArchive
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57465 | PATCH | The system must be configured to store all data in the error report archive."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: ConfigureArchive
+      data: 0x00000002
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57467 | PATCH | The maximum number of error reports to archive on a system must be configured to 100 or greater."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: MaxArchiveCount
+      data: 0x00000064
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57469 | PATCH | The system must be configured to queue error reports until a local or network collector is available."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: DisableQueue
+      data: 0
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57471 | PATCH | The system must be configured to add all error reports to the queue."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: ForceQueue
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57473 | PATCH | The maximum number of error reports to queue on a system must be configured to 50 or greater."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: MaxQueueCount
+      data: 0x00000032
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57475 | PATCH | The system must be configured to attempt to forward queued error reports once a day."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting'
+      value: QueuePesterInterval
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57477 | PATCH | The system must be configured to automatically consent to send all data requested by a local or DOD-wide error collection site."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting\Consent'
+      value: DefaultConsent
+      data: 0x00000004
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57479 | PATCH | The system must be configured to permit the default consent levels of Windows Error Reporting to override any other consent policy setting."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting\Consent'
+      value: DefaultOverrideBehavior
+      data: 1
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57633 | AUDIT | The system must be configured to audit Policy Change - Authorization Policy Change successes."
+  win_shell: 'AuditPol /get /subcategory:"Cambio de la directiva de autorización"'
+  register: auth_policy_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57633 | PATCH | The system must be configured to audit Policy Change - Authorization Policy Change successes."
+  win_shell: 'AuditPol /set /subcategory:"Cambio de la directiva de autorización" /success:enable'
+  when: '"aciertos" not in auth_policy_audit.stdout|lower'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57635 | PATCH | The system must be configured to audit Policy Change - Authorization Policy Change failures."
+  win_shell: 'AuditPol /set /subcategory:"Cambio de la directiva de autorización" /failure:enable'
+  when: "'errores' not in auth_policy_audit.stdout|lower"
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57639 | PATCH | Users must be required to enter a password to access private keys stored on the computer."
+  win_regedit:
+      key: 'HKLM:\SOFTWARE\Policies\Microsoft\Cryptography\'
+      value: ForceKeyProtection
+      data: 2
+      datatype: dword
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57721 | AUDIT | Event Viewer must be protected from unauthorized modification and deletion."
+  win_shell: 'Get-Acl -PATH "C:\Windows\System32\Eventvwr.exe" | Format-List'
+  register: event_viewer_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     event_viewer_audit.stderr != "" and
+     '"path_not_found" not in event_viewer_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57721 | AUDIT | Event Viewer must be protected from unauthorized modification and deletion."
+  win_shell: '(Get-Acl -PATH "C:\Windows\System32\Eventvwr.exe").Access.IdentityReference.Value'
+  register: event_viewer_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     event_viewer_audit.stderr != "" and
+     '"path_not_found" not in event_viewer_audit.stderr'
+  tags: ['cat2']
+
+- name: "MEDIUM | V-57721 | PATCH | Event Viewer must be protected from unauthorized modification and deletion."
+  block:
+    - name: "MEDIUM | V-57721 | PATCH | Event Viewer must be protected from unauthorized modification and deletion."
+      win_acl:
+          path: 'C:\Windows\System32\Eventvwr.exe'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('TrustedInstaller' in item[0] or 'Administradores' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - "{{ event_viewer_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "MEDIUM | V-57721 | PATCH | Event Viewer must be protected from unauthorized modification and deletion."
+      win_acl:
+          path: 'C:\Windows\System32\Eventvwr.exe'
+          user: '{{ item.user }}'
+          rights: '{{ item.rights }}'
+          type: 'allow'
+          state: 'present'
+          inherit: '{{ item.inherit }}'
+          propagation: '{{ item.propagation }}'
+      with_items:
+          - user: 'NT SERVICE\TrustedInstaller'
+            rights: 'FullControl'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'ReadAndExecute'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'BUILTIN\Usuarios'
+            rights: 'ReadAndExecute'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'TODOS LOS PAQUETES DE APLICACIONES'
+            rights: 'ReadAndExecute'
+            inherit: 'None'
+            propagation: 'None'
+
+    - name: "REMOVAL MEDIUM | V-57721 | PATCH | Event Viewer must be protected from unauthorized modification and deletion."
+      win_acl_inheritance:
+          path: 'C:\Windows\System32\Eventvwr.exe'
+          state: absent
+  tags: ['cat2']

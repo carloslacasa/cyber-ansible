@@ -1,0 +1,69 @@
+---
+- name: Include variables
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_facts['os_family'] }}.yml"
+  - default_distro.yml
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags:
+   - compliance
+   - stig
+   - disa
+
+- name: Determine Language settings
+  win_shell: 'Get-WinSystemLocale | select name'
+  register: language_settings
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags:
+   - compliance
+   - stig
+   - disa
+
+- name: Include variables for OS version (ES)
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_facts['os_family'] }}_es.yml"
+  - default_distro_es.yml
+  when:
+   - ansible_facts['os_family']|lower == "windows"
+   - "'es-es' in language_settings.stdout|lower"
+  tags:
+   - compliance
+   - stig
+   - disa
+
+- name: Include variables for OS version (EN)
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_facts['os_family'] }}_en.yml"
+  - default_distro_en.yml
+  when:
+   - ansible_facts['os_family']|lower == "windows"
+   - "'es-es' not in language_settings.stdout|lower"
+  tags:
+   - compliance
+   - stig
+   - disa
+
+
+
+- name: DISA-STIG policies windows ACL  
+  include_tasks: acl.yml 
+  when: 
+    - ansible_facts['os_family']|lower == "windows"
+  tags:
+   - compliance
+   - stig
+   - disa
+
+#- name: DISA-STIG policies window server 2012R2
+#  include_tasks: stig-win2012r2.yml 
+#  when: >
+#    ansible_facts['os_family']|lower == "windows" and
+#    ansible_facts['os_name']|lower == "microsoft windows server 2012 r2 standard"
+#  tags:
+#   - compliance
+#   - stig
+#   - disa

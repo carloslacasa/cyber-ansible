@@ -1,0 +1,18 @@
+---
+- name: DISA-STIG policies windows server 2012R2 CAT-I
+  include_tasks: windows2012r2/cat1.yml
+  tags:
+   - disa
+   - stig
+
+- name: DISA-STIG policies windows server 2012R2 CAT-II
+  include_tasks: windows2012r2/cat2.yml
+  tags:
+   - disa
+   - stig
+
+- name: DISA-STIG policies windows server 2012R2 CAT-III
+  include_tasks: windows2012r2/cat3.yml
+  tags:
+   - disa
+   - stig

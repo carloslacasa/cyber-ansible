@@ -1,0 +1,91 @@
+## Settings adicionales GSA/CIS
+## clacasa (Septiembre 2020)
+
+#- name: "windows-187: Ensure 'Configure SMB v1 server' is set to 'Disabled'"
+#  win_regedit:
+#     path: HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters
+#     name: "SMB1"
+#     data: "0"
+#     type: dword
+#  tags: ['configuration']
+
+- name: "windows-188: Ensure 'Structured Exception Handling Overwrite Protection (SEHOP)' is set to 'Enabled'"
+  win_regedit:
+     path: HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\kernel
+     name: "DisableExceptionChainValidation"
+     data: "0"
+     type: dword
+  tags: ['configuration']
+
+# https://mspoweruser.com/windows-aslr-flaw-heres-can-fix/
+- name: "windows-188-2: Ensure 'Address Space Layout Randomization (ASLR)' is set to 'Enabled' (Flaw mitigation)"
+  win_regedit:
+     path: HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\kernel
+     name: "MitigationOptions"
+     data: hex:00,01,01,00,00,00,00,00,00,00,00,00,00,00,00,00
+     type: binary
+  tags: ['configuration']
+
+- name: "windows-221: Ensure 'Remote host allows delegation of non-exportable credentials' is set to 'Enabled'"
+  win_regedit:
+     path: HKLM:\SOFTWARE\Policies\Microsoft\Windows\CredentialsDelegation
+     name: "AllowProtectedCreds"
+     data: "1"
+     type: dword
+  tags: ['configuration']
+
+- name: "windows-247: Ensure 'Turn off picture password sign-in' is set to 'Enabled'"
+  win_regedit:
+     path: HKLM:\Software\Policies\Microsoft\Windows\System
+     name: "BlockDomainPicturePassword"
+     data: "1"
+     type: dword
+  tags: ['configuration']
+
+- name: "windows-248: Ensure 'Turn on convenience PIN sign-in' is set to 'Disabled'"
+  win_regedit:
+     path: HKLM:\Software\Policies\Microsoft\Windows\System
+     name: "AllowDomainPINLogon"
+     data: "0"
+     type: dword
+  tags: ['configuration']
+
+- name: "windows-324: Ensure 'Configure local setting override for reporting to Microsoft MAPS' is set to 'Disabled'"
+  win_regedit:
+     path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet
+     name: "LocalSettingOverrideSpynetReporting"
+     data: "0"
+     type: dword
+  tags: ['configuration']
+
+- name: "windows-326: Ensure 'Turn on behavior monitoring' is set to 'Enabled'"
+  win_regedit:
+     path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Real-Time Protection
+     name: "DisableBehaviorMonitoring"
+     data: "0"
+     type: dword
+  tags: ['configuration']
+
+- name: "windows-328: Ensure 'Scan removable drives' is set to 'Enabled'"
+  win_regedit:
+     path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Scan
+     name: "DisableRemovableDriveScanning"
+     data: "0"
+     type: dword
+  tags: ['configuration']
+
+- name: "windows-329: Ensure 'Turn on e-mail scanning' is set to 'Enabled'"
+  win_regedit:
+     path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Scan
+     name: "DisableEmailScanning"
+     data: "0"
+     type: dword
+  tags: ['configuration']
+
+- name: "windows-333: Ensure 'Turn off Windows Defender AntiVirus' is set to 'Disabled'"
+  win_regedit:
+     path: HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender
+     name: "DisableAntiSpyware"
+     data: "0"
+     type: dword
+  tags: ['configuration']

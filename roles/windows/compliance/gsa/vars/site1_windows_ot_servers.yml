@@ -1,0 +1,12 @@
+---
+unprivileged_shutdown_allowed: False
+dont_display_last_username: True
+inactivity_timeout_login: True
+enable_forced_logoff: True 
+audit_enabled: True
+screensaver_enabled: True
+onedrive_enabled: False
+no_autoreboot_with_logged_on_users: False
+enable_autologon: False
+elevation_prompt_users: True
+show_legal_notice: True

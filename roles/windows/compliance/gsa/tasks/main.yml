@@ -1,0 +1,82 @@
+---
+- name: Determine Language settings
+  win_shell: 'Get-WinSystemLocale | select name'
+  register: language_settings
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags:
+   - compliance
+   - gsa
+
+- name: Include variables for OS version (ES)
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_facts['os_family'] }}_es.yml"
+  - default_distro_es.yml
+  when: 
+   - ansible_facts['os_family']|lower == "windows"
+   - "'es-es' in language_settings.stdout|lower"
+  tags:
+   - compliance
+   - gsa
+
+- name: Include variables for OS version (EN)
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_facts['os_family'] }}_en.yml"
+  - default_distro_en.yml
+  when:
+   - ansible_facts['os_family']|lower == "windows"
+   - "'es-es' not in language_settings.stdout|lower"
+  tags:
+   - compliance
+   - gsa
+
+- name: Include particular variables for the inventory group
+  include_vars: '{{ item }}'
+  with_first_found:
+  - '{{ ansible_limit }}.yml'
+  - default_group.yml
+  tags: 
+   - compliance
+   - gsa
+
+# https://github.com/GSA/ansible-os-win-2016/tree/master/tasks
+- name: US General Services Administration policies (CIS compliant) for windows Servers or windows workstations Enterprise
+  include_tasks: '{{ item }}'
+  with_items:
+    - section01.yml
+    - section02.yml
+    - section09.yml
+    - section17.yml
+    - section18.yml
+    - section19.yml
+    - section99.yml
+  when: >
+    ansible_facts['os_family']|lower == "windows" and
+    (
+      ansible_facts['os_name']|lower == "microsoft windows server 2012 r2 standard" or
+      ansible_facts['os_name']|lower == "microsoft windows server 2016" or
+      ansible_facts['os_name']|lower == "microsoft windows server 2019" or
+      ansible_facts['os_name']|lower == "microsoft windows server 2019 standard" or
+      ansible_facts['os_name']|lower == "microsoft windows 10 enterprise"
+    )
+  tags:
+   - compliance
+   - gsa
+
+- name: US General Services Administration policies (CIS compliant) for windows workstations Professional
+  include_tasks: '{{ item }}'
+  with_items:
+    - section01.yml
+    - section02.yml
+    - section09.yml
+    - section18.yml
+    - section19.yml
+    - section99.yml
+  when: >
+    ansible_facts['os_family']|lower == "windows" and
+    ansible_facts['os_name']|lower == "microsoft windows 10 pro"
+  tags:
+   - compliance
+   - gsa

@@ -1,0 +1,44 @@
+---
+- name: "Dynamic Data Exchange (DDE)"
+  block:
+    - name: "Prevent loading external content Excel"
+      win_regedit:
+         path: HKCU:\Software\Microsoft\Office\16.0\Excel\Security
+         name: '{{ reg.name }}'
+         data: '{{ reg.value }}'
+         type: dword
+      loop:
+         - name: "DataConnectionWarnings"
+           value: "2"
+         - name: "RichDataConnectionWarnings"
+           value: "2"
+         - name: "WorkbookLinkWarnings"
+           value: "2"
+      loop_control:
+          loop_var: reg
+
+    - name: "Prevent loading external content Word"
+      win_regedit:
+         path: HKCU:\Software\Microsoft\Office\16.0\Word\Security
+         name: "AllowDDE"
+         data: "0"
+         type: dword
+  tags: ['configuration']
+
+- name: "Object linking and embedding (OLE)"
+  block:
+    - name: Prevent activation of OLE packages
+      win_regedit:
+         path: 'HKCU:\Software\Microsoft\Office\16.0\{{ name }}\Security'
+         name: "PackagePrompt"
+         data: "2"
+         type: dword
+      loop:
+         - "Excel"
+         - "PowerPoint"
+         - "Word"
+      loop_control:
+          loop_var: name
+  tags: ['configuration']
+
+

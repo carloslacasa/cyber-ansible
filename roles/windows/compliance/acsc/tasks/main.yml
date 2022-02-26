@@ -1,0 +1,59 @@
+---
+- name: Determine Language settings
+  win_shell: 'Get-WinSystemLocale | select name'
+  register: language_settings
+  when:
+    - ansible_facts['os_family']|lower == "windows"
+  tags:
+   - compliance
+   - acsc
+
+- name: Include variables for OS version (ES)
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_facts['os_family'] }}_es.yml"
+  - default_distro_es.yml
+  when:
+   - ansible_facts['os_family']|lower == "windows"
+   - "'es-es' in language_settings.stdout|lower"
+  tags:
+   - compliance
+   - acsc
+
+- name: Include variables for OS version (EN)
+  include_vars: '{{ item }}'
+  with_first_found:
+  - "{{ ansible_facts['os_family'] }}_en.yml"
+  - default_distro_en.yml
+  when:
+   - ansible_facts['os_family']|lower == "windows"
+   - "'es-es' not in language_settings.stdout|lower"
+  tags:
+   - compliance
+   - acsc
+
+- name: Include particular variables for the inventory group
+  include_vars: '{{ item }}'
+  with_first_found:
+  - '{{ ansible_limit }}.yml'
+  - default_group.yml
+  tags:
+   - compliance
+   - acsc
+
+- name: Australian Cyber Security Center recommendations
+  include_tasks: '{{ item }}'
+  loop:
+    - office.yml
+  when: >
+    ansible_facts['os_family']|lower == "windows" and
+    (
+      ansible_facts['os_name']|lower == "microsoft windows server 2012 r2 standard" or
+      ansible_facts['os_name']|lower == "microsoft windows server 2016" or
+      ansible_facts['os_name']|lower == "microsoft windows server 2019" or
+      ansible_facts['os_name']|lower == "microsoft windows server 2019 standard" or
+      ansible_facts['os_name']|lower == "microsoft windows 10 enterprise"
+    )
+  tags:
+   - compliance
+   - acsc

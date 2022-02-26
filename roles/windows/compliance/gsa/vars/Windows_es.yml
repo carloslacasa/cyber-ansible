@@ -1,0 +1,41 @@
+---
+### Audit variables
+audit_type_success: aciertos
+audit_type_failure: errores
+subcategory_logon: 'Inicio de sesión'
+subcategory_logoff: 'Cerrar sesión'
+subcategory_special_logon: 'Inicio de sesión especial'
+subcategory_application_group_management: 'Administración de grupos de aplicaciones'
+subcategory_user_account_management: 'Administración de cuentas de usuario'
+subcategory_computer_account_management: 'Administración de cuentas de equipo'
+subcategory_distribution_group_management: 'Administración de grupos de distribución'
+subcategory_security_group_management: 'Administración de grupos de seguridad'
+subcategory_process_creation: 'Creación del proceso'
+subcategory_audit_policy_change: 'Cambio en la directiva de auditoría'
+subcategory_authentication_policy_change: 'Cambio de la directiva de autenticación'
+subcategory_authorization_policy_change: 'Cambio de la directiva de autorización'
+subcategory_ipsec_driver: 'Controlador IPSec'
+subcategory_sensitive_privilege_use: 'Uso de privilegio confidencial'
+subcategory_other_system_events: 'Otros eventos de sistema'
+subcategory_other_account_management: 'Otros eventos de administración de cuentas'
+subcategory_credential_validation: 'Validación de credenciales'
+subcategory_other_logon_logoff_events: 'Otros eventos de inicio y cierre de sesión'
+subcategory_plug_and_play_events: 'Eventos Plug and Play'
+subcategory_account_lockout: 'Bloqueo de cuenta'
+subcategory_removable_storage: 'Almacenamiento extraíble'
+subcategory_security_state_change: 'Cambio de estado de seguridad'
+subcategory_system_integrity: 'Integridad del sistema'
+subcategory_security_system_extension: 'Extensión del sistema de seguridad'
+
+### User variables
+group_administrators: Administradores
+group_auth_users: 'Usuarios autentificados'
+group_local_service: 'Servicio local'
+group_local_account: 'Cuenta local'
+group_network_service: 'Servicio de red'
+group_remote_desktop: 'Usuarios de escritorio remoto'
+group_service: Servicio
+group_guests: Invitados
+group_iis_users: IIS_IUSRS
+legal_notice_caption: 'Advertencia de seguridad'
+legal_notice_text: 'Éste es un sistema de <CHANGEME>. Sólo puede ser accedido por usuarios autorizados, para uso profesional. Su uso implica la aceptación de las políticas de uso corporativas. Este sistema está sujeto a monitorización.'

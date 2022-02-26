@@ -1,0 +1,24 @@
+---
+- name: Account Logon Audit Log | windows-audit-203
+  win_audit_policy_system:
+    subcategory: '{{ subcategory_logon }}'
+    audit_type: '{{ audit_type_success }},{{ audit_type_failure }}'
+  tags: ['configuration']
+
+- name: Audit Application Group Management | windows-audit-204
+  win_audit_policy_system:
+    subcategory: '{{ subcategory_application_group_management }}'
+    audit_type: '{{ audit_type_success }},{{ audit_type_failure }}'
+  tags: ['configuration']
+
+- name: Audit Computer Account Management | windows-audit-205
+  win_audit_policy_system:
+    subcategory: '{{ subcategory_computer_account_management }}'
+    audit_type: '{{ audit_type_success }},{{ audit_type_failure }}'
+  tags: ['configuration']
+
+- name: Audit Distribution Group Management | windows-audit-206
+  win_audit_policy_system:
+    subcategory: '{{ subcategory_distribution_group_management }}'
+    audit_type: '{{ audit_type_success }},{{ audit_type_failure }}'
+  tags: ['configuration']

@@ -1,0 +1,67 @@
+---
+- name: "1.1.1,CCE-37166-6 | Ensure 'Enforce password history' is set to '24 or more password(s)' (** EXCEPTION **)"
+  win_security_policy:
+     section: System Access
+     key: PasswordHistorySize
+     value: '{{ passwordhistorysize }}' 
+  tags: ['configuration']
+
+- name: "1.1.2,CCE-37167-4 | Ensure 'Maximum password age' is set to '60 or fewer days, but not 0' (** EXCEPTION **) [GSA-90]"
+  win_security_policy:
+     section: System Access
+     key: MaximumPasswordAge
+     value: '{{ maximumpasswordage }}'
+  tags: ['configuration']
+
+- name: "1.1.3,CCE-37073-4 | Ensure 'Minimum password age' is set to '1 or more day(s)' [GSA-0]"
+  win_security_policy:
+     section: System Access
+     key: MinimumPasswordAge
+     value: '{{ minimumpasswordage }}' 
+  tags: ['configuration']
+
+#Local Security Policy limited to 14 chars at most for 'Minimum password length'; 16 chars (GSA Policy) implemented via Default Domain Policy Attribute for domain-joined nodes
+- name: "1.1.4,CCE-36534-6 | Ensure 'Minimum password length' is set to '14 or more character(s)' (** EXCEPTION **) [GSA-16]"
+  win_security_policy:
+     section: System Access
+     key: MinimumPasswordLength
+     value: '{{ minimumpasswordlength }}' 
+  tags: ['configuration']
+
+#CIS-CAT unable to audit this control for non-domain-joined nodes
+- name: "1.1.5,CCE-37063-5 | Ensure 'Password must meet complexity requirements' is set to 'Enabled' [GSA-Disabled]"
+  win_security_policy:
+     section: System Access
+     key: PasswordComplexity
+     value: '{{ passwordcomplexity }}' 
+  tags: ['configuration']
+
+#CIS-CAT unable to audit this control for non-domain-joined nodes
+- name: "1.1.6,CCE-36286-3 | Ensure 'Store passwords using reversible encryption' is set to 'Disabled'"
+  win_security_policy:
+     section: System Access
+     key: ClearTextPassword
+     value: 0
+  tags: ['configuration']
+
+- name: "1.2.2,CCE-36008-1 | Ensure 'Account lockout threshold' is set to '10 or fewer invalid logon attempt(s), but not 0' [GSA-5]"
+  win_security_policy:
+     section: System Access
+     key: LockoutBadCount
+     value: '{{ lockoutbadcount }}' 
+  tags: ['configuration']
+
+- name: "1.2.1,CCE-37034-6 | Ensure 'Account lockout duration' is set to '15 or more minute(s)' [GSA-30]"
+  win_security_policy:
+     section: System Access
+     key: LockoutDuration
+     value: '{{ lockoutduration }}' 
+  tags: ['configuration']
+
+- name: "1.2.3,CCE-36883-7 | Ensure 'Reset account lockout counter after' is set to '15 or more minute(s)' [GSA-30]"
+  win_security_policy:
+     section: System Access
+     key: ResetLockoutCount
+     value: '{{ resetlockoutcount }}'
+  tags: ['configuration']
+

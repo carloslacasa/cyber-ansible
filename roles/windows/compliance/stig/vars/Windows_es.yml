@@ -1,0 +1,5 @@
+---
+builtin_administrators: 'BUILTIN\Administradores'
+builtin_users: 'BUILTIN\Usuarios'
+nt_authusers: 'NT AUTHORITY\Usuarios Autentificados'
+all_users: 'Todos'

@@ -1,0 +1,7 @@
+---
+audit_type_success: aciertos
+audit_type_failure: errores
+subcategory_logon: Inicio de sesión
+subcategory_application_group_management: Administración de grupos de aplicaciones
+subcategory_computer_account_management: Administración de cuentas de equipo
+subcategory_distribution_group_management: Administración de grupos de distribución

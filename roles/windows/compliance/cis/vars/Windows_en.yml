@@ -1,0 +1,7 @@
+---
+audit_type_success: success
+audit_type_failure: failure
+subcategory_logon: Logon
+subcategory_application_group_management: Application Group Management
+subcategory_computer_account_management: Computer Account Management
+subcategory_distribution_group_management: Distribution Group Management

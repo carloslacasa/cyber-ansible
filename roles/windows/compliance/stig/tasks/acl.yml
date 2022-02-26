@@ -1,0 +1,49 @@
+---
+- name: ACL for windows root folder
+  vars:
+    root_folder: 'C:'
+  block:
+    - name: Enable ACE inheritance
+      win_acl_inheritance:
+        path: '{{ root_folder }}'
+        state: absent
+
+    - name: ACL for '{{ root_folder }}'
+      win_acl:
+        path: '{{ root_folder }}'
+        user: '{{ item.user }}'
+        rights: '{{ item.rights }}'
+        type: '{{ item.type }}'
+        state: present 
+        inherit: '{{ item.inherit }}' 
+        propagation: '{{ item.propagation }}'
+      with_items:
+        - user: '{{ builtin_administrators }}'
+          rights: 'Full'
+          type: 'allow'
+          inherit: 'ContainerInherit,ObjectInherit'
+          propagation: 'None'
+        - user: 'NT AUTHORITY\SYSTEM'
+          rights: 'Full'
+          type: 'allow'
+          inherit: 'ContainerInherit,ObjectInherit'
+          propagation: 'None'
+        - user: '{{ nt_authusers }}'
+          rights: 'Modify'
+          type: 'allow'
+          inherit: 'ContainerInherit,ObjectInherit'
+          propagation: 'InheritOnly'
+        - user: '{{ nt_authusers }}'
+          rights: 'AppendData'
+          type: 'allow'
+          inherit: 'None'
+          propagation: 'None'
+        - user: '{{ builtin_users }}'
+          rights: 'WriteData,CreateFiles,CreateDirectories,AppendData,WriteExtendedAttributes,DeleteSubdirectoriesAndFiles,WriteAttributes,Write,Delete,Modify,ChangePermissions,TakeOwnership,Synchronize,FullControl'
+          type: 'deny'
+          inherit: 'None'
+          propagation: 'None'
+  tags:
+   - disa
+   - stig
+

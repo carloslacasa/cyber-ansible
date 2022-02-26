@@ -1,0 +1,85 @@
+---
+- name: Account Logon Audit Log | windows-audit-203
+  block:
+    - name: Account Logon Audit Log | check | windows-audit-203
+      win_shell: 'AuditPol /get /subcategory:"{{ subcategory_logon }}"'
+      register: logon_audit
+      check_mode: no
+      changed_when: no
+ 
+    - name: Account Logon Audit Log | fix success | windows-audit-203
+      win_shell: 'AuditPol /set /subcategory:"{{ subcategory_logon }}" /success:enable'
+      when: 
+        - '"aciertos" not in logon_audit.stdout|lower'
+        - '"success" not in logon_audit.stdout|lower'
+
+    - name: Account Logon Audit Log | fix failures | windows-audit-203
+      win_shell: 'AuditPol /set /subcategory:"{{ subcategory_logon }}" /failure:enable'
+      when: 
+        - '"errores" not in logon_audit.stdout|lower'
+        - '"failure" not in logon_audit.stdout|lower'
+  tags: ['configuration']
+
+- name: Audit Application Group Management | windows-audit-204
+  block:
+    - name: Audit Application Group Management | check | windows-audit-204
+      win_shell: 'AuditPol /get /subcategory:"{{ subcategory_application_group_management }}"'
+      register: application_group_management_audit
+      check_mode: no
+      changed_when: no
+ 
+    - name: Audit Application Group Management | fix success| check | windows-audit-204
+      win_shell: 'AuditPol /set /subcategory:"{{ subcategory_application_group_management }}" /success:enable'
+      when: 
+        - '"aciertos" not in application_group_management_audit.stdout|lower'
+        - '"success" not in application_group_management_audit.stdout|lower'
+
+    - name: Audit Application Group Management | fix failure| check | windows-audit-204
+      win_shell: 'AuditPol /set /subcategory:"{{ subcategory_application_group_management }}" /failure:enable'
+      when: 
+        - '"errores" not in application_group_management_audit.stdout|lower'
+        - '"failure" not in application_group_management_audit.stdout|lower'
+  tags: ['configuration']
+
+- name: Audit Computer Account Management | windows-audit-205
+  block:
+    - name: Audit Computer Account Management | check | windows-audit-205
+      win_shell: 'AuditPol /get /subcategory:"{{ subcategory_computer_account_management }}"'
+      register: computer_account_management_audit
+      check_mode: no
+      changed_when: no
+ 
+    - name: Audit Computer Account Management | fix success | windows-audit-205
+      win_shell: 'AuditPol /set /subcategory:"{{ subcategory_computer_account_management }}" /success:enable'
+      when: 
+        - '"aciertos" not in computer_account_management_audit.stdout|lower'
+        - '"success" not in computer_account_management_audit.stdout|lower'
+
+    - name: Audit Computer Account Management | fix failure | windows-audit-205
+      win_shell: 'AuditPol /set /subcategory:"{{ subcategory_computer_account_management }}" /failure:enable'
+      when: 
+        - '"errores" not in computer_account_management_audit.stdout|lower'
+        - '"failure" not in computer_account_management_audit.stdout|lower'
+  tags: ['configuration']
+
+- name: Audit Distribution Group Management | windows-audit-206
+  block:
+    - name: Audit Distribution Group Management | check | windows-audit-206
+      win_shell: 'AuditPol /get /subcategory:"{{ subcategory_distribution_group_management }}"'
+      register: distribution_group_management_audit
+      check_mode: no
+      changed_when: no
+ 
+    - name: Audit Distribution Group Management | fix success | windows-audit-206
+      win_shell: 'AuditPol /set /subcategory:"{{ subcategory_distribution_group_management }}" /success:enable'
+      when: 
+        - '"aciertos" not in distribution_group_management_audit.stdout|lower'
+        - '"success" not in distribution_group_management_audit.stdout|lower'
+
+    - name: Audit Distribution Group Management | fix failure | windows-audit-206
+      win_shell: 'AuditPol /set /subcategory:"{{ subcategory_distribution_group_management }}" /failure:enable'
+      when: 
+        - '"errores" not in distribution_group_management_audit.stdout|lower'
+        - '"failure" not in distribution_group_management_audit.stdout|lower'
+  tags: ['configuration']
+

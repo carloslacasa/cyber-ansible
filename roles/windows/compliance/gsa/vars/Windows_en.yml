@@ -1,0 +1,42 @@
+---
+### Audit variables
+audit_type_success: success
+audit_type_failure: failure
+subcategory_logon: Logon
+subcategory_logoff: Logoff
+subcategory_other_logon_logoff_events: 'Other Logon/Logoff Events'
+subcategory_special_logon: 'Special Logon'
+subcategory_credential_validation: 'Credential validation'
+subcategory_application_group_management: 'Application Group Management'
+subcategory_computer_account_management: 'Computer Account Management'
+subcategory_other_account_management: 'Other Account Management Events'
+subcategory_distribution_group_management: 'Distribution Group Management'
+subcategory_security_group_management: 'Security Group Management'
+subcategory_user_account_management: 'User Account Management'
+subcategory_plug_and_play_events: 'Plug and Play Events'
+subcategory_process_creation: 'Process Creation'
+subcategory_account_lockout: 'Account Lockout'
+subcategory_group_membership: 'Group Membership'
+subcategory_audit_policy_change: 'Audit Policy Change'
+subcategory_authentication_policy_change: 'Authentication Policy Change'
+subcategory_authorization_policy_change: 'Authorization Policy Change'
+subcategory_sensitive_privilege_use: 'Sensitive Privilege Use'
+subcategory_ipsec_driver: 'IPsec Driver'
+subcategory_other_system_events: 'Other System Events'
+subcategory_removable_storage: 'Removable Storage'
+subcategory_security_state_change: 'Security State Change'
+subcategory_security_system_extension: 'Security System Extension'
+subcategory_system_integrity: 'System Integrity'
+
+### User variables
+group_administrators: Administrators
+group_auth_users: Authenticated Users
+group_local_service: Local Service
+group_local_account: Local Account
+group_network_service: Network Service
+group_remote_desktop: Remote Desktop Users
+group_service: Service
+group_guests: Guests
+group_iis_users: IIS_IUSRS
+legal_notice_caption: 'Security warning'
+legal_notice_text: 'This is an <CHANGEME> computer system. It may be accessed by authorized users for professional use only. Use of this system implies acceptance of corporate use policies. This system is subject to monitoring.'

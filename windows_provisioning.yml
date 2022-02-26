@@ -9,8 +9,8 @@
     - windows/common/vnc
     - windows/common/rdp
     - windows/common/teamviewer
-    #- windows/compliance/cis
-    #- windows/compliance/gsa
+    - windows/compliance/cis
+    - windows/compliance/gsa
     #- windows/compliance/stig
-    #- windows/compliance/acsc
+    - windows/compliance/acsc
     - windows/common/logshipping

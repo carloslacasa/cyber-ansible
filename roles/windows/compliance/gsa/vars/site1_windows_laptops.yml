@@ -1,0 +1,7 @@
+---
+standby_enabled: True
+shutdown_without_logon: True
+require_password_dc_wakeup: True
+require_password_ac_wakeup: True
+onedrive_enabled: True
+microphone_enabled: True

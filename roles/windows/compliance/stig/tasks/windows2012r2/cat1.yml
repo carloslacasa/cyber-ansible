@@ -1,0 +1,488 @@
+---
+- name: "HIGH | V-1073 | AUDIT | Systems must be maintained at a supported service pack level."
+  win_command: wmic os get Caption, Version, CSDVersion, BuildNumber
+  register: supported_pack_level_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     supported_pack_level_audit.stderr != "" and
+     '"reg_not_found" not in supported_pack_level_audit.stderr'
+  tags: ['cat1']
+
+- name: "HIGH | V-1074 | AUDIT | An approved antivirus program must be installed and used."
+  win_command: 'reg query "HKLM\Software\Wow6432Node\Network Associates\ePolicy Orchestrator\Application Plugins\VIRUSCAN8800" /v Version'
+  register: mcafee_approved_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     mcafee_approved_audit.stderr != "" and 
+     '"reg_not_found" not in mcafee_approved_audit.stderr'
+  tags: ['cat1']
+
+- name: "HIGH | V-1081 | AUDIT | Local volumes must be formatted using NTFS."
+  win_shell: Get-Volume | Select-Object -Property DriveLetter,FileSystem
+  register: local_volume_format_audit
+  check_mode: no
+  changed_when: no
+  failed_when: '"FAT32" in local_volume_format_audit.stdout'
+  tags: ['cat1']
+
+- name: "HIGH | V-1093 | PATCH | Anonymous enumeration of shares will be restricted."
+  win_regedit: 
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: RestrictAnonymous
+      data: 1
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-1102 | PATCH | Unauthorized accounts must not have the Act as part of the operating system user right."
+  win_user_right:
+      name: SeTcbPrivilege
+      users: []
+  tags: ['cat1']
+
+- name: "HIGH | V-1121 | PATCH | FTP server is not installed"
+  win_package:
+    product_id: msftpsvc
+    arguments: /S
+    state: absent
+  tags: ['cat1']
+
+- name: "HIGH | V-1127 | AUDIT | Only administrators responsible for the system must have Administrator rights on the system."
+  win_command: net localgroup Administradores
+  register: administrators_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat1']
+
+- name: "HIGH | V-1127 | AUDIT | Feedback only administrators responsible for the system must have Administrator rights on the system."
+  assert:
+    that: 
+      - "'---\r\nAdministrador\r\nEUROPE\\Domain Admins\r\nEUROPE\\{{ vault_domain_admin_user }}\r\nSe ha completado' not in administrators_audit.stdout"
+    success_msg: "V-1127 check OK {{ ansible_hostname }}.{{ domain_name }}"
+    fail_msg: "V-1127 check NOK | Administrator rights must be reviewed at {{ ansible_hostname }}.{{ domain_name }}"
+  tags: ['cat1']
+
+- name: "HIGH | V-1152 | PATCH | Anonymous access to the registry must be restricted."
+  win_regedit:
+      key: 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg'
+  tags: ['cat1']
+
+- name: "HIGH | V-1152 | AUDIT | Anonymous access to the registry must be restricted."
+  win_shell: (Get-Acl -PATH 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg').Access.IdentityReference.Value
+  register: anon_registry_access_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     anon_registry_access_audit.stderr != "" and
+     '"path_not_found" not in anon_registry_access_audit.stderr'
+  tags: ['cat1']
+
+- name: "HIGH | V-1152 | Anonymous access to the registry must be restricted."
+  block:
+    
+    - name: "REMOVAL HIGH | V-1152 | PATCH | Anonymous access to the registry must be restricted."
+      win_acl:
+          path: 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg'
+          user: '{{ item[0] }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "'Administradores' not in item[0] or 'allow' not in item[1]"
+      with_nested:
+          - "{{ anon_registry_access_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "HIGH | V-1152 | PATCH | Admin Anonymous access to the registry must be restricted."
+      win_acl:
+          path: 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg'
+          user: '{{ item.user }}'
+          rights: '{{ item.rights }}'
+          type: 'allow'
+          state: 'present'
+          inherit: '{{ item.inherit }}'
+          propagation: '{{ item.propagation }}'
+      with_items:
+          - user: 'BUILTIN\Administradores'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Operadores de copia de seguridad'
+            rights: 'ReadKey'
+            inherit: 'None'
+            propagation: 'None'
+          - user: 'SERVICIO LOCAL'
+            rights: 'ReadKey'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+
+    #- name: "REMOVAL HIGH | V-1152 | PATCH | Anonymous access to the registry must be restricted."
+    #  win_acl_inheritance:
+    #      path: 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurePipeServers\Winreg'
+    #      state: absent
+  tags: ['cat1']
+
+- name: "HIGH | V-1153 | PATCH | The LanMan authentication level must be set to send NTLMv2 response only, and to refuse LM and NTLM."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: LMCompatibilityLevel
+      data: 5
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-2374 | PATCH | Autoplay must be disabled for all drives."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\policies\Explorer\'
+      value: NoDriveTypeAutoRun
+      data: 255
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-3337 | PATCH | Anonymous SID/Name translation will not be allowed."
+  win_security_policy:
+      section: 'System Access'
+      key: LSAAnonymousNameLookup
+      value: '0'
+  tags: ['cat1']
+
+- name: "HIGH | V-3338 | AUDIT | Named pipes that can be accessed anonymously must be configured with limited values on domain controllers."
+  win_command: 'reg query HKLM\System\CurrentControlSet\Services\LanManServer\Parameters\ /v NullSessionPipes'
+  register: pipes_limited_dc_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat1']
+
+- name: "HIGH | V-3338 | PATCH | Named pipes that can be accessed anonymously must be configured with limited values on domain controllers."
+  win_command: 'reg add HKLM\System\CurrentControlSet\Services\LanManServer\Parameters /v NullSessionPipes /t REG_MULTI_SZ /f'
+  when: pipes_limited_dc_audit.stderr != ""
+  tags: ['cat1']
+
+- name: "HIGH | V-3339 | PATCH | Unauthorized remotely accessible registry paths must not be configured."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedExactPaths'
+      value: Machine
+      data: >
+         ['System\\CurrentControlSet\\Control\\ProductOptions\0System\\CurrentControlSet\\Control\\Server',
+          'Applications\0Software\\Microsoft\\Windows NT\\CurrentVersion']
+      datatype: multistring
+  tags: ['cat1']
+
+- name: "HIGH | V-3340 | AUDIT | Network shares that can be accessed anonymously will not be allowed."
+  win_command: 'reg query HKLM\System\CurrentControlSet\Services\LanManServer\Parameters /v NullSessionShares'
+  register: null_session_shares_audit
+  check_mode: no
+  changed_when: no
+  tags: ['cat1']
+
+- name: "HIGH | V-3340 | PATCH | Network shares that can be accessed anonymously will not be allowed."
+  win_command: 'reg add HKLM\System\CurrentControlSet\Services\LanManServer\Parameters /v NullSessionShares /t REG_MULTI_SZ /f'
+  when: null_session_shares_audit.stderr != ""
+  tags: ['cat1']
+
+- name: "HIGH | V-3343 | PATCH | Solicited Remote Assistance must not be allowed."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows NT\Terminal Services'
+      value: fAllowToGetHelp
+      data: 0
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-3344 | PATCH | Local accounts with blank passwords must be restricted to prevent access from the network."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa\'
+      value: LimitBlankPasswordUse
+      data: 1
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-3379 | PATCH | The system will be configured to prevent the storage of the LAN Manager hash of passwords."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa'
+      value: NoLMHash
+      data: 1
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-4443 | PATCH | Unauthorized remotely accessible registry paths and sub-paths must not be configured."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\SecurePipeServers\Winreg\AllowedPaths\'
+      value: Machine
+      data: >
+            ['Software\\Microsoft\\OLAP Server\0\',
+            'Software\\Microsoft\\Windows NT\\CurrentVersion\\Perflib\0\',
+            'Software\\Microsoft\\Windows NT\\CurrentVersion\\Print\0\',
+            'Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows\0\',
+            'System\\CurrentControlSet\\Control\\ContentIndex\0\',
+            'System\\CurrentControlSet\\Control\\Print\\Printers\0\',
+            'System\\CurrentControlSet\\Control\\Terminal Server\0\',
+            'System\\CurrentControlSet\\Control\\Terminal Server\\UserConfig\0\',
+            'System\\CurrentControlSet\\Control\\Terminal Server\\DefaultUserConfiguration\0\',
+            'System\\CurrentControlSet\\Services\\Eventlog\0\',
+            'System\\CurrentControlSet\\Services\\Sysmonlog']
+      datatype: multistring
+  tags: ['cat1']
+
+- name: "HIGH | V-6834 | PATCH | Anonymous access to Named Pipes and Shares must be restricted."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Services\LanManServer\Parameters\'
+      value: RestrictNullSessAccess
+      data: 1
+      datatype: dword
+  tags: ['cat1']
+
+
+# Well-known security identifiers in Windows operating systems
+# https://support.microsoft.com/en-us/kb/243330
+- name: "HIGH | V-18010 | PATCH | Unauthorized accounts must not have the Debug programs user right."
+  win_user_right:
+      name: SeDebugPrivilege
+      users: ['Administradores']
+  tags: ['cat1']
+
+- name: "HIGH | V-21973 | PATCH | Autoplay must be turned off for non-volume devices."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\Explorer\'
+      value: NoAutoplayfornonVolume
+      data: 1
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-22692 | PATCH | The default Autorun behavior must be configured to prevent Autorun commands."
+  win_regedit:
+      key: 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer\'
+      value: NoAutorun
+      data: 1
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-26070 | AUDIT | Standard user accounts must only have Read permissions to the Winlogon registry key."
+  win_shell: Get-Acl -PATH 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon' | Format-List
+  register: standard_user_read_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     standard_user_read_audit.stderr != "" and
+     '"path_not_found" not in standard_user_read_audit.stderr'
+  tags: ['cat1']
+
+- name: "HIGH | V-26070 | AUDIT | Standard user accounts must only have Read permissions to the Winlogon registry key."
+  win_shell: (Get-Acl -PATH 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon').Access.IdentityReference.Value
+  register: standard_user_read_audit
+  check_mode: no
+  changed_when: no
+  failed_when: >
+     standard_user_read_audit.stderr != "" and
+     '"path_not_found" not in standard_user_read_audit.stderr'
+  tags: ['cat1']
+
+- name: "HIGH | V-26070 | PATCH | Standard user accounts must only have Read permissions to the Winlogon registry key."
+  block:
+    - name: "REMOVAL HIGH | V-26070 | PATCH | Standard user accounts must only have Read permissions to the Winlogon registry key."
+      win_acl:
+          path: 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES","TODOS LOS PAQUETES DE APLICACIONES") }}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not ('TrustedInstaller' in item[0] or 'SYSTEM' in item[0] or 'Administradores' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - "{{ standard_user_read_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "HIGH | V-26070 | PATCH | Standard user accounts must only have Read permissions to the Winlogon registry key."
+      win_acl:
+          path: 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon'
+          user: '{{ item.user }}'
+          rights: '{{ item.rights }}'
+          type: 'allow'
+          state: 'present'
+          inherit: '{{ item.inherit }}'
+          propagation: '{{ item.propagation }}'
+      with_items:
+          - user: 'NT SERVICE\TrustedInstaller'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Administradores'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Usuarios'
+            rights: 'ReadKey'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'TODOS LOS PAQUETES DE APLICACIONES'
+            rights: 'ReadKey'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+
+    #- name: "REMOVAL HIGH | V-26070 | PATCH | Standard user accounts must only have Read permissions to the Winlogon registry key."
+    #  win_acl_inheritance:
+    #      path: 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\Winlogon'
+    #      state: absent
+  tags: ['cat1']
+
+- name: "HIGH | V-26283 | PATCH | Anonymous enumeration of SAM accounts must not be allowed."
+  win_regedit:
+      key: 'HKLM:\System\CurrentControlSet\Control\Lsa\'
+      value: RestrictAnonymousSAM
+      data: 1
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-26479 | PATCH | Unauthorized accounts must not have the Create a token object user right."
+  win_user_right:
+      name: SeCreateTokenPrivilege
+      users: []
+  tags: ['cat1']
+
+- name: "HIGH | V-32282 | AUDIT | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+  win_shell: (Get-Acl -PATH 'HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components').Access.IdentityReference.Value
+  register: standard_read_active_audit
+  check_mode: no
+  changed_when: no
+  failed_when: > 
+     standard_read_active_audit.stderr != "" and
+     '"path_not_found" not in standard_read_active_audit.stderr'
+  tags: ['cat1']
+
+- name: "HIGH | V-32282 | AUDIT | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+  win_shell: (Get-Acl -PATH 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Active Setup\Installed Components').Access.IdentityReference.Value
+  register: standard_read_active2_audit
+  check_mode: no
+  changed_when: no
+  when: ansible_architecture == '64 bits'
+  failed_when: > 
+     standard_read_active2_audit.stderr != "" and
+     '"path_not_found" not in standard_read_active2_audit.stderr'
+  tags: ['cat1']
+
+- name: "HIGH | V-32282 | PATCH | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+  block:
+    - name: "REMOVAL HIGH | V-32282 | PATCH | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+      win_acl:
+          path: 'HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES" , "TODOS LOS PAQUETES DE APLICACIONES")}}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('Administradores' in item[0] or 'SYSTEM' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - "{{ standard_read_active_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "HIGH | V-32282 | PATCH | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+      win_acl:
+          path: 'HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components'
+          user: "{{ item.user }}"
+          rights: "{{ item.rights }}"
+          type: 'allow'
+          state: 'present'
+          inherit: "{{ item.inherit }}"
+          propagation: "{{ item.propagation }}"
+      with_items:
+          - user: 'BUILTIN\Usuarios'
+            rights: 'ReadKey'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Administradores'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'CREATOR OWNER'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit'
+            propagation: 'InheritOnly'
+          - user: 'TODOS LOS PAQUETES DE APLICACIONES'
+            rights: 'ReadKey'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+
+    #- name: "REMOVAL HIGH | V-32282 | PATCH | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+    #  win_acl_inheritance:
+    #      path: 'HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components'
+    #      state: absent
+  tags: ['cat1']
+
+- name: "HIGH | V-32282 | PATCH | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key (64 bits)."
+  block:
+    - name: "REMOVAL HIGH | V-32282 | PATCH | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+      win_acl:
+          path: 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Active Setup\Installed Components'
+          user: '{{ item[0] | replace("ENTIDAD DE PAQUETES DE APLICACIONES\TODOS LOS PAQUETES DE APLICACIONES" , "TODOS LOS PAQUETES DE APLICACIONES")}}'
+          rights: 'FullControl'
+          type: '{{ item[1] }}'
+          state: 'absent'
+      when: "not('Administradores' in item[0] or 'SYSTEM' in item[0]) or 'allow' not in item[1]"
+      with_nested:
+          - "{{ standard_read_active2_audit.stdout_lines }}"
+          - [ allow, deny ]
+
+    - name: "HIGH | V-32282 | PATCH | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+      win_acl:
+          path: 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Active Setup\Installed Components'
+          user: "{{ item.user }}"
+          rights: "{{ item.rights }}"
+          type: 'allow'
+          state: 'present'
+          inherit: "{{ item.inherit }}"
+          propagation: "{{ item.propagation }}"
+      with_items:
+          - user: 'BUILTIN\Usuarios'
+            rights: 'ReadKey'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'BUILTIN\Administradores'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'NT AUTHORITY\SYSTEM'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+          - user: 'CREATOR OWNER'
+            rights: 'FullControl'
+            inherit: 'ContainerInherit'
+            propagation: 'InheritOnly'
+          - user: 'TODOS LOS PAQUETES DE APLICACIONES'
+            rights: 'ReadKey'
+            inherit: 'ContainerInherit, ObjectInherit'
+            propagation: 'None'
+
+    #- name: "REMOVAL HIGH | V-32282 | PATCH | Standard user accounts must only have Read permissions to the Active Setup Installed Components registry key."
+    #  win_acl_inheritance:
+    #      path: 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Active Setup\Installed Components'
+    #      state: absent
+  tags: ['cat1']
+
+- name: "HIGH | V-34974 | PATCH | The Windows Installer Always install with elevated privileges option must be disabled."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\Installer\'
+      value: AlwaysInstallElevated
+      data: 0
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-36712 | PATCH | The Windows Remote Management (WinRM) client must not use Basic authentication."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\WinRM\Client'
+      value: AllowBasic
+      data: 0
+      datatype: dword
+  tags: ['cat1']
+
+- name: "HIGH | V-36718 | PATCH | The Windows Remote Management (WinRM) service must not use Basic authentication."
+  win_regedit:
+      key: 'HKLM:\Software\Policies\Microsoft\Windows\WinRM\Service\'
+      value: AllowBasic
+      data: 0
+      datatype: dword
+  tags: ['cat1']
