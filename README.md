@@ -2,6 +2,34 @@
 
 ## Ansible playbooks related to Cybersecurity
 
+### Hardening rules for Windows systems
+Security configuration for Windows systems according to recommendations published by CIS, GSA and ACSC.
+CIS: Center for Internet Security
+GSA: US General Services Administration
+ACSC: Australian Cyber Security Center
+
+Different configuration options can be customized at group level or host level defined in the Ansible inventories.
+
+Tested on Windows 10 (64, 32bits), Windows Server 2016, Windows Server 2019
+DISCLAIMER: These rules must be seen as an example. They must be reviewed/modified in order to suit the needs of any particular environments. Do NOT apply them in production without a previous and careful testing.
+
+How to call the playbook:
+
+`ansible-playbook -i inventory/on-premise/windows/dev --limit site1_windows_wks_personal -T 5 ./windows_provisioning.yml --tags cis,acsc,gsa,install,configuration,services -vault-password-file ./.vault`
+
+
+### Hardening rules for Linux (Ubuntu) systems
+Configuration of Ubuntu systems according to CIS security baselines.
+OpenSCAP software and up-to-date security guides are included in order to audit our security posture against different security profiles and Cybersecurity frameworks.
+Different configuration options can be customized at group level or host level defined in the Ansible inventories.
+
+Tested on Ubuntu>=18.04 LTS
+DISCLAIMER: These rules must be seen as an example. They must be reviewed/modified in order to suit the needs of any particular environments. Do NOT apply them in production without a previous and careful testing.
+
+How to call the playbook:
+
+`ansible-playbook -i inventory/on-premise/linux/dev --limit site1_linux_wks_it -T 5 ./linux_provisioning.yml --tags scap,install,configuration,services --vault-password-file ./.vault`
+
 ### Generic protective measures for Windows systems
 Define which services must be running or stopped, which software packages must be installed or removed.
 Workaround for known vulnerabilities (such as CVE-2021-34527 and CVE-2021-40444).
